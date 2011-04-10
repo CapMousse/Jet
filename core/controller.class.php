@@ -6,7 +6,7 @@
 		//$layout var true if controller need a layout to work
 		public $layout = true;
 
-		//define the used view for layout
+		//define the used view for layout, by default index
 		public $template = "index";
 
 		//the view object

@@ -1,12 +1,16 @@
 <?php
 
 $routes = array(
+	//How to define route?
+	//'url' => array( 'controller' => 'controller name', 'action' => 'action name')
+
+	//Keyword for url:
+		// :any : any char
+		// :num : only number
+		// :alpha : only alphabetical char
+
 	'default_controller' => array('controller' => 'home', 'action' => 'index'),
-	'404' => array('controller' => 'home', 'action' => 'do404'),
-	'home/index' => array('controller' => 'home', 'action' => 'index'),
-	'home/:num' => array('controller' => 'home', 'action' => 'testAny'),
-	'home/:num/:num/:any' => array('controller' => 'home', 'action' => 'testAny'),
-	'test/test/Test' => array('controller' => 'home', 'action' => 'index')
+	'404' => array('controller' => 'home', 'action' => 'do404')
 );
 
 ?>

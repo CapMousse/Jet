@@ -1,5 +1,5 @@
 <?php $this->view->createBlock('content'); ?>
-	<?php foreach($tableau as $name => $value): ?>
-		Tableau : <?=$value?><br />
+	<?php foreach($articles as $name => $value): ?>
+		Article : <?=$value->titre_article?>
 	<?php endforeach; ?>
 <?php $this->view->endBlock('content'); ?>

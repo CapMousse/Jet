@@ -1,28 +1,23 @@
 <?php
 	class Home extends Controller{
-		public $title = 'Essai';
+		public $title = 'Test';
 
 		public function index($options){
+
+			//You can change the title on the fly
 			$this->title = "Modification";
 			
-			$tableau = array();
-			for($i = 0; $i < 10; $i++){
-				$tableau[$i] = $i;
-			}
-
+			//include a model for db query
 			$articles = $this->includeModel('article');
 
-			print_r($articles->where('id', 9)->find_many());
-			
-			$this->getView('partial/home', array('tableau' => $tableau));
-		}
-
-		public function testAny($options){
-			print_r($options);
+			//get a view and send an article array var
+			$this->getView('partial/home', 
+				array('articles' => $articles->where('id', 9)->find_many())
+			);
 		}
 
 		public function do404($options){
-			$this->title = "Erreur 404 LOLWTFNOOB";
+			$this->title = "404 Error";
 
 			$this->getView('partial/404');
 		}

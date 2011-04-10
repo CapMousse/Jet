@@ -1,8 +1,6 @@
 <?php
 	//View class
 	class View{
-		//titleView used by <title></tible>
-		public $titleView = '';
 
 		//Lauch the render of a block
 		public function createBlock($block){
