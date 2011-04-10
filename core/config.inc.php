@@ -3,35 +3,55 @@
 if($_SERVER['SERVER_ADDR'] == "127.0.0.1")
 {
 	// DEV PROPERTIES
-	define("HOST", "127.0.0.1");
-	define("LOG","root");
-	define("PASS","root");
-	define("BASE","portblog");
-	define("ROOT", "http://framework.loc/");
-	define("TITRE", 'Test framework');
-	define("DEBUG", false);
+
+	//use SQL?
 	define("SQL", true);
 
-	define("TEMPLATE_PAGE", "template_page.php");
-	define("MODELE_DEFAUT", "home.php");
+	//server addresse for database
+	define("HOST", "127.0.0.1");
+
+	//login & password for database
+	define("LOG","root");
+	define("PASS","root");
+
+	//database name
+	define("BASE","portblog");
+
+	//site addresse for static file (if static file are in other place)
+	define("ROOT", "http://framework.loc/");
+
+	//Enable debug mod
+	define("DEBUG", false);
+
+	//define the routes for all apps
 	$routesApp = array(
-		'default' => 'front',
-		'/backoffice' => 'back'	
+		'default' => 'front'
 	);
 }
 else
 {
 	// PRODUCTION PROPERTIES
-	define("HOST", "127.0.0.1");
-	define("LOG","root");
-	define("PASS","root");
-	define("BASE","framework");
-	define("ROOT", "http://framework.loc/");
-	define("TITRE", 'Test framework');
-	define("DEBUG", FALSE);
+
+	//use SQL?
 	define("SQL", true);
 
-	define("TEMPLATE_PAGE", "template_page.php");
-	define("MODELE_DEFAUT", "home.php");
+	//server addresse for database
+	define("HOST", "127.0.0.1");
+
+	//login & password for database
+	define("LOG","root");
+	define("PASS","root");
+
+	//database name
+	define("BASE","portblog");
+
+	//site addresse for static file (if static file are in other place)
+	define("ROOT", "http://framework.loc/");
+
+	//Enable debug mod
+	define("DEBUG", false);
+
+	//define the routes for all apps
+	$routesApp = array();
 }
 ?>

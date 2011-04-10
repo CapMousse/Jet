@@ -1,19 +1,30 @@
 <?php
+	// Controller class
+
 	abstract class Controller{
+
+		//$layout var true if controller need a layout to work
 		public $layout = true;
+
+		//define the used view for layout
 		public $template = "index";
+
+		//the view object
 		public $view;
 
-		protected $model;
-
 		public function __construct(){
+
+			//enable view model for template control
 			$this->view = new View();
 		}
 
 		protected function getView($file, $options = null){
+
+			//Control if options is defined, if yes, construct all var used in templates
 			if(is_array($options))
 				foreach($options as $name => $value){ $$name = $value; }
 				
+			//Control if view file exists
 			if(!is_file(APPS.CURRENT_APP.'views/'.$file.'.php')){
 				trigger_error("The asked view <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />");
 				exit();
@@ -23,6 +34,8 @@
 		}
 
 		protected function includeModel($file){
+
+			//Control if model file exists
 			if(!is_file(APPS.CURRENT_APP.'models/'.$file.'.php')){
 				trigger_error("The asked model <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />");
 				exit();
@@ -30,14 +43,17 @@
 			
 			include(APPS.CURRENT_APP.'models/'.$file.'.php');
 
+			//Init model
 			$file = ucfirst($file);
 			return Model::factory($file);
 		}
 
+		//Set the layout property
 		public function setLayout($bool){
 			$this->layout = $bool;
 		}
 
+		//Return the layout value (used for render)
 		public function hasLayout(){
 			return $this->layout;
 		}

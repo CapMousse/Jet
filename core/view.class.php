@@ -1,33 +1,39 @@
 <?php
-class View{
-	public $titleView = '';
+	//View class
+	class View{
+		//titleView used by <title></tible>
+		public $titleView = '';
 
-	public function createBlock($block){
-		global $blocks;
+		//Lauch the render of a block
+		public function createBlock($block){
+			global $blocks;
 
-		if(!isset($blocks[$block]))
-			$blocks[$block] = null;
-		ob_start();
-	}
+			if(!isset($blocks[$block]))
+				$blocks[$block] = null;
+			ob_start();
+		}
 
-	public function endBlock($block){
-		global $blocks;
+		//End the render of a block and stock it
+		public function endBlock($block){
+			global $blocks;
 
-		$value = ob_get_clean();
-		
-		$blocks[$block] .= $value;
-	}
+			$value = ob_get_clean();
+			
+			$blocks[$block] .= $value;
+		}
 
-	public function getBlock($block){
-		global $blocks;
-		
-		return isset($blocks[$block]) ? $blocks[$block] : null;
-	}
+		//Get the rendered block in the template
+		public function getBlock($block){
+			global $blocks;
+			
+			return isset($blocks[$block]) ? $blocks[$block] : null;
+		}
 
-	public function getVar($var){
-		global $theApp;
+		//Get a simple var (like titleVew) in the template
+		public function getVar($var){
+			global $theApp;
 
-		return $theApp->$var;
-	}
+			return $theApp->$var;
+		}
 }
 ?>
