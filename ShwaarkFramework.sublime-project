@@ -15,44 +15,28 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "/D/Dropbox/projets/ShwaarkFramework/core/config.inc.php",
-			"settings":
-			{
-				"buffer_size": 880,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "/D/Dropbox/projets/ShwaarkFramework/core/ShwaarkFramework.php",
-			"settings":
-			{
-				"buffer_size": 3869,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "/D/Dropbox/projets/ShwaarkFramework/core/debug.php",
-			"settings":
-			{
-				"buffer_size": 354,
-				"line_ending": "Windows"
-			}
-		}
 	],
 	"build_system": "",
 	"file_history":
 	[
-		"/D/Dropbox/projets/ShwaarkFramework/index.php",
+		"/D/Dropbox/projets/ShwaarkFramework/apps/front/routes.php",
+		"/D/Dropbox/projets/ShwaarkFramework/core/Controller.class.php",
+		"/D/Dropbox/projets/ShwaarkFramework/core/View.class.php",
+		"/D/Dropbox/projets/shwaark/Doc.txt",
+		"/D/Dropbox/projets/ShwaarkFramework/core/config.inc.php",
+		"/D/Dropbox/projets/ShwaarkFramework/README.markdown",
+		"/C/WINDOWS/system32/drivers/etc/hosts",
+		"/D/Dropbox/projets/ShwaarkFramework/apps/front/controllers/home.php",
 		"/D/Dropbox/projets/ShwaarkFramework/core/ShwaarkFramework.php",
+		"/D/Dropbox/projets/ShwaarkFramework/apps/front/models/exemple.php",
+		"/D/Dropbox/projets/ShwaarkFramework/index.php",
+		"/D/Dropbox/projets/ShwaarkFramework/apps/front/modeles/exemple.php",
+		"/D/Dropbox/projets/ShwaarkFramework/core/debug.php",
 		"/D/Dropbox/projets/capitaine-mousse-codeIgniter/system/core/Router.php",
 		"/D/Dropbox/projets/ShwaarkFramework/apps/front/views/index.php",
 		"/D/Dropbox/projets/ShwaarkFramework/apps/front/views/partial/home.php",
 		"/D/Dropbox/projets/ShwaarkFramework/core/AbstractController.class.php",
 		"/D/Dropbox/projets/ShwaarkFramework/core/DefaultsHelpers.class.php",
-		"/D/Dropbox/projets/ShwaarkFramework/core/View.class.php",
-		"/D/Dropbox/projets/ShwaarkFramework/apps/front/routes.php",
-		"/D/Dropbox/projets/ShwaarkFramework/apps/front/controllers/home.php",
 		"/D/Dropbox/projets/capitaine-mousse-codeIgniter/application/config/routes.php",
 		"/D/Dropbox/projets/capitaine-mousse-codeIgniter/system/core/URI.php",
 		"/D/Dropbox/projets/ShwaarkFramework/apps/back/routes.php",
@@ -136,90 +120,8 @@
 	"groups":
 	[
 		{
-			"selected": 1,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "/D/Dropbox/projets/ShwaarkFramework/core/config.inc.php",
-					"settings":
-					{
-						"buffer_size": 880,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								307,
-								307
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0,
-						"translation.y": 288,
-						"zoom_level": 1
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "/D/Dropbox/projets/ShwaarkFramework/core/ShwaarkFramework.php",
-					"settings":
-					{
-						"buffer_size": 3869,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								974,
-								974
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0,
-						"translation.y": 176,
-						"zoom_level": 1
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "/D/Dropbox/projets/ShwaarkFramework/core/debug.php",
-					"settings":
-					{
-						"buffer_size": 354,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								324,
-								324
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0,
-						"translation.y": 0,
-						"zoom_level": 1
-					},
-					"type": "text"
-				}
 			]
 		}
 	],

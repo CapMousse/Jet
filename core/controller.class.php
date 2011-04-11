@@ -57,5 +57,9 @@
 		public function hasLayout(){
 			return $this->layout;
 		}
+
+		public function render(){
+			require(APPS.CURRENT_APP.'views/'.$this->template.'.php');
+		}
 	}
 ?>

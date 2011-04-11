@@ -139,8 +139,7 @@
 	
 	//check if we have a layout and render it if yes
 	if($theApp->hasLayout()){
-		$views = new View();
-		require(APPS.CURRENT_APP.'views/'.$theApp->template.'.php');
+		$theApp->render();
 	}
 	
 	if(DEBUG){
