@@ -126,14 +126,14 @@
 	if(isset($controller) && isset($action)){
 		include(APPS.'/'.CURRENT_APP.'/controllers/'.$controller.'.php');
 
-		$theApp = new $controller();
+		$theApp = new $controller($controller, $action);
 		$theApp->$action($options);
 
 	//else launch the default_controller and default_action
 	}else if(isset($default_controller) && isset($default_action)){
 		include(APPS.'/'.CURRENT_APP.'/controllers/'.$default_controller.'.php');
 
-		$theApp = new $default_controller();
+		$theApp = new $default_controller($default_controller, $default_action);
 		$theApp->$default_action($options);
 	}
 	

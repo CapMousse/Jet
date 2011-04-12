@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"ins",
+				"inside"
+			],
+			[
 				"array_k",
 				"array_key_exists"
 			],
@@ -15,10 +19,31 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "/D/Dropbox/projets/shwaark/apps/shwaarkFramework/views/partial/home.php",
+			"settings":
+			{
+				"buffer_size": 967,
+				"line_ending": "Windows"
+			}
+		}
 	],
 	"build_system": "",
 	"file_history":
 	[
+		"/D/Dropbox/projets/shwaark/core/config.inc.php",
+		"/D/Dropbox/projets/shwaark/apps/shwaarkFramework/routes.php",
+		"/D/Dropbox/projets/ShwaarkFramework/core/controller.class.php",
+		"/D/Dropbox/projets/ShwaarkFramework/core/shwaarkframework.php",
+		"/D/Dropbox/projets/shwaark/apps/shwaarkFramework/views/layout.php",
+		"/D/Dropbox/projets/shwaark/static/css/global.css",
+		"/D/Dropbox/projets/shwaark/apps/shwaarkFramework/controllers/pages.php",
+		"/D/Dropbox/projets/shwaark/apps/shwaarkFramework/views/partial/home.php",
+		"/D/Dropbox/projets/ShwaarkFramework/core/view.class.php",
+		"/D/Dropbox/projets/ShwaarkFramework/core/Paris.class.php",
+		"/D/Dropbox/projets/capitaine-mousse.fr/design/design.css",
+		"/D/Dropbox/projets/shwaark/index.php",
+		"/D/Dropbox/projets/shwaark/apps/shwaarkFramework/controllers/home.php",
 		"/D/Dropbox/projets/ShwaarkFramework/apps/front/routes.php",
 		"/D/Dropbox/projets/ShwaarkFramework/core/Controller.class.php",
 		"/D/Dropbox/projets/ShwaarkFramework/core/View.class.php",
@@ -88,6 +113,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"view",
 			"controler",
 			"<p>",
 			"</p>",
@@ -99,6 +125,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"this->view",
 			"controller",
 			"<div>",
 			"</div>",
@@ -120,8 +147,36 @@
 	"groups":
 	[
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "/D/Dropbox/projets/shwaark/apps/shwaarkFramework/views/partial/home.php",
+					"settings":
+					{
+						"buffer_size": 967,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								550,
+								550
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0,
+						"translation.y": 0,
+						"zoom_level": 1
+					},
+					"type": "text"
+				}
 			]
 		}
 	],

@@ -38,6 +38,9 @@
 			return isset($this->blocks[$block]) ? true : false;
 		}
 
+		//Completely destroy the asked block
+		//@param block string
+		//@return void
 		public function destroyBlock($block){
 			unset($this->blocks[$block]);
 		}

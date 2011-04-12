@@ -9,10 +9,19 @@
 		//define the used view for layout, by default index
 		public $template = "index";
 
-		//the view object
-		public $view;
+		//used by isAction() view method
+		private $action = "";
 
-		public function __construct(){
+		//used by isController view method
+		private $name = "";
+
+		//the view object
+		private $view;
+
+		public function __construct($name, $action){
+
+			$this->name = $name;
+			$this->action = $action;
 
 			//enable view model for template control
 			$this->view = new View();
@@ -58,6 +67,15 @@
 			return $this->layout;
 		}
 
+		public function isAction($action){
+			return $action == $this->action ? true : false;
+		}
+
+		public function isController($controller){			
+			return $controller == $this->name ? true : false;
+		}
+
+		//Include the asked layout and launch the render
 		public function render(){
 			require(APPS.CURRENT_APP.'views/'.$this->template.'.php');
 		}
