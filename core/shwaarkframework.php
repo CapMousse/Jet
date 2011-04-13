@@ -58,7 +58,11 @@
 	if(is_array($uri_array)){
 		if(array_key_exists('/'.$uri_array[0], $routesApp)){
 			$app = $routesApp['/'.$uri_array[0]].'/';
-			unset($uri_array[0]);
+
+			if(count($uri_array) > 1)
+				unset($uri_array[0]);
+			else
+				$uri_array = '';
 		}
 	}
 
@@ -66,8 +70,8 @@
 	DEFINE('CURRENT_APP', isset($app) ? $app : $routesApp['default'].'/');
 
 	//check if route file exists in app dir
-	if(is_file(APPS.'/'.CURRENT_APP.'/routes.php')){
-		include(APPS.'/'.CURRENT_APP.'/routes.php');
+	if(is_file(APPS.CURRENT_APP.'routes.php')){
+		include(APPS.CURRENT_APP.'routes.php');
 
 		//define default controller & action and unset them from array for route control
 		$default_controller = isset($routes['default_controller']['controller']) ? $routes['default_controller']['controller'] : '' ;
@@ -124,14 +128,14 @@
 
 	//if we have a controller and an action, let's rock!
 	if(isset($controller) && isset($action)){
-		include(APPS.'/'.CURRENT_APP.'/controllers/'.$controller.'.php');
+		include(APPS.CURRENT_APP.'controllers/'.$controller.'.php');
 
 		$theApp = new $controller($controller, $action);
 		$theApp->$action($options);
 
 	//else launch the default_controller and default_action
 	}else if(isset($default_controller) && isset($default_action)){
-		include(APPS.'/'.CURRENT_APP.'/controllers/'.$default_controller.'.php');
+		include(APPS.CURRENT_APP.'controllers/'.$default_controller.'.php');
 
 		$theApp = new $default_controller($default_controller, $default_action);
 		$theApp->$default_action($options);

@@ -8,8 +8,8 @@
 	//Define the root path for the apps
 	define('APPS', str_replace("\\", "/", 'apps/'));
 
-	//Define the root path for static files (css, img...)
-	define('STATIC', str_replace("\\", "/", 'static/'));
+	//Define the root path for internal links
+	define('ROOT', trim('/', 'http://'.$_SERVER['HTTP_HOST']));
 
 	//let's rock!
 	require(BASEPATH.'ShwaarkFramework.php');

@@ -18,7 +18,7 @@ if($_SERVER['SERVER_ADDR'] == "127.0.0.1")
 	define("BASE","portblog");
 
 	//site addresse for static file (if static file are in other place)
-	define("ROOT", "http://framework.loc/");
+	define("STATICS", "http://framework.loc/");
 
 	//Enable debug mod
 	define("DEBUG", false);
@@ -46,7 +46,7 @@ else
 	define("BASE","portblog");
 
 	//site addresse for static file (if static file are in other place)
-	define("ROOT", "http://framework.loc/");
+	define("STATICS", "http://framework.loc/");
 
 	//Enable debug mod
 	define("DEBUG", false);

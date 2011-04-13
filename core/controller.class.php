@@ -9,6 +9,9 @@
 		//define the used view for layout, by default index
 		public $template = "index";
 
+		//the title of the page
+		public $title = "";
+
 		//used by isAction() view method
 		private $action = "";
 
@@ -22,6 +25,8 @@
 
 			$this->name = $name;
 			$this->action = $action;
+
+			$this->title = $name;
 
 			//enable view model for template control
 			$this->view = new View();
@@ -66,11 +71,13 @@
 		public function hasLayout(){
 			return $this->layout;
 		}
-
+		
+		//return true if the asked action is the current used action
 		public function isAction($action){
 			return $action == $this->action ? true : false;
 		}
 
+		//return true if the asked controller is the current used controller
 		public function isController($controller){			
 			return $controller == $this->name ? true : false;
 		}
