@@ -132,6 +132,13 @@
         public function create($data=null) {
             return $this->_create_model_instance(parent::create($data));
         }
+
+        /**
+        * clear the current query
+        */
+        public function end(){
+            $this->_end();
+        }
     }
 
     /**

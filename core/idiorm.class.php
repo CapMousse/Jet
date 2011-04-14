@@ -1138,5 +1138,21 @@
         public function __isset($key) {
             return isset($this->_data[$key]);
         }
+
+        public function _end(){
+            $this->_values = array();
+            $this->_result_columns = array('*');
+            $this->_using_default_result_columns = true;
+            $this->_join_sources = array();
+            $this->_distinct = false;
+            $this->_is_raw_query = false;
+            $this->_raw_query = '';
+            $this->_raw_parameters = array();
+            $this->_where_conditions = array();
+            $this->_limit = null;
+            $this->_offset = null;
+            $this->_order_by = array();
+            $this->_group_by = array();
+        }
     }
 
