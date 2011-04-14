@@ -51,7 +51,7 @@ class View{
 	public function getVar($var){
 		global $theApp;
 
-		return $theApp->$var;
+		return isset($theApp->$var) ? $theApp->$var : '';
 	}
 
 	//slufigy text
