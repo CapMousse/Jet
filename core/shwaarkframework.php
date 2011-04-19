@@ -3,33 +3,25 @@
 
 	// load framework config
 	require(BASEPATH.'config.inc.php');
+	$config = $config[$environement];
 
 	// used for perf test in debug mod
-	if(DEBUG)
+	if($config['debug'])
 		$start = microtime();
 
 	session_start();
-	
-	// prevent from stollen session
-	if(isset($_SESSION['HTTP_USER_AGENT'])){
-		if($_SESSION['HTTP_USER_AGENT'] != sha1($_SERVER['HTTP_USER_AGENT'].'sand')){
-			exit;
-		}
-	}else{
-		$_SESSION['HTTP_USER_AGENT'] = sha1($_SERVER['HTTP_USER_AGENT'].'sand');
-	}
-	
+
 	/***********************************************/
 	/**** Include class framework and init them ****/
 	/***********************************************/
 
 	// don't necesary load orm class if no sql needed
-	if(SQL){
+	if($config['sql']){
 		require(BASEPATH.'idiorm.class.php');
 		require(BASEPATH.'paris.class.php');
-		ORM::configure('mysql:host='.HOST.';dbname='.BASE);
-		ORM::configure('username', LOG);
-		ORM::configure('password', PASS);
+		ORM::configure('mysql:host='.$config['host'].';dbname='.$config['base']);
+		ORM::configure('username', $config['log']);
+		ORM::configure('password', $config['pass']);
 	}
 	
 	//load defaults helpers
@@ -56,8 +48,8 @@
 
 	//check if uri_array is not empty and check if it contain a route app
 	if(is_array($uri_array)){
-		if(array_key_exists('/'.$uri_array[0], $routesApp)){
-			$app = $routesApp['/'.$uri_array[0]].'/';
+		if(array_key_exists('/'.$uri_array[0], $config['routes'])){
+			$app = $config['routes']['/'.$uri_array[0]].'/';
 
 			if(count($uri_array) > 1)
 				unset($uri_array[0]);
@@ -67,20 +59,20 @@
 	}
 
 	//define CURRENT_APP with asked app or default app
-	DEFINE('CURRENT_APP', isset($app) ? $app : $routesApp['default'].'/');
+	DEFINE('CURRENT_APP', isset($app) ? $app : $config['routes']['default'].'/');
 
 	//check if route file exists in app dir
 	if(is_file(APPS.CURRENT_APP.'routes.php')){
 		include(APPS.CURRENT_APP.'routes.php');
 
 		//define default controller & action and unset them from array for route control
-		$default_controller = isset($routes['default_controller']['controller']) ? $routes['default_controller']['controller'] : '' ;
-		$default_action = isset($routes['default_controller']['action']) ? $routes['default_controller']['action'] : '';
-		unset($routes['default_controller']);
+		$default_controller = isset($routes['default']['controller']) ? $routes['default']['controller'] : '' ;
+		$default_action = isset($routes['default']['action']) ? $routes['default']['action'] : '';
+		unset($routes['default']);
 		$options = null;
 
-		if(DEBUG)
-			$route = 'default_controller';
+		if($config['debug'])
+			$route = 'default';
 
 		if(is_array($uri_array)){
 
@@ -109,7 +101,7 @@
 						$action = $routes[$key]['action'];
 						$options = $array;
 
-						if(DEBUG)
+						if($config['debug'])
 							$route = $key;
 					}
 				}
@@ -123,30 +115,25 @@
 				}
 			}
 		}
+
+		$controller = isset($controller) ? $controller : $default_controller;
+		$action = isset($action) ? $action : $default_action;
 	}
 
-
-	//if we have a controller and an action, let's rock!
+	
 	if(isset($controller) && isset($action)){
 		include(APPS.CURRENT_APP.'controllers/'.$controller.'.php');
 
 		$theApp = new $controller($controller, $action);
 		$theApp->$action($options);
-
-	//else launch the default_controller and default_action
-	}else if(isset($default_controller) && isset($default_action)){
-		include(APPS.CURRENT_APP.'controllers/'.$default_controller.'.php');
-
-		$theApp = new $default_controller($default_controller, $default_action);
-		$theApp->$default_action($options);
+	
+		//check if we have a layout and render it if yes
+		if($theApp->hasLayout()){
+			$theApp->render();
+		}
 	}
 	
-	//check if we have a layout and render it if yes
-	if($theApp->hasLayout()){
-		$theApp->render();
-	}
-	
-	if(DEBUG){
+	if($config['debug']){
 		$end = microtime() - $start;
 		include(BASEPATH.'debug.php');
 	}

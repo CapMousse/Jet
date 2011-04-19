@@ -8,6 +8,9 @@
 	//Define the root path for the apps
 	define('APPS', str_replace("\\", "/", 'apps/'));
 
+	//Define the root path for the apps
+	define('MODULES', str_replace("\\", "/", 'modules/'));
+
 	//Define the root path for internal links
 	define('ROOT', trim('/', 'http://'.$_SERVER['HTTP_HOST']));
 

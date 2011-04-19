@@ -9,7 +9,7 @@ $routes = array(
 		// :num : only number
 		// :alpha : only alphabetical char
 
-	'default_controller' => array('controller' => 'home', 'action' => 'index'),
+	'default' => array('controller' => 'home', 'action' => 'index'),
 	'404' => array('controller' => 'home', 'action' => 'do404')
 );
 

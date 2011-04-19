@@ -2,6 +2,12 @@
 	class Home extends Controller{
 		public $title = 'Test';
 
+		protected function construct(){
+			//load the Users Manager module
+			//you can access to the module with $this->UserManager
+			$this->loadModule('UsersManager');			
+		}
+
 		public function index($options){
 
 			//You can change the title on the fly
@@ -20,6 +26,10 @@
 			$this->title = "404 Error";
 
 			$this->getView('partial/404');
+		}
+
+		public function adminPanel($options){
+			if(!$this->UsersManager->checkAuth('articles')) $this->do404();
 		}
 	}
 ?>
