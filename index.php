@@ -12,8 +12,8 @@
 	define('MODULES', str_replace("\\", "/", 'modules/'));
 
 	//Define the root path for internal links
-	define('ROOT', trim('/', 'http://'.$_SERVER['HTTP_HOST']));
+	define('ROOT', 'http://'.$_SERVER['HTTP_HOST']);
 
 	//let's rock!
-	require(BASEPATH.'ShwaarkFramework.php');
+	require(BASEPATH.'shwaarkframework.php');
 ?>

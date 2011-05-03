@@ -17,6 +17,7 @@ class UsersManager{
 		$password = sha1(stripcslashes($password));
 		$login = stripcslashes(htmlspecialchars($login));
 
+		//factory the Users models. Module don't automaticly factiry included models
 		$userModel = Model::factory('Users');
 		$user = $userModel->where('password', $password)->where('login', $login)->find_one();
 		unset($userModel);
@@ -89,6 +90,7 @@ class UsersManager{
 
 	public function checkAuth($id, $auth = null){
 		if(is_null($auth)){
+			if(!isset($_SESSION['auth'])) return false
 			if((int)$_SESSION['auth'] & $this->auth[$id]) return true;
 		}else{
 			$usersModel = Model::factory('Users');

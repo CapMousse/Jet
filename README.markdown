@@ -10,6 +10,7 @@ Features
 
 * PHP 5.3 support
 * MVC support in OOP
+* Modules support
 * Personnal routes support
 * Highly modifiable
 

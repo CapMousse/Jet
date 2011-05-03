@@ -29,10 +29,13 @@
 			$this->name = $name;
 			$this->action = $action;
 
+			//by default, the title is the conrtoller name
 			$this->title = $name;
 
-			//enable view model for template control
+			//launch the construct method, to not override the __construct
 			$this->construct();
+			
+			//enable view model for template control
 			$this->view = new View();
 		}
 
@@ -68,7 +71,8 @@
 				$file = ucfirst($file);		
 				$this->models[$file] = $file;	
 			}
-
+			
+			//return the intentiate model
 			return Model::factory($this->models[$file]);
 		}
 
@@ -98,15 +102,19 @@
 		}
 
 		protected function loadModule($names){
+			//check if we have a array of name or convert it to array
 			if(!is_array($names)) $names = array($names);
 
 			foreach($names as $name){
+				//check if module and module conf exists
 				if(is_dir(MODULES.$name) && is_file(MODULES.$name.'/config.php')){
 					include(MODULES.$name.'/config.php');
 					
+					//include all nececary files
 					foreach($required_files['files'] as $file)
 						include(MODULES.$name.'/'.$file.'.php');
 
+					//include and instentiate the core file
 					include(MODULES.$name.'/'.$required_files['module'].'.php');
 					$this->$required_files['module'] = new $required_files['module']();
 				}

@@ -1,3 +1,7 @@
+## for people who use OVH, just uncomment thoses 2 lines
+#SetEnv REGISTER_GLOBALS 0
+#SetEnv PHP_VER 5
+
 RewriteEngine on
 
 <IfModule mod_setenvif.c>
@@ -69,13 +73,6 @@ ErrorDocument 404 /error.html
 AddDefaultCharset utf-8
 AddCharset utf-8 .html .css .js .xml .json .rss
 ServerSignature Off
-
-#RewriteRule ^index.html$ index.php
-
-#RewriteRule ^([0-9A-Za-z.-]+).html/([0-9A-Za-z.-]+)/([0-9A-Za-z.-]+)/(.+)$ index.php?page=$1&action=$2&parametre=$3&autre=$4
-#RewriteRule ^([0-9A-Za-z.-]+).html/([0-9A-Za-z.-]+)/([0-9A-Za-z.-]+)$ index.php?page=$1&action=$2&parametre=$3
-#RewriteRule ^([0-9A-Za-z.-]+).html/([0-9A-Za-z.-]+)$ index.php?page=$1&action=$2
-#RewriteRule ^([0-9A-Za-z.-]+).html$ index.php?page=$1
 
 DirectoryIndex index.php
 RewriteCond $1 !^(index\.php|images|css|js|robots\.txt|favicon\.ico)

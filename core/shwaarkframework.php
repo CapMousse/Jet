@@ -94,9 +94,14 @@
 
 					//try if current uri look like the parsed route
 					if (preg_match('#^'.$parsedKey.'$#', $uri, $array)){
+
+						//remove the first element of array, '/'
 						unset($array[0]);
+
+						//resort the array to fill the empty space
 						sort($array);
 
+						//now, let's rock!
 						$controller = $routes[$key]['controller'];
 						$action = $routes[$key]['action'];
 						$options = $array;
@@ -107,7 +112,7 @@
 				}
 			}
 
-			//third, if no routes look like our uri, try the 404 route;
+			//third, if no routes look like our uri, try the 404 route
 			if(!isset($controller) && !isset($action)){
 				if(isset($routes['404'])){
 					$controller = $routes['404']['controller'];
@@ -116,6 +121,7 @@
 			}
 		}
 
+		//if a controller already exists, keep it, else, load the default controller
 		$controller = isset($controller) ? $controller : $default_controller;
 		$action = isset($action) ? $action : $default_action;
 	}
@@ -124,10 +130,13 @@
 	if(isset($controller) && isset($action)){
 		include(APPS.CURRENT_APP.'controllers/'.$controller.'.php');
 
+		//Intentiate the asked controller
 		$theApp = new $controller($controller, $action);
+
+		//lauch the asked action, with our options
 		$theApp->$action($options);
 	
-		//check if we have a layout and render it if yes
+		//check if we need the layout, usefull for WebService
 		if($theApp->hasLayout()){
 			$theApp->render();
 		}
