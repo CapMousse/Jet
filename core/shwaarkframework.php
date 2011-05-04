@@ -5,6 +5,9 @@
 	require(BASEPATH.'config.inc.php');
 	$config = $config[$environement];
 
+	//create the Static constant
+	define('STATICS', $config['statics']);
+	
 	// used for perf test in debug mod
 	if($config['debug'])
 		$start = microtime();
