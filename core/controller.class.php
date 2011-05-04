@@ -43,7 +43,7 @@
 			return false;
 		}
 
-		protected function getView($file, $options = null){
+		public function getView($file, $options = null){
 
 			//Control if options is defined, if yes, construct all var used in templates
 			if(is_array($options))
@@ -58,10 +58,10 @@
 			include(APPS.CURRENT_APP.'views/'.$file.'.php');
 		}
 
-		protected function includeModel($file){
+		public function includeModel($file){
 
 			//Control if model file exists
-			if(!$this->models[$file]){
+			if(!isset($this->models[$file])){
 				if(!is_file(APPS.CURRENT_APP.'models/'.$file.'.php')){
 					trigger_error("The asked model <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />");
 					exit();
