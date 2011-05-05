@@ -13,4 +13,4 @@ $config['dev']['routes'] 	= array(
 );
 
 
-$environement = 'dev'; 
+$environment = 'dev'; 

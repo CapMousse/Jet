@@ -43,7 +43,7 @@
 			return false;
 		}
 
-		public function getView($file, $options = null){
+		public function loadView($file, $options = null){
 
 			//Control if options is defined, if yes, construct all var used in templates
 			if(is_array($options))
@@ -58,7 +58,7 @@
 			include(APPS.CURRENT_APP.'views/'.$file.'.php');
 		}
 
-		public function includeModel($file){
+		public function loadModel($file){
 
 			//Control if model file exists
 			if(!isset($this->models[$file])){
@@ -96,11 +96,6 @@
 			return $controller == $this->name ? true : false;
 		}
 
-		//Include the asked layout and launch the render
-		public function render(){
-			require(APPS.CURRENT_APP.'views/'.$this->template.'.php');
-		}
-
 		protected function loadModule($names){
 			//check if we have a array of name or convert it to array
 			if(!is_array($names)) $names = array($names);
@@ -119,6 +114,11 @@
 					$this->$required_files['module'] = new $required_files['module']();
 				}
 			}
+		}
+
+		//Include the asked layout and launch the render
+		public function render(){
+			require(APPS.CURRENT_APP.'views/'.$this->template.'.php');
 		}
 	}
 ?>

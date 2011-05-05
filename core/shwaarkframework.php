@@ -3,7 +3,7 @@
 
 	// load framework config
 	require(BASEPATH.'config.inc.php');
-	$config = $config[$environement];
+	$config = $config[$environment];
 
 	//create the Static constant
 	define('STATICS', $config['statics']);
