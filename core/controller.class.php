@@ -58,7 +58,10 @@
 			include(APPS.CURRENT_APP.'views/'.$file.'.php');
 		}
 
-		protected function loadModel($file){
+		// loadModel : load the asked model and return the factory model
+		// @ param file string : the asked model file
+		// [@ param factoring bool : return the factory model or not ]  
+		protected function loadModel($file, $factoring = true){
 
 			//Control if model file exists
 			if(!isset($this->models[$file])){
@@ -73,10 +76,12 @@
 			}
 			
 			//return the intentiate model
-			return Model::factory($this->models[$file]);
+			if($factoring)
+				return Model::factory($this->models[$file]);
+			
 		}
 
-		protected static function loadController($file, $options = null){
+		protected static function loadController($file){
 			include(APPS.CURRENT_APP.'controllers/'.$file.'.php');
 
 			$controller = ucfirst($file);
