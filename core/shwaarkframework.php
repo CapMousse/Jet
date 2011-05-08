@@ -26,9 +26,6 @@
 		ORM::configure('username', $config['log']);
 		ORM::configure('password', $config['pass']);
 	}
-	
-	//load defaults helpers
-	require(BASEPATH.'helpers.class.php');
 
 	//load the abstract controler class, used to be extend by user controller
 	require(BASEPATH.'controller.class.php');
