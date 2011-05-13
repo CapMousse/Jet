@@ -1,151 +1,172 @@
 <?php	
-	ob_start();
+/**
+*	ShwaarkFramework
+*	A lightwave and fast framework for developper who don't need hundred of files
+* 	
+*	@package SwhaarkFramework
+*	@author  Jérémy Barbe
+*	@license BSD
+*	@link 	 https://github.com/CapMousse/ShwaarkFramework
+*	@version 1.1
+*/
 
-	// load framework config
-	require(BASEPATH.'config.inc.php');
-	$config = $config[$environment];
+ob_start('ob_gzhandler');
 
-	//create the Static constant
-	define('STATICS', $config['statics']);
-	
-	// used for perf test in debug mod
+// load framework user config file
+require(BASEPATH.'config.inc.php');
+
+// get the asked config environment
+$config = $config[$environment];
+
+//create the Static constant, for statics files
+define('STATICS', $config['statics']);
+
+// used for perf test in debug mod
+if($config['debug'])
+	$start = microtime();
+
+session_start();
+
+/***********************************************/
+/**** Include class framework and init them ****/
+/***********************************************/
+
+// load the abstract controler class, used to be extend by user controller
+require(BASEPATH.'controller.class.php');
+
+// load the view controler class used by templates
+require(BASEPATH.'view.class.php');
+
+// don't necesary load orm class if no sql needed
+if($config['sql']){
+	require(BASEPATH.'idiorm.class.php');
+	require(BASEPATH.'paris.class.php');
+	ORM::configure('mysql:host='.$config['host'].';dbname='.$config['base']);
+	ORM::configure('username', $config['log']);
+	ORM::configure('password', $config['pass']);
+}
+
+if($config['cache']){
+	require(BASEPATH.'cache.class.php');
+}
+
+/**********************/
+/**** Parse routes ****/
+/**********************/
+
+// get current adresse path
+$path = (isset($_SERVER['PATH_INFO'])) ? $_SERVER['PATH_INFO'] : @getenv('PATH_INFO');
+
+$uri_array = '';
+
+// check if current path is not root url or core url, else return array of current route
+if (trim($path, '/') != '' && $path != "/".SELF)
+{
+	$uri_array = explode('/', trim($path, '/'));
+}
+
+// check if uri_array is not empty and check if it contain a core config route
+if(is_array($uri_array)){
+	if(array_key_exists('/'.$uri_array[0], $config['routes'])){
+		$app = $config['routes']['/'.$uri_array[0]].'/';
+
+		// check if whe have app routes and remove current route
+		if(count($uri_array) > 1)
+			unset($uri_array[0]);
+		else
+			$uri_array = '';
+	}
+}
+
+// define CURRENT_APP with asked app or default app
+DEFINE('CURRENT_APP', isset($app) ? $app : $config['routes']['default'].'/');
+
+// check and include route file app
+if(is_file(APPS.CURRENT_APP.'routes.php')){
+	include(APPS.CURRENT_APP.'routes.php');
+
+	//define default controller & action and unset them from array for route control
+	$default_controller = isset($routes['default']['controller']) ? $routes['default']['controller'] : '' ;
+	$default_action = isset($routes['default']['action']) ? $routes['default']['action'] : '';
+	unset($routes['default']);
+	$options = null;
+
 	if($config['debug'])
-		$start = microtime();
+		$route = 'default';
 
-	session_start();
-
-	/***********************************************/
-	/**** Include class framework and init them ****/
-	/***********************************************/
-
-	// don't necesary load orm class if no sql needed
-	if($config['sql']){
-		require(BASEPATH.'idiorm.class.php');
-		require(BASEPATH.'paris.class.php');
-		ORM::configure('mysql:host='.$config['host'].';dbname='.$config['base']);
-		ORM::configure('username', $config['log']);
-		ORM::configure('password', $config['pass']);
-	}
-
-	//load the abstract controler class, used to be extend by user controller
-	require(BASEPATH.'controller.class.php');
-
-	//load the view controler class used by templates
-	require(BASEPATH.'view.class.php');
-	
-	//block array, used to render partial
-	$blocks = array();
-
-	//get current adresse path
-	$path = (isset($_SERVER['PATH_INFO'])) ? $_SERVER['PATH_INFO'] : @getenv('PATH_INFO');
-	$uri_array = '';
-
-	//check if current path is not root url or core url, else return array of current route
-	if (trim($path, '/') != '' && $path != "/".SELF)
-	{
-		$uri_array = explode('/', trim($path, '/'));
-	}
-
-	//check if uri_array is not empty and check if it contain a route app
+	// check if we have routes to parse
 	if(is_array($uri_array)){
-		if(array_key_exists('/'.$uri_array[0], $config['routes'])){
-			$app = $config['routes']['/'.$uri_array[0]].'/';
 
-			if(count($uri_array) > 1)
-				unset($uri_array[0]);
-			else
-				$uri_array = '';
+		// impode current uri for control
+		$uri = implode('/', $uri_array);
+
+		// first, check if current raw uri look exactly to one route
+		if(isset($routes[$uri])){
+			$controller = $routes[$uri]['controller'];
+			$action = $routes[$uri]['action'];
 		}
-	}
 
-	//define CURRENT_APP with asked app or default app
-	DEFINE('CURRENT_APP', isset($app) ? $app : $config['routes']['default'].'/');
+		// second, check each routes
+		if(!isset($controller) && !isset($action)){
+			foreach ($routes as $key => $val){
 
-	//check if route file exists in app dir
-	if(is_file(APPS.CURRENT_APP.'routes.php')){
-		include(APPS.CURRENT_APP.'routes.php');
+				// for each route, replace the :any, :alpha and :num by regex for control
+				$parsedKey = str_replace(':any', '(.+)', str_replace(':num', '([0-9]+)', str_replace(':alpha', '([a-zA-Z]+)', $key)));
 
-		//define default controller & action and unset them from array for route control
-		$default_controller = isset($routes['default']['controller']) ? $routes['default']['controller'] : '' ;
-		$default_action = isset($routes['default']['action']) ? $routes['default']['action'] : '';
-		unset($routes['default']);
-		$options = null;
+				// try if current uri look like the parsed route
+				if (preg_match('#^'.$parsedKey.'$#', $uri, $array)){
 
-		if($config['debug'])
-			$route = 'default';
+					// remove the first element of array, '/'
+					unset($array[0]);
 
-		if(is_array($uri_array)){
+					// resort the array to fill the empty space
+					sort($array);
 
-			//impode current uri for control
-			$uri = implode('/', $uri_array);
-	
-			//first, check if current raw uri look like one route
-			if(isset($routes[$uri])){
-				$controller = $routes[$uri]['controller'];
-				$action = $routes[$uri]['action'];
-			}
+					//now, let's rock!
+					$controller = $routes[$key]['controller'];
+					$action = $routes[$key]['action'];
+					$options = $array;
 
-			//second, check each routes
-			if(!isset($controller) && !isset($action)){
-				foreach ($routes as $key => $val){
-
-					//for each route, replace the :any, :alpha and :num by regex for control
-					$parsedKey = str_replace(':any', '(.+)', str_replace(':num', '([0-9]+)', str_replace(':alpha', '([a-zA-Z]+)', $key)));
-
-					//try if current uri look like the parsed route
-					if (preg_match('#^'.$parsedKey.'$#', $uri, $array)){
-
-						//remove the first element of array, '/'
-						unset($array[0]);
-
-						//resort the array to fill the empty space
-						sort($array);
-
-						//now, let's rock!
-						$controller = $routes[$key]['controller'];
-						$action = $routes[$key]['action'];
-						$options = $array;
-
-						if($config['debug'])
-							$route = $key;
-					}
-				}
-			}
-
-			//third, if no routes look like our uri, try the 404 route
-			if(!isset($controller) && !isset($action)){
-				if(isset($routes['404'])){
-					$controller = $routes['404']['controller'];
-					$action = $routes['404']['action'];
+					if($config['debug'])
+						$route = $key;
 				}
 			}
 		}
 
-		//if a controller already exists, keep it, else, load the default controller
-		$controller = isset($controller) ? $controller : $default_controller;
-		$action = isset($action) ? $action : $default_action;
-	}
-
-	
-	if(isset($controller) && isset($action)){
-		include(APPS.CURRENT_APP.'controllers/'.$controller.'.php');
-
-		//Intentiate the asked controller
-		$theApp = new $controller($controller, $action);
-
-		//lauch the asked action, with our options
-		$theApp->$action($options);
-	
-		//check if we need the layout, usefull for WebService
-		if($theApp->hasLayout()){
-			$theApp->render();
+		// third, if no routes look like our uri, try the 404 route
+		if(!isset($controller) && !isset($action)){
+			if(isset($routes['404'])){
+				$controller = $routes['404']['controller'];
+				$action = $routes['404']['action'];
+			}
 		}
 	}
-	
-	if($config['debug']){
-		$end = microtime() - $start;
-		include(BASEPATH.'debug.php');
-	}
 
-	ob_end_flush();
-?>
+	// if a controller already exists, keep it, else, load the default controller. Same for action
+	$controller = isset($controller) ? $controller : $default_controller;
+	$action = isset($action) ? $action : $default_action;
+}
+
+
+if(isset($controller) && isset($action)){
+	// include the asked controller
+	include(APPS.CURRENT_APP.'controllers/'.$controller.'.php');
+
+	// create the asked controller
+	$theApp = new $controller($controller, $action);
+
+	// lauch the asked action, with our options
+	$theApp->$action($options);
+
+	// check if we our app need to be rendered
+	if($theApp->hasLayout()){
+		$theApp->render();
+	}
+}
+
+if($config['debug']){
+	$end = microtime() - $start;
+	include(BASEPATH.'debug.php');
+}
+
+ob_end_flush();

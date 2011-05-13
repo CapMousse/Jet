@@ -1,124 +1,181 @@
 <?php
-	// Controller class
 
-	abstract class Controller{
+/**
+*	ShwaarkFramework
+*	A lightwave and fast framework for developper who don't need hundred of files
+* 	
+*	@package SwhaarkFramework
+*	@author  Jérémy Barbe
+*	@license BSD
+*	@link 	 https://github.com/CapMousse/ShwaarkFramework
+*	@version 1.1
+*/
 
-		//$layout var true if controller need a layout to work
-		public $layout = true;
+/**
+*	Controller abstract class
+*	the controller model
+* 	
+*	@package SwhaarkFramework
+*	@author  Jérémy Barbe
+*	@license BSD
+*	@link 	 https://github.com/CapMousse/ShwaarkFramework
+*	@version 1.2
+*/
+abstract class Controller{
 
-		//define the used view for layout, by default index
-		public $template = "index";
+	public 
+		$layout = true,
+		$template = "index",
+		$title = "";
 
-		//the title of the page
-		public $title = "";
+	private 
+		$view,
+		$models = array();
 
-		//used by isAction() view method
-		private $action = "";
+	protected
+		$cache;
 
-		//used by isController view method
-		private $name = "";
+	//if you want to made your own __construct, add parent::__construct() to your code
+	public function __construct(){
+		global $config;
 
-		//the view object
-		private $view;
+		if($config['cache'])
+			$this->cache = new Cache();
 
-		//keep models on memory
-		private $models;
+		//enable view model for template control
+		$this->view = new View();
+	}
 
-		public function __construct($name, $action){
+	/**
+	 * loadView
+	 *
+	 * load the asked view. Important for display data... or not
+	 *
+	 * @access	protected
+	 * @param	string	$file		name of the view file
+	 * @param 	array 	$options 	data used by the view
+	 * @return	void 
+	 */	
+	protected function loadView($file, $options = null){
 
-			$this->name = $name;
-			$this->action = $action;
-
-			//by default, the title is the conrtoller name
-			$this->title = $name;
-
-			//launch the construct method, to not override the __construct
-			$this->construct();
+		//Control if options is defined, if yes, construct all var used in templates
+		if(is_array($options))
+			foreach($options as $name => $value){ $$name = $value; }
 			
-			//enable view model for template control
-			$this->view = new View();
-		}
-
-		protected function construct(){
-			return false;
-		}
-
-		public function loadView($file, $options = null){
-
-			//Control if options is defined, if yes, construct all var used in templates
-			if(is_array($options))
-				foreach($options as $name => $value){ $$name = $value; }
-				
-			//Control if view file exists
-			if(!is_file(APPS.CURRENT_APP.'views/'.$file.'.php')){
-				trigger_error("The asked view <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />");
-				exit();
-			}
-
-			include(APPS.CURRENT_APP.'views/'.$file.'.php');
-		}
-
-		public function loadModel($file){
-
-			//Control if model file exists
-			if(!isset($this->models[$file])){
-				if(!is_file(APPS.CURRENT_APP.'models/'.$file.'.php')){
-					trigger_error("The asked model <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />");
-					exit();
-				}
-			
-				include(APPS.CURRENT_APP.'models/'.$file.'.php');
-				$file = ucfirst($file);		
-				$this->models[$file] = $file;	
-			}
-			
-			//return the intentiate model
-			return Model::factory($this->models[$file]);
-		}
-
-		//Set the layout property
-		public function setLayout($bool){
-			$this->layout = $bool;
-		}
-
-		//Return the layout value (used for render)
-		public function hasLayout(){
-			return $this->layout;
-		}
-		
-		//return true if the asked action is the current used action
-		public function isAction($action){
-			return $action == $this->action ? true : false;
-		}
-
-		//return true if the asked controller is the current used controller
-		public function isController($controller){			
-			return $controller == $this->name ? true : false;
-		}
-
-		protected function loadModule($names){
-			//check if we have a array of name or convert it to array
-			if(!is_array($names)) $names = array($names);
-
-			foreach($names as $name){
-				//check if module and module conf exists
-				if(is_dir(MODULES.$name) && is_file(MODULES.$name.'/config.php')){
-					include(MODULES.$name.'/config.php');
-					
-					//include all nececary files
-					foreach($required_files['files'] as $file)
-						include(MODULES.$name.'/'.$file.'.php');
-
-					//include and instentiate the core file
-					include(MODULES.$name.'/'.$required_files['module'].'.php');
-					$this->$required_files['module'] = new $required_files['module']();
-				}
-			}
-		}
-
-		//Include the asked layout and launch the render
-		public function render(){
-			require(APPS.CURRENT_APP.'views/'.$this->template.'.php');
+		//Control if view file exists
+		if(!is_file(APPS.CURRENT_APP.'views/'.$file.'.php')){
+			trigger_error("The asked view <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />");
+			exit();
 		}
 	}
+
+	/**
+	 * loadModel
+	 *
+	 * load the asked model. 
+	 * Y U R SO AHRD WIHT MEH?
+	 *
+	 * @access	protected
+	 * @param	string	$file		name of the model file
+	 * @param 	bool 	$factoring 	do your want to return a factory model? - default true
+	 * @return	void/Factory model 
+	 */	
+	protected function loadModel($file, $factoring = true){
+
+		//Control if model file exists
+		if(!isset($this->models[$file])){
+			if(!is_file(APPS.CURRENT_APP.'models/'.$file.'.php')){
+				trigger_error("The asked model <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />");
+				exit();
+			}
+		
+			include(APPS.CURRENT_APP.'models/'.$file.'.php');
+			$file = ucfirst($file);		
+			$this->models[$file] = $file;	
+		}
+		
+		//return the intentiate model
+		if($factoring)
+			return Model::factory($this->models[$file]);
+		
+	}
+
+	/**
+	 * loadController
+	 *
+	 * load the asked model. 
+	 * We need to go deeper.
+	 *
+	 * @access	protected
+	 * @param	string	$file		name of the controller file
+	 * @return	object
+	 */	
+	protected static function loadController($file){
+		include(APPS.CURRENT_APP.'controllers/'.$file.'.php');
+
+		$controller = ucfirst($file);
+		return new $controller();
+	}
+
+	/**
+	 * loadModule
+	 *
+	 * load the asked module with all attached files. 
+	 *
+	 * @access	protected
+	 * @param	array/string	$names		names of all wanted modules
+	 * @return	void
+	 */	
+	protected function loadModule($names){
+		//check if we have a array of name or convert it to array
+		if(!is_array($names)) $names = array($names);
+
+		foreach($names as $name){
+			//check if module and module conf exists
+			if(is_dir(MODULES.$name) && is_file(MODULES.$name.'/config.php')){
+				include(MODULES.$name.'/config.php');
+				
+				//include all nececary files
+				foreach($required_files['files'] as $file)
+					include(MODULES.$name.'/'.$file.'.php');
+
+				//include and instentiate the core file
+				include(MODULES.$name.'/'.$required_files['module'].'.php');
+				$this->{$required_files['module']} = new $required_files['module']();
+			}
+		}
+	}
+
+	/**
+	 * setLayout
+	 *
+	 * @access	public
+	 * @param	bool 	$bool
+	 * @return	void
+	 */	
+	public function setLayout($bool){
+		$this->layout = $bool;
+	}
+
+	/**
+	 * hasLayout
+	 *
+	 * @access	public
+	 * @return	bool
+	 */
+	public function hasLayout(){
+		return $this->layout;
+	}
+
+	/**
+	 * render
+	 *
+	 * @access	public
+	 * @return	void
+	 */
+	public function render(){
+		if($this->hasLayout())
+			require(APPS.CURRENT_APP.'views/'.$this->template.'.php');
+	}
+}
 ?>
