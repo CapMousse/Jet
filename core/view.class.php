@@ -1,12 +1,56 @@
 <?php
-//View class
+/**
+*	ShwaarkFramework
+*	A lightwave and fast framework for developper who don't need hundred of files
+* 	
+*	@package SwhaarkFramework
+*	@author  Jérémy Barbe
+*	@license BSD
+*	@link 	 https://github.com/CapMousse/ShwaarkFramework
+*	@version 1.1
+*/
+
+/**
+*	View class
+*	Make the block magic!
+* 	
+*	@package SwhaarkFramework
+*	@author  Jérémy Barbe
+*	@license BSD
+*	@link 	 https://github.com/CapMousse/ShwaarkFramework
+*	@version 1.1
+*/
+
+
 class View{
 	private $blocks = array();
+	private $blockName = null;
 
-	//Lauch the render of a block
-	//@param block string
-	//@return void
+	/**
+	 * createBlock
+	 *
+	 * alias of beginBlock
+	 *
+	 * @access	public
+	 * @param	string	$block	name of the block
+	 * @return	void
+	 */	
 	public function createBlock($block){
+		$this->beginBlock($block);
+	}
+
+	/**
+	 * beginBlock
+	 *
+	 * Start to cache rendered html to make the final render
+	 *
+	 * @access	public
+	 * @param	string	$block	name of the block
+	 * @return	void
+	 */	
+	public function beginBlock($block){
+
+		$this->blockName = $block;
 
 		if(!isset($this->blocks[$block]))
 			$this->blocks[$block] = null;
@@ -14,48 +58,89 @@ class View{
 		ob_start();
 	}
 
-	//End the render of a block and stock it
-	//@param block string
-	//@return void
-	public function endBlock($block){
+	/**
+	 * endBlock
+	 *
+	 * save the cached html to the block name
+	 * if the parameters is empty, end the last beginBlock
+	 *
+	 * @access	public
+	 * @param	string	$block	name of the block
+	 * @return	void
+	 */	
+	public function endBlock($block = null){
 
 		$value = ob_get_clean();
 		
+		$block = is_null($block) ? $this->blockName : $block;
 		$this->blocks[$block] .= $value;
 	}
 
-	//Get the rendered block in the template
-	//@param block string
-	//@return string
+	
+	/**
+	 * getBlock
+	 *
+	 * give the asked rendered block
+	 *
+	 * @access	public
+	 * @param	string	$block	name of the block
+	 * @return	string
+	 */	
 	public function getBlock($block){
-		return isset($this->blocks[$block]) ? $this->blocks[$block] : null;
+		return isset($this->blocks[$block]) ? $this->blocks[$block] : '';
 	}
 
-	//Control is the asked block exists
-	//@param block string
-	//@return bool
+
+	/**
+	 * issetBlock
+	 *
+	 * check if the asked block exists
+	 *
+	 * @access	public
+	 * @param	string	$block	name of the block
+	 * @return	bool
+	 */	
 	public function issetBlock($block){
 		return isset($this->blocks[$block]) ? true : false;
 	}
 
-	//Completely destroy the asked block
-	//@param block string
-	//@return void
+	/**
+	 * destroyBlock
+	 *
+	 * delete the asked block
+	 *
+	 * @access	public
+	 * @param	string	$block	name of the block
+	 * @return	void
+	 */	
 	public function destroyBlock($block){
 		unset($this->blocks[$block]);
 	}
 
-	//Get a simple var (like titleVew) in the template
-	//@param block string
-	//@return ?
+	/**
+	 * getVar
+	 *
+	 * return a defined public var from the controller
+	 *
+	 * @access	public
+	 * @param	string	$var	name of the var
+	 * @return	string
+	 */	
 	public function getVar($var){
 		global $theApp;
 
 		return isset($theApp->$var) ? $theApp->$var : '';
 	}
 
-	//slufigy text
-	//Render : This is an URL with spécïal char!!!*^$^ù to this-is-an-url-with-special-char
+	/**
+	 * slugify
+	 *
+	 * Remove and replace all special caractère to be url friendly
+	 *
+	 * @access	public
+	 * @param	string	$text	the text to be slugify
+	 * @return	string
+	 */	
 	public function slugify($text){
 		$text = preg_replace('~[^\\pL\d]+~u', '-', $text);
 		$text = trim($text, '-');
