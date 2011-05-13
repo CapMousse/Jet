@@ -67,6 +67,8 @@ abstract class Controller{
 			trigger_error("The asked view <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />");
 			exit();
 		}
+
+		include(APPS.CURRENT_APP.'views/'.$file.'.php');
 	}
 
 	/**
