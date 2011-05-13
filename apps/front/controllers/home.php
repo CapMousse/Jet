@@ -2,7 +2,7 @@
 	class Home extends Controller{
 		public $title = 'Test';
 
-		protected function __construct(){
+		public function __construct(){
 			//must add this line if you create your own __construct method
 			parent::__construct();
 

@@ -90,7 +90,7 @@ class UsersManager{
 
 	public function checkAuth($id, $auth = null){
 		if(is_null($auth)){
-			if(!isset($_SESSION['auth'])) return false
+			if(!isset($_SESSION['auth'])) return false;
 			if((int)$_SESSION['auth'] & $this->auth[$id]) return true;
 		}else{
 			$usersModel = Model::factory('Users');
