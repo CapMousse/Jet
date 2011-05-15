@@ -18,12 +18,20 @@ require(BASEPATH.'config.inc.php');
 // get the asked config environment
 $config = $config[$environment];
 
+// star the debug mode
+$debug = array(
+	'startRender' => microtime(),
+	'endRender' => null,
+	'layout' => null,
+	'loadedViews' => array(),
+	'loadedControllers' => array(),
+	'loadedModels' => array(),
+	'loadedModules' => array(),
+	'route' => null
+);
+
 //create the Static constant, for statics files
 define('STATICS', $config['statics']);
-
-// used for perf test in debug mod
-if($config['debug'])
-	$start = microtime();
 
 session_start();
 
@@ -66,15 +74,16 @@ if (trim($path, '/') != '' && $path != "/".SELF)
 }
 
 // check if uri_array is not empty and check if it contain a core config route
-if(is_array($uri_array)){
+if(isset($uri_array[0])){
 	if(array_key_exists('/'.$uri_array[0], $config['routes'])){
 		$app = $config['routes']['/'.$uri_array[0]].'/';
 
 		// check if whe have app routes and remove current route
-		if(count($uri_array) > 1)
+		if(count($uri_array) > 1){
 			unset($uri_array[0]);
-		else
-			$uri_array = '';
+			sort($uri_array);
+		}else
+			$uri_array = null;
 	}
 }
 
@@ -91,11 +100,10 @@ if(is_file(APPS.CURRENT_APP.'routes.php')){
 	unset($routes['default']);
 	$options = null;
 
-	if($config['debug'])
-		$route = 'default';
+	$debug['route'] = 'default';
 
 	// check if we have routes to parse
-	if(is_array($uri_array)){
+	if(isset($uri_array[0])){
 
 		// impode current uri for control
 		$uri = implode('/', $uri_array);
@@ -128,7 +136,7 @@ if(is_file(APPS.CURRENT_APP.'routes.php')){
 					$options = $array;
 
 					if($config['debug'])
-						$route = $key;
+						$debug['route'] = $key;
 				}
 			}
 		}
@@ -152,6 +160,8 @@ if(isset($controller) && isset($action)){
 	// include the asked controller
 	include(APPS.CURRENT_APP.'controllers/'.$controller.'.php');
 
+	$debug['loadedControllers'][] = $controller;
+
 	// create the asked controller
 	$theApp = new $controller($controller, $action);
 
@@ -164,8 +174,10 @@ if(isset($controller) && isset($action)){
 	}
 }
 
+$debug['endRender'] = microtime();
+
+
 if($config['debug']){
-	$end = microtime() - $start;
 	include(BASEPATH.'debug.php');
 }
 

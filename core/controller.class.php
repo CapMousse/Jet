@@ -30,14 +30,18 @@ abstract class Controller{
 
 	private 
 		$view,
-		$models = array();
+		$models = array(),
+		$debug = null;
 
 	protected
 		$cache;
 
 	//if you want to made your own __construct, add parent::__construct() to your code
 	public function __construct(){
-		global $config;
+		global $config, $debug;
+
+		$this->debug = &$debug;
+		$this->debug['layout'] = $this->template;
 
 		if($config['cache'])
 			$this->cache = new Cache();
@@ -68,6 +72,8 @@ abstract class Controller{
 			exit();
 		}
 
+		$this->debug['loadedViews'][] = $file;
+
 		include(APPS.CURRENT_APP.'views/'.$file.'.php');
 	}
 
@@ -95,6 +101,8 @@ abstract class Controller{
 			$file = ucfirst($file);		
 			$this->models[$file] = $file;	
 		}
+
+		$this->debug['loadedModels'][] = $file;
 		
 		//return the intentiate model
 		if($factoring)
@@ -113,7 +121,14 @@ abstract class Controller{
 	 * @return	object
 	 */	
 	protected static function loadController($file){
+		if(!is_file(APPS.CURRENT_APP.'controllers/'.$file.'.php')){
+			trigger_error("The asked controller <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />");
+			exit();
+		}
+
 		include(APPS.CURRENT_APP.'controllers/'.$file.'.php');
+
+		$this->debug['loadedControllers'][] = $file;
 
 		$controller = ucfirst($file);
 		return new $controller();
@@ -144,6 +159,8 @@ abstract class Controller{
 				//include and instentiate the core file
 				include(MODULES.$name.'/'.$required_files['module'].'.php');
 				$this->{$required_files['module']} = new $required_files['module']();
+
+				$this->debug['loadedModules'][] = $name;
 			}
 		}
 	}

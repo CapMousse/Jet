@@ -99,7 +99,7 @@ class Cache{
 	 * @return	void
 	 */
 	public function delete($cache){
-		if(!is_array($cache)) 
+		if(!isset($cache['0'])) 
 			$cache = array($cache);
 
 		foreach($cache as $name){
