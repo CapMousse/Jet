@@ -120,7 +120,7 @@ abstract class Controller{
 	 * @param	string	$file		name of the controller file
 	 * @return	object
 	 */	
-	protected static function loadController($file){
+	protected function loadController($file){
 		if(!is_file(APPS.CURRENT_APP.'controllers/'.$file.'.php')){
 			trigger_error("The asked controller <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />");
 			exit();
