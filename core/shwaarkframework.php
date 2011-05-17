@@ -80,8 +80,7 @@ if(isset($uri_array[0])){
 
 		// check if whe have app routes and remove current route
 		if(count($uri_array) > 1){
-			unset($uri_array[0]);
-			sort($uri_array);
+			$uri_array[0] = "";
 		}else
 			$uri_array = null;
 	}
@@ -106,7 +105,7 @@ if(is_file(APPS.CURRENT_APP.'routes.php')){
 	if(isset($uri_array[0])){
 
 		// impode current uri for control
-		$uri = implode('/', $uri_array);
+		$uri = trim(implode('/', $uri_array), "/");
 
 		// first, check if current raw uri look exactly to one route
 		if(isset($routes[$uri])){
@@ -117,6 +116,9 @@ if(is_file(APPS.CURRENT_APP.'routes.php')){
 		// second, check each routes
 		if(!isset($controller) && !isset($action)){
 			foreach ($routes as $key => $val){
+
+				// don't parse config routes
+				if($key == '404' || $key == 'default') continue;
 
 				// for each route, replace the :any, :alpha and :num by regex for control
 				$parsedKey = str_replace(':any', '(.+)', str_replace(':num', '([0-9]+)', str_replace(':alpha', '([a-zA-Z]+)', $key)));
