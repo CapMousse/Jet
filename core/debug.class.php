@@ -1,11 +1,7 @@
 <?php
-final class debug{
-	protected static $instance;
+class debug{
 	private static $markers = array();
 	public static $start;
-
-	protected function __construct(){}
-	protected function __clone(){}
 
 	public static function log($data){
 		$bk = debug_backtrace();
