@@ -15,7 +15,7 @@
 $config['dev']['sql'] 			= true;
 $config['dev']['host'] 			= 'localhost';
 $config['dev']['log'] 			= 'root';
-$config['dev']['pass'] 			= 'root';
+$config['dev']['pass'] 			= '';
 $config['dev']['base'] 			= 'shwaarkframework';
 
 // activate caching
@@ -26,7 +26,7 @@ $config['dev']['cache_dir']		= 'cache/';
 $config['dev']['statics'] 		= 'http://shwaark.framework/statics/';
 
 // active the debug mode
-$config['dev']['debug'] 		= false;
+$config['dev']['debug'] 		= true;
 
 // your app routes
 $config['dev']['routes'] 		= array(

@@ -2,10 +2,10 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title><?=$views->getVar('title')?></title>
+	<title><?=$this->view->getVar('title')?></title>
 	<link type="text/css" media="screen" rel="stylesheet" href="<?=ROOT?>/design/design.css" />
-	<?=$views->getBlock('css')?>
-	<?=$views->getBlock('meta')?>
+	<?=$this->view->getBlock('css')?>
+	<?=$this->view->getBlock('meta')?>
 </head>
 
 <body>
@@ -13,8 +13,8 @@
 		<h1>Exemple template</h1>
 	</header>
 	<section id="content">
-		<?=$views->getBlock('content')?>	
+		<?=$this->view->getBlock('content')?>	
 	</section>
-	<?=$views->getBlock('javascript')?>
+	<?=$this->view->getBlock('javascript')?>
 </body>
 </html>

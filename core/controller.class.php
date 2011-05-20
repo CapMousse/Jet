@@ -38,12 +38,9 @@ abstract class Controller{
 
 	//if you want to made your own __construct, add parent::__construct() to your code
 	public function __construct(){
-		global $config, $debug;
+		debug::log('Layout set to : '.$this->template);
 
-		$this->debug = &$debug;
-		$this->debug['layout'] = $this->template;
-
-		if($config['cache'])
+		if(Shwaark::$config['cache'])
 			$this->cache = new Cache();
 
 		//enable view model for template control
@@ -72,7 +69,7 @@ abstract class Controller{
 			exit();
 		}
 
-		$this->debug['loadedViews'][] = $file;
+		debug::log('Loaded view : '.$file);
 
 		include(APPS.CURRENT_APP.'views/'.$file.'.php');
 	}
@@ -102,7 +99,7 @@ abstract class Controller{
 			$this->models[$file] = $file;	
 		}
 
-		$this->debug['loadedModels'][] = $file;
+		debug::log('Model loaded : '.$file);
 		
 		//return the intentiate model
 		if($factoring)
@@ -128,7 +125,7 @@ abstract class Controller{
 
 		include(APPS.CURRENT_APP.'controllers/'.$file.'.php');
 
-		$this->debug['loadedControllers'][] = $file;
+		debug::log('Controller loaded : '.$file);
 
 		$controller = ucfirst($file);
 		return new $controller();
@@ -160,7 +157,7 @@ abstract class Controller{
 				include(MODULES.$name.'/'.$required_files['module'].'.php');
 				$this->{$required_files['module']} = new $required_files['module']();
 
-				$this->debug['loadedModules'][] = $name;
+				debug::log('Module loaded : '.$name);
 			}
 		}
 	}
