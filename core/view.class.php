@@ -23,138 +23,137 @@
 
 
 class View{
-	private $blocks = array();
-	private $blockName = null;
+    private $blocks = array();
+    private $blockName = null;
 
-	/**
-	 * createBlock
-	 *
-	 * alias of beginBlock
-	 *
-	 * @access	public
-	 * @param	string	$block	name of the block
-	 * @return	void
-	 */	
-	public function createBlock($block){
-		$this->beginBlock($block);
-	}
+    /**
+     * createBlock
+     *
+     * alias of beginBlock
+     *
+     * @access	public
+     * @param	string	$block	name of the block
+     * @return	void
+     */	
+    public function createBlock($block){
+        $this->beginBlock($block);
+    }
 
-	/**
-	 * beginBlock
-	 *
-	 * Start to cache rendered html to make the final render
-	 *
-	 * @access	public
-	 * @param	string	$block	name of the block
-	 * @return	void
-	 */	
-	public function beginBlock($block){
+    /**
+     * beginBlock
+     *
+     * Start to cache rendered html to make the final render
+     *
+     * @access	public
+     * @param	string	$block	name of the block
+     * @return	void
+     */	
+    public function beginBlock($block){
+        $this->blockName = $block;
 
-		$this->blockName = $block;
+        if(!isset($this->blocks[$block]))
+                $this->blocks[$block] = null;
 
-		if(!isset($this->blocks[$block]))
-			$this->blocks[$block] = null;
+        ob_start();
+    }
 
-		ob_start();
-	}
+    /**
+     * endBlock
+     *
+     * save the cached html to the block name
+     * if the parameters is empty, end the last beginBlock
+     *
+     * @access	public
+     * @param	string	$block	name of the block
+     * @return	void
+     */	
+    public function endBlock($block = null){
 
-	/**
-	 * endBlock
-	 *
-	 * save the cached html to the block name
-	 * if the parameters is empty, end the last beginBlock
-	 *
-	 * @access	public
-	 * @param	string	$block	name of the block
-	 * @return	void
-	 */	
-	public function endBlock($block = null){
+            $value = ob_get_clean();
 
-		$value = ob_get_clean();
-		
-		$block = is_null($block) ? $this->blockName : $block;
-		$this->blocks[$block] .= $value;
-	}
-
-	
-	/**
-	 * getBlock
-	 *
-	 * give the asked rendered block
-	 *
-	 * @access	public
-	 * @param	string	$block	name of the block
-	 * @return	string
-	 */	
-	public function getBlock($block){
-		return isset($this->blocks[$block]) ? $this->blocks[$block] : '';
-	}
+            $block = is_null($block) ? $this->blockName : $block;
+            $this->blocks[$block] .= $value;
+    }
 
 
-	/**
-	 * issetBlock
-	 *
-	 * check if the asked block exists
-	 *
-	 * @access	public
-	 * @param	string	$block	name of the block
-	 * @return	bool
-	 */	
-	public function issetBlock($block){
-		return isset($this->blocks[$block]) ? true : false;
-	}
+    /**
+     * getBlock
+     *
+     * give the asked rendered block
+     *
+     * @access	public
+     * @param	string	$block	name of the block
+     * @return	string
+     */	
+    public function getBlock($block){
+        return isset($this->blocks[$block]) ? $this->blocks[$block] : '';
+    }
 
-	/**
-	 * destroyBlock
-	 *
-	 * delete the asked block
-	 *
-	 * @access	public
-	 * @param	string	$block	name of the block
-	 * @return	void
-	 */	
-	public function destroyBlock($block){
-		unset($this->blocks[$block]);
-	}
 
-	/**
-	 * getVar
-	 *
-	 * return a defined public var from the controller
-	 *
-	 * @access	public
-	 * @param	string	$var	name of the var
-	 * @return	string
-	 */	
-	public function getVar($var){
-		global $theApp;
+    /**
+     * issetBlock
+     *
+     * check if the asked block exists
+     *
+     * @access	public
+     * @param	string	$block	name of the block
+     * @return	bool
+     */	
+    public function issetBlock($block){
+            return isset($this->blocks[$block]) ? true : false;
+    }
 
-		return isset($theApp->$var) ? $theApp->$var : '';
-	}
+    /**
+     * destroyBlock
+     *
+     * delete the asked block
+     *
+     * @access	public
+     * @param	string	$block	name of the block
+     * @return	void
+     */	
+    public function destroyBlock($block){
+        unset($this->blocks[$block]);
+    }
 
-	/**
-	 * slugify
-	 *
-	 * Remove and replace all special caractère to be url friendly
-	 *
-	 * @access	public
-	 * @param	string	$text	the text to be slugify
-	 * @return	string
-	 */	
-	public function slugify($text){
-		$text = preg_replace('~[^\\pL\d]+~u', '-', $text);
-		$text = trim($text, '-');
+    /**
+     * getVar
+     *
+     * return a defined public var from the controller
+     *
+     * @access	public
+     * @param	string	$var	name of the var
+     * @return	string
+     */	
+    public function getVar($var){
+        global $theApp;
 
-		if (function_exists('iconv'))
-			$text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+        return isset($theApp->$var) ? $theApp->$var : '';
+    }
 
-		$text = strtolower($text);
-		$text = preg_replace('~[^-\w]+~', '', $text);
+    /**
+     * slugify
+     *
+     * Remove and replace all special caractère to be url friendly
+     *
+     * @access	public
+     * @param	string	$text	the text to be slugify
+     * @return	string
+     */	
+    public function slugify($text){
+        $text = preg_replace('~[^\\pL\d]+~u', '-', $text);
+        $text = trim($text, '-');
 
-		if (empty($text))
-			return 'n-a';
+        if (function_exists('iconv'))
+            $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
 
-		return $text;
-	}
+        $text = strtolower($text);
+        $text = preg_replace('~[^-\w]+~', '', $text);
+
+        if (empty($text))
+            return 'n-a';
+
+        return $text;
+    }
 }
 ?>

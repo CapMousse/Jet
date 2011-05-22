@@ -21,42 +21,42 @@
 *	@version 1.2
 */
 class debug{
-	private static $markers = array();
-	public static $start;
+    private static $markers = array();
+    public static $start;
 
-        /**
-	 * log
-	 *
-	 * add a log data to the log pile
-	 *
-	 * @access	static method
-	 * @param	string	$data		data you want to log
-	 * @return	void 
-	 */	
-	public static function log($data){
-		$bk = debug_backtrace();
-		
-		$caller = substr($bk[1]['file'], strrpos($bk[1]['file'], "/") + 1);
-		$line = $bk[1]['line'];
-		$time = microtime() - self::$start;
+    /**
+     * log
+     *
+     * add a log data to the log pile
+     *
+     * @access	static method
+     * @param	string	$data		data you want to log
+     * @return	void 
+     */	
+    public static function log($data){
+        $bk = debug_backtrace();
 
-		self::$markers[] = $data.' '.$caller.' at line '.$line.' ('.$time.')';
-	}
+        $caller = substr($bk[1]['file'], strrpos($bk[1]['file'], "/") + 1);
+        $line = $bk[1]['line'];
+        $time = microtime() - self::$start;
 
-        /**
-	 * displayLog
-	 *
-	 * show log pile
-	 *
-	 * @access	static method
-	 * @return	void 
-	 */
-	public static function displayLog(){
-		echo '<h1>DEBUG</h1><ul>';
-		foreach(self::$markers as $marker){
-			echo '<li>'.$marker.'</li>';
-		}
-		echo '</ul>';
-	}
+        self::$markers[] = $data.' '.$caller.' at line '.$line.' ('.$time.')';
+    }
+
+    /**
+     * displayLog
+     *
+     * show log pile
+     *
+     * @access	static method
+     * @return	void 
+     */
+    public static function displayLog(){
+        echo '<h1>DEBUG</h1><ul>';
+        foreach(self::$markers as $marker){
+            echo '<li>'.$marker.'</li>';
+        }
+        echo '</ul>';
+    }
 }
 ?>

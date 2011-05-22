@@ -40,25 +40,26 @@ require(BASEPATH.'view.class.php');
 
 // don't necesary load orm class if no sql needed
 if($config['sql']){
-	require(BASEPATH.'idiorm.class.php');
-	require(BASEPATH.'paris.class.php');
-	ORM::configure('mysql:host='.$config['host'].';dbname='.$config['base']);
-	ORM::configure('username', $config['log']);
-	ORM::configure('password', $config['pass']);
+    require(BASEPATH.'idiorm.class.php');
+    require(BASEPATH.'paris.class.php');
+    ORM::configure('mysql:host='.$config['host'].';dbname='.$config['base']);
+    ORM::configure('username', $config['log']);
+    ORM::configure('password', $config['pass']);
 }
 
 if($config['cache']){
-	require(BASEPATH.'cache.class.php');
+    require(BASEPATH.'cache.class.php');
 }
 
 /*
- _      ______ _______ _____   _____   ____   _____ _  __
-| |    |  ____|__   __/ ____| |  __ \ / __ \ / ____| |/ /
-| |    | |__     | | | (___   | |__) | |  | | |    | ' / 
-| |    |  __|    | |  \___ \  |  _  /| |  | | |    |  <  
-| |____| |____   | |  ____) | | | \ \| |__| | |____| . \ 
-|______|______|  |_| |_____/  |_|  \_\\____/ \_____|_|\_\
-*/
+     _      ______ _______ _____   _____   ____   _____ _  __
+    | |    |  ____|__   __/ ____| |  __ \ / __ \ / ____| |/ /
+    | |    | |__     | | | (___   | |__) | |  | | |    | ' / 
+    | |    |  __|    | |  \___ \  |  _  /| |  | | |    |  <  
+    | |____| |____   | |  ____) | | | \ \| |__| | |____| . \ 
+    |______|______|  |_| |_____/  |_|  \_\\____/ \_____|_|\_\
+ 
+ */
 
 require(BASEPATH.'core.class.php');
 Shwaark::$config = $config;
@@ -66,7 +67,7 @@ Shwaark::run($config);
 
 
 if($config['debug']){
-	debug::displayLog();
+    debug::displayLog();
 }
 
 
