@@ -1,8 +1,37 @@
 <?php
+/**
+*	ShwaarkFramework
+*	A lightwave and fast framework for developper who don't need hundred of files
+* 	
+*	@package SwhaarkFramework
+*	@author  Jérémy Barbe
+*	@license BSD
+*	@link 	 https://github.com/CapMousse/ShwaarkFramework
+*	@version 1.1
+*/
 
+/**
+*	Shwaark class
+*	The main core class
+* 	
+*	@package SwhaarkFramework
+*	@author  Jérémy Barbe
+*	@license BSD
+*	@link 	 https://github.com/CapMousse/ShwaarkFramework
+*	@version 1.2
+*/
 final class Shwaark{
 	public static $config;
 
+
+        /**
+	 * run
+	 *
+	 * launch the framework
+	 *
+	 * @access	static method
+	 * @return	void 
+	 */
 	public static function run($config){
 		/**********************/
 		/**** Parse routes ****/
