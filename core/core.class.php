@@ -101,6 +101,7 @@ class Shwaark{
                         $options = array();
 
                         // for each route, replace the :any, :alpha and :num by regex for control
+                        // check if asked route have argument name for action
                         $segmented_route = explode('/', $route);
                         
                         foreach($segmented_route as $small_route){                     
@@ -109,7 +110,10 @@ class Shwaark{
                         }
                         
                         $parsedRoute = preg_replace('#\[([a-zA-Z]+)\]#', '', $route);
-                        $parsedKey = str_replace(':any', '(.+)', str_replace(':num', '([0-9]+)', str_replace(':alpha', '([a-zA-Z]+)', $parsedRoute)));
+                        
+                        $search = array(':any',':num',':alpha');
+                        $replace = array('([a-zA-Z0-9_-]+)','([0-9]+)','([a-zA-Z_-]+)');
+                        $parsedKey = str_replace($keyword, $replace, $parsedRoute);
                         
                         // try if current uri look like the parsed route
                         if (preg_match('#^'.$parsedKey.'$#', $uri, $array)){
