@@ -12,15 +12,16 @@
 
 // load the debug class, used to log all events
 require(BASEPATH.'debug.class.php');
-debug::$start = microtime();
-
-ob_start('ob_gzhandler');
 
 // load framework user config file
 require(BASEPATH.'config.inc.php');
-
-// get the asked config environment
 $config = $config[$environment];
+
+debug::$log_all = $config['log_all'];
+debug::$start = microtime();
+debug::log('Init framework');
+
+ob_start('ob_gzhandler');
 
 //create the Static constant, for statics files
 define('STATICS', $config['statics']);
@@ -34,9 +35,11 @@ session_start();
 
 // load the abstract controler class, used to be extend by user controller
 require(BASEPATH.'controller.class.php');
+debug::log('Load controller');
 
 // load the view controler class used by templates
 require(BASEPATH.'view.class.php');
+debug::log('Load view');
 
 // don't necesary load orm class if no sql needed
 if($config['sql']){
@@ -45,10 +48,12 @@ if($config['sql']){
     ORM::configure('mysql:host='.$config['host'].';dbname='.$config['base']);
     ORM::configure('username', $config['log']);
     ORM::configure('password', $config['pass']);
+    debug::log('Load model');
 }
 
 if($config['cache']){
     require(BASEPATH.'cache.class.php');
+    debug::log('Load cache');
 }
 
 /*
@@ -61,12 +66,13 @@ if($config['cache']){
  
  */
 
+debug::log('Load core');
 require(BASEPATH.'core.class.php');
 Shwaark::$config = $config;
 Shwaark::run($config);
 
 
-if($config['debug']){
+if($config['show_debug_log']){
     debug::displayLog();
 }
 

@@ -26,7 +26,8 @@ $config['dev']['cache_dir']		= 'cache/';
 $config['dev']['statics'] 		= 'http://shwaark.framework/statics/';
 
 // active the debug mode
-$config['dev']['debug'] 		= false;
+$config['dev']['show_debug_log'] 	= false;
+$config['dev']['log_all'] 		= false;
 
 // your app routes
 $config['dev']['routes'] 		= array(

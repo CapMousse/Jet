@@ -63,12 +63,12 @@ abstract class Controller{
 
         //Control if view file exists
         if(!is_file(APPS.CURRENT_APP.'views/'.$file.'.php')){
-            trigger_error("The asked view <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />");
-            exit();
+            debug::log("The asked view <b>$file</b> doesn't exists in <b>".get_class($this).".php</b>");
+            return false;
         }
 
         debug::log('Loaded view : '.$file);
-
+        
         include(APPS.CURRENT_APP.'views/'.$file.'.php');
     }
 

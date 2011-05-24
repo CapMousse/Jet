@@ -11,7 +11,7 @@ class Home extends Controller{
         $this->loadModule('UsersManager');			
     }
 
-    public function index($options){
+    public function index(){
         //You can change the title on the fly
         $this->title = "Modification";
 
@@ -19,18 +19,21 @@ class Home extends Controller{
         $articles = $this->loadModel('article');
 
         //get a view and send an article array var
-        $this->loadView('partial/home', 
+        $this->loadView('partial/home',
                 array('articles' => $articles->where('id', 9)->find_many())
         );
     }
+    
+    public function singleArticle($id){
+    }
 
-    public function do404($options){
+    public function do404(){
         $this->title = "404 Error";
 
         $this->loadView('partial/404');
     }
 
-    public function adminPanel($options){
+    public function adminPanel(){
         if(!$this->UsersManager->checkAuth('articles')) $this->do404();
     }
 }

@@ -10,7 +10,8 @@ $routes = array(
 		// :alpha : only alphabetical char
 
 	'default' => array('controller' => 'home', 'action' => 'index'),
-	'404' => array('controller' => 'home', 'action' => 'do404')
+	'404' => array('controller' => 'home', 'action' => 'do404'),
+	'test/[id]:num/:alpha/[test]:any' => array('controller' => 'home', 'action' => 'singleArticle')
 );
 
 ?>

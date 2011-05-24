@@ -33,11 +33,13 @@ class Shwaark{
      * @return	void 
      */
     public static function run($config){
-            /**********************/
-            /**** Parse routes ****/
-            /**********************/
-
-            // get current adresse path
+        /**********************/
+        /**** Parse routes ****/
+        /**********************/
+        
+        debug::log('Begining route parsing');
+        
+        // get current adresse path
         $path = (isset($_SERVER['PATH_INFO'])) ? $_SERVER['PATH_INFO'] : @getenv('PATH_INFO');
 
         $uri_array = '';
@@ -84,36 +86,46 @@ class Shwaark{
 
                 // first, check if current raw uri look exactly to one route
                 if(isset($routes[$uri])){
+                    debug::log('Routed url '.$routes[$uri]);
                     $controller = $routes[$uri]['controller'];
                     $action = $routes[$uri]['action'];
                 }
 
                 // second, check each routes
                 if(!isset($controller) && !isset($action)){
-                    foreach ($routes as $key => $val){
+                    foreach ($routes as $route => $val){
 
                         // don't parse config routes
-                        if($key == '404' || $key == 'default') continue;
+                        if($route == '404' || $route == 'default') continue;
+                        
+                        $options = array();
 
                         // for each route, replace the :any, :alpha and :num by regex for control
-                        $parsedKey = str_replace(':any', '(.+)', str_replace(':num', '([0-9]+)', str_replace(':alpha', '([a-zA-Z]+)', $key)));
-
+                        $segmented_route = explode('/', $route);
+                        
+                        foreach($segmented_route as $small_route){                     
+                            preg_match('#\[([a-zA-Z]+)\]#', $small_route, $result);
+                            $options[] = isset($result[1]) ? $result[1] : null;
+                        }
+                        
+                        $parsedRoute = preg_replace('#\[([a-zA-Z]+)\]#', '', $route);
+                        $parsedKey = str_replace(':any', '(.+)', str_replace(':num', '([0-9]+)', str_replace(':alpha', '([a-zA-Z]+)', $parsedRoute)));
+                        
                         // try if current uri look like the parsed route
                         if (preg_match('#^'.$parsedKey.'$#', $uri, $array)){
-
-                            // remove the first element of array, '/'
-                            unset($array[0]);
-
-                            // resort the array to fill the empty space
-                            sort($array);
-
+                            debug::log('Routed url '.$route);
+                            
+                            $method_args = array();
+                            foreach($options as $name => $value){
+                                if(is_null($value)) continue;
+                                
+                                $method_args[$value] = $array[$name];
+                            }
+                            
                             //now, let's rock!
-                            $controller = $routes[$key]['controller'];
-                            $action = $routes[$key]['action'];
-                            $options = $array;
-
-                            if($config['debug'])
-                                $debug['route'] = $key;
+                            $controller = $routes[$route]['controller'];
+                            $action = $routes[$route]['action'];
+                            $options = $method_args;
                         }
                     }
                 }
@@ -121,6 +133,8 @@ class Shwaark{
                 // third, if no routes look like our uri, try the 404 route
                 if(!isset($controller) && !isset($action)){
                     if(isset($routes['404'])){
+                            debug::log('Routed url 404 : '.$route, true);
+                            
                             $controller = $routes['404']['controller'];
                             $action = $routes['404']['action'];
                     }
@@ -134,19 +148,26 @@ class Shwaark{
 
 
         if(isset($controller) && isset($action)){
-            // include the asked controller
+            // include the asked controller            
+            debug::log('Asked controller and action : '.$controller.'->'.$action);            
+            
             include(APPS.CURRENT_APP.'controllers/'.$controller.'.php');
 
             $debug['loadedControllers'][] = $controller;
 
             // create the asked controller
-            $theApp = new $controller($controller, $action);
-
+            $theApp = new $controller();
+            
+            $options = is_null($options) ? array() : $options;
             // lauch the asked action, with our options
-            $theApp->$action($options);
+            if(!is_null($options))
+                @call_user_func_array(array($theApp, $action), $options);
+            else
+                $theApp->$action();
 
             // check if we our app need to be rendered
             if($theApp->hasLayout()){
+                debug::log('Render layout');
                 $theApp->render();
             }
         }
