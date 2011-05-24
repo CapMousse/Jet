@@ -113,7 +113,7 @@ class Shwaark{
                         
                         $search = array(':any',':num',':alpha');
                         $replace = array('([a-zA-Z0-9_-]+)','([0-9]+)','([a-zA-Z_-]+)');
-                        $parsedKey = str_replace($keyword, $replace, $parsedRoute);
+                        $parsedKey = str_replace($search, $replace, $parsedRoute);
                         
                         // try if current uri look like the parsed route
                         if (preg_match('#^'.$parsedKey.'$#', $uri, $array)){
