@@ -44,11 +44,7 @@ Changelog
 
 Plus global optimisation, changes and other stuffs
 
-#### V1.0 - released 2011-05-05
-
-* First Stable release
-
-#### beta 0.1 - released 2011-04-10
+#### beta 1 - released 2011-04-10
 
 * Initial release
 
