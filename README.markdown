@@ -18,7 +18,7 @@ Features
 Changelog
 ---------
 
-#### V0.2 - release 2011-05-35
+#### V0.2 - release 2011-05-25
 * Added *Core* : Move all route parsing to a core class
 * Added *Debug* : Create a class to log all debug message
 
@@ -70,3 +70,4 @@ Credits
 -------
 
 * Build with [Paris](http://github.com/j4mie/paris) & [Idiorm](http://github.com/j4mie/idiorm) from j4mie for ORM support
+* Thanks to [Taluu](https://github.com/Taluu) for help for the routing solution
