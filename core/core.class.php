@@ -98,8 +98,6 @@ class Shwaark{
                         // don't parse config routes
                         if($route == '404' || $route == 'default') continue;
                         
-                        $options = array();
-
                         // for each route, replace the :any, :alpha and :num by regex for control
                         // check if asked route have argument name for action
                         $parsedRoute = preg_replace('#\[([a-zA-Z_-]+)\]:(any|num|alpha)#', '(?<$1>:$2)', $route);
