@@ -18,7 +18,22 @@ Features
 Changelog
 ---------
 
-#### V1.1 - released 2011-05-13
+#### V0.2 - release 2011-05-35
+* Added *Core* : Move all route parsing to a core class
+* Added *Debug* : Create a class to log all debug message
+
+* Change *Route parsing* : now you can name your route like "test/[id]:num/"
+* Change *route action call* : Now action il call with arguments ($id for above exemple)
+* Change *config access* : Now with ```Shwaark::$config```
+
+* Bugfix: controller now loaded propreply
+* Bugfix: perf drop on route parsing resolved
+* Bugfix: view can now load an other view
+* Bugfix: debug now log error to log file
+* Bugfix: module are now loaded propreply
+* Bugfix: loadView not working prepreply
+
+#### V0.1 - released 2011-05-13
 * Added *Cache*: Now, you have memory!
 * Added *Controller: **loadController** you can include other controller in your controller
 
