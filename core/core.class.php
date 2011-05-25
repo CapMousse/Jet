@@ -109,7 +109,6 @@ class Shwaark{
                         $parsedRoute = str_replace($search, $replace, $parsedRoute);
                         
                         // try if current uri look like the parsed route
-                        $parsedKey = '';
                         if (preg_match('#^'.$parsedRoute.'$#', $uri, $array)){
                             debug::log('Routed url '.$route);      
                             
