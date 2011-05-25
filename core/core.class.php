@@ -102,28 +102,21 @@ class Shwaark{
 
                         // for each route, replace the :any, :alpha and :num by regex for control
                         // check if asked route have argument name for action
-                        $segmented_route = explode('/', $route);
-                        
-                        foreach($segmented_route as $small_route){                     
-                            preg_match('#\[([a-zA-Z]+)\]#', $small_route, $result);
-                            $options[] = isset($result[1]) ? $result[1] : null;
-                        }
-                        
-                        $parsedRoute = preg_replace('#\[([a-zA-Z]+)\]#', '', $route);
+                        $parsedRoute = preg_replace('#\[([a-zA-Z_-]+)\]:(any|num|alpha)#', '(?<$1>:$2)', $route);
                         
                         $search = array(':any',':num',':alpha');
                         $replace = array('([a-zA-Z0-9_-]+)','([0-9]+)','([a-zA-Z_-]+)');
-                        $parsedKey = str_replace($search, $replace, $parsedRoute);
+                        $parsedRoute = str_replace($search, $replace, $parsedRoute);
                         
                         // try if current uri look like the parsed route
-                        if (preg_match('#^'.$parsedKey.'$#', $uri, $array)){
-                            debug::log('Routed url '.$route);
+                        $parsedKey = '';
+                        if (preg_match('#^'.$parsedRoute.'$#', $uri, $array)){
+                            debug::log('Routed url '.$route);      
                             
                             $method_args = array();
-                            foreach($options as $name => $value){
-                                if(is_null($value)) continue;
-                                
-                                $method_args[$value] = $array[$name];
+                            foreach($array as $name => $value){
+                                if(is_int($name)) continue;                                
+                                $method_args[$name] = $value;
                             }
                             
                             //now, let's rock!
