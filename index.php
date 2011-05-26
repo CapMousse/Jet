@@ -11,9 +11,12 @@ define('APPS', str_replace("\\", "/", 'apps/'));
 //Define the root path for the apps
 define('MODULES', str_replace("\\", "/", 'modules/'));
 
+//Define the root path for root views
+define('VIEWS', str_replace("\\", "/", 'views/'));
+
 //Define the root path for internal links
 define('ROOT', 'http://'.$_SERVER['HTTP_HOST']);
 
 //let's rock!
-require(BASEPATH.'shwaarkframework.php');
+require(BASEPATH.'init.php');
 ?>

@@ -34,26 +34,26 @@ session_start();
 
 
 // load the abstract controler class, used to be extend by user controller
-require(BASEPATH.'controller.class.php');
 debug::log('Load controller');
+require(BASEPATH.'controller.class.php');
 
 // load the view controler class used by templates
-require(BASEPATH.'view.class.php');
 debug::log('Load view');
+require(BASEPATH.'view.class.php');
 
 // don't necesary load orm class if no sql needed
 if($config['sql']){
+    debug::log('Load model');
     require(BASEPATH.'idiorm.class.php');
     require(BASEPATH.'paris.class.php');
     ORM::configure('mysql:host='.$config['host'].';dbname='.$config['base']);
     ORM::configure('username', $config['log']);
     ORM::configure('password', $config['pass']);
-    debug::log('Load model');
 }
 
 if($config['cache']){
-    require(BASEPATH.'cache.class.php');
     debug::log('Load cache');
+    require(BASEPATH.'cache.class.php');
 }
 
 /*

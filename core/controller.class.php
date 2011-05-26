@@ -60,16 +60,18 @@ abstract class Controller{
         //Control if options is defined, if yes, construct all var used in templates
         if(is_array($options))
             foreach($options as $name => $value){ $$name = $value; }
-
-        //Control if view file exists
-        if(!is_file(APPS.CURRENT_APP.'views/'.$file.'.php')){
+            
+        if(is_file(APPS.CURRENT_APP.'views/'.$file.'.php')){
+            $file = APPS.CURRENT_APP.'views/'.$file.'.php';
+        }else if(is_file(VIEWS.$file.'.php')){            
+            $file = VIEWS.$file.'.php';
+        }else{
             debug::log("The asked view <b>$file</b> doesn't exists in <b>".get_class($this).".php</b>");
             return false;
         }
-
-        debug::log('Loaded view : '.$file);
         
-        include(APPS.CURRENT_APP.'views/'.$file.'.php');
+        include($file);
+        debug::log('Loaded view : '.$file);
     }
 
     /**
@@ -188,7 +190,7 @@ abstract class Controller{
      */
     public function render(){
         if($this->hasLayout())
-            require(APPS.CURRENT_APP.'views/'.$this->template.'.php');
+            $this->loadView($this->template);
     }
 }
 ?>

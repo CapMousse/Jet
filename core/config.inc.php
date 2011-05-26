@@ -12,27 +12,26 @@
 
 
 // set the database option
-$config['dev']['sql'] 			= true;
-$config['dev']['host'] 			= 'localhost';
-$config['dev']['log'] 			= 'root';
-$config['dev']['pass'] 			= 'root';
-$config['dev']['base'] 			= 'shwaarkframework';
+$config['dev']['sql'] 		= false;
+$config['dev']['host'] 		= 'localhost';
+$config['dev']['log'] 		= 'root';
+$config['dev']['pass'] 		= 'root';
+$config['dev']['base'] 		= 'shwaarkframework';
 
 // activate caching
-$config['dev']['cache']			= true;
-$config['dev']['cache_dir']		= 'cache/';
+$config['dev']['cache']		= false;
+$config['dev']['cache_dir']	= 'cache/';
 
 // where are your statics files
-$config['dev']['statics'] 		= 'http://shwaark.framework/statics/';
+$config['dev']['statics'] 	= 'http://your.static.domain/dir/';
 
 // active the debug mode
 $config['dev']['show_debug_log']= false;
-$config['dev']['log_all']		= false;
+$config['dev']['log_all']	= false;
 
 // your app routes
-$config['dev']['routes'] 		= array(
-	'default' => 'front',
-	'/other' => 'otherApp'
+$config['dev']['routes'] 	= array(
+	'default' => 'install',
 );
 
 $environment = 'dev'; 

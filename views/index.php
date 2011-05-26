@@ -10,10 +10,10 @@
 
 <body>
     <header>
-            <h1>Exemple template</h1>
+        <h1>Congrats !</h1>
     </header>
     <section id="content">
-            <?=$this->view->getBlock('content')?>	
+        <?=$this->view->getBlock('content')?>	
     </section>
     <?=$this->view->getBlock('javascript')?>
 </body>
