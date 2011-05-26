@@ -17,6 +17,9 @@ define('VIEWS', str_replace("\\", "/", 'views/'));
 //Define the root path for internal links
 define('ROOT', 'http://'.$_SERVER['HTTP_HOST']);
 
+define('CONTROLLER', 0);
+define('ACTION', 1);
+
 //let's rock!
 require(BASEPATH.'init.php');
 ?>

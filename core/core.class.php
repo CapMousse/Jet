@@ -50,7 +50,7 @@ class Shwaark{
         
         // check if uri_array is not empty and check if it contain a core config route
         if(is_array($uri_array)){
-            if(array_key_exists('/'.$uri_array[0], $config['routes'])){
+            if(isset($config['routes']['/'.$uri_array[0]])){
                 $app = $config['routes']['/'.$uri_array[0]].'/';
                 unset($uri_array[0]);
             }
@@ -60,15 +60,12 @@ class Shwaark{
         DEFINE('CURRENT_APP', isset($app) ? $app : $config['routes']['default'].'/');
 
         // check and include route file app
-        try{
-            include(APPS.CURRENT_APP.'routes.php');
-        }catch(Exception $e){
+        if(!@include(APPS.CURRENT_APP.'routes.php'))
             exit('No route defined for '.CURRENT_APP);
-        }
 
         //define default controller & action and unset them from array for route control
-        $controller = isset($routes['default'][0]) ? $routes['default'][0] : '' ;
-        $action = isset($routes['default'][1]) ? $routes['default'][1] : '';
+        $controller = isset($routes['default'][CONTROLLER]) ? $routes['default'][CONTROLLER] : '' ;
+        $action = isset($routes['default'][ACTION]) ? $routes['default'][ACTION] : '';
         unset($routes['default']);
         
         if(!is_array($uri_array))
@@ -82,8 +79,8 @@ class Shwaark{
         if(isset($routes[$uri])){
             debug::log('Routed url '.$routes[$uri]);
             
-            $controller = $routes[$uri][0];
-            $action = $routes[$uri][1];
+            $controller = $routes[$uri][CONTROLLER];
+            $action = $routes[$uri][ACTION];
             
             return self::render($controller, $action);
         }
@@ -113,8 +110,8 @@ class Shwaark{
                 }
 
                 //now, let's rock!
-                $controller = $routes[$route][0];
-                $action = $routes[$route][1];
+                $controller = $routes[$route][CONTROLLER];
+                $action = $routes[$route][ACTION];
                 $options = $method_args;
                 
                 return self::render($controller, $action, $options);
@@ -125,8 +122,8 @@ class Shwaark{
         if(isset($routes['404'])){
             debug::log('Routed url 404 : '.$route, true);
 
-            $controller = $routes['404'][0];
-            $action = $routes['404'][1];
+            $controller = $routes['404'][CONTROLLER];
+            $action = $routes['404'][ACTION];
 
             return self::render($controller, $action);
         }
@@ -136,7 +133,11 @@ class Shwaark{
         // include the asked controller            
         debug::log('Asked controller and action : '.$controller.'->'.$action);            
 
-        include(APPS.CURRENT_APP.'controllers/'.$controller.'.php');
+        if(!@include(APPS.CURRENT_APP.'controllers/'.$controller.'.php')){
+            debug::log('Controller '.$controller.' does not exists');
+            return;
+        }
+            
 
         // create the asked controller
         $theApp = new $controller();
