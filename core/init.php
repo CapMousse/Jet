@@ -69,7 +69,7 @@ if($config['cache']){
 debug::log('Load core');
 require(BASEPATH.'core.class.php');
 Shwaark::$config = $config;
-Shwaark::run($config);
+Shwaark::run();
 
 
 if($config['show_debug_log']){

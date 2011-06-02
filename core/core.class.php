@@ -35,7 +35,7 @@ class Shwaark{
      * @access	static method
      * @return	void 
      */
-    public static function run($config){
+    public static function run(){
         /**********************/
         /**** Parse routes ****/
         /**********************/
@@ -50,14 +50,14 @@ class Shwaark{
         
         // check if uri_array is not empty and check if it contain a core config route
         if(is_array($uri_array)){
-            if(isset($config['routes']['/'.$uri_array[0]])){
-                $app = $config['routes']['/'.$uri_array[0]].'/';
+            if(isset(self::$config['routes']['/'.$uri_array[0]])){
+                $app = self::$config['routes']['/'.$uri_array[0]].'/';
                 unset($uri_array[0]);
             }
         }
 
         // define CURRENT_APP with asked app or default app
-        DEFINE('CURRENT_APP', isset($app) ? $app : $config['routes']['default'].'/');
+        DEFINE('CURRENT_APP', isset($app) ? $app : self::$config['routes']['default'].'/');
 
         // check and include route file app
         if(!@include(APPS.CURRENT_APP.'routes.php'))
@@ -129,7 +129,21 @@ class Shwaark{
         }
     }
     
-    public static function render($controller, $action, $options = null){
+    
+    
+    /**
+     * render
+     * 
+     * lauch the render
+     * 
+     * @access  private static function
+     * @param   $controller string : the class to be instanciated
+     * @param   $action string : the method to be launched
+     * @param   $options array [optional] : the arguments for the method
+     * @return  void
+     */
+    
+    private static function render($controller, $action, $options = null){
         // include the asked controller            
         debug::log('Asked controller and action : '.$controller.'->'.$action);            
 
@@ -141,18 +155,41 @@ class Shwaark{
 
         // create the asked controller
         $theApp = new $controller();
-
-        $options = is_null($options) ? array() : $options;
-        // lauch the asked action, with our options
-        if(!is_null($options))
-            @call_user_func_array(array($theApp, $action), $options);
-        else
-            $theApp->$action();
+        
+        if(method_exists($theApp, 'before'.ucfirst($action)))
+            self::lauchAction($theApp, 'before'.ucfirst($action), $options);
+        
+        self::lauchAction($theApp, $action, $options);
+        
+        if(method_exists($theApp, 'after'.ucfirst($action)))
+            self::lauchAction($theApp, 'after'.ucfirst($action), $options);
 
         // check if we our app need to be rendered
         if($theApp->hasLayout()){
             debug::log('Render layout');
             $theApp->render();
         }        
+    }
+    
+    /**
+     * lauchAction
+     * 
+     * lauch the specified action form class with sent options
+     * 
+     * @access  private static function
+     * @param   $class object : the object from the action
+     * @param   $method string : the method to be launched
+     * @param   $option array [optional] : the arguments for the method
+     * @return  void
+     */
+    private static function lauchAction($class, $method, $options = null){
+        debug::log('LauchAction : '.$method);
+        
+        $options = is_null($options) ? array() : $options;
+        // lauch the asked action, with our options
+        if(!is_null($options))
+            @call_user_func_array(array($class, $method), $options);
+        else
+            $class->$method();
     }
 }

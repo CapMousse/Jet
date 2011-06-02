@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title><?=$this->view->getVar('title')?></title>
+    <title><?=$this->title?></title>
     <link type="text/css" media="screen" rel="stylesheet" href="<?=ROOT?>/design/design.css" />
     <?=$this->view->getBlock('css')?>
     <?=$this->view->getBlock('meta')?>
