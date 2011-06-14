@@ -1,7 +1,7 @@
 <?php
 /**
 *	ShwaarkFramework
-*	A lightwave and fast framework for developper who don't need hundred of files
+*	A lightweigth and fast framework for developper who don't need hundred of files
 * 	
 *	@package SwhaarkFramework
 *	@author  Jérémy Barbe
