@@ -127,6 +127,8 @@ class Shwaark{
 
             return self::render($controller, $action);
         }
+
+        return self::render($controller, $action);
     }
     
     
@@ -134,7 +136,7 @@ class Shwaark{
     /**
      * render
      * 
-     * lauch the render
+     * launch the render
      * 
      * @access  private static function
      * @param   $controller string : the class to be instanciated
