@@ -26,12 +26,12 @@ $config['dev']['cache_dir']	= 'cache/';
 $config['dev']['statics'] 	= 'http://your.static.domain/dir/';
 
 // active the debug mode
-$config['dev']['show_debug_log']= false;
-$config['dev']['log_all']	= false;
+$config['dev']['show_debug_log']= true;
+$config['dev']['log_all']	= true;
 
 // your app routes
 $config['dev']['routes'] 	= array(
-	'default' => 'install',
+	'default' => 'install'
 );
 
 $environment = 'dev'; 

@@ -52,7 +52,8 @@ class Shwaark{
         if(is_array($uri_array)){
             if(isset(self::$config['routes']['/'.$uri_array[0]])){
                 $app = self::$config['routes']['/'.$uri_array[0]].'/';
-                unset($uri_array[0]);
+                debug::log('Set app to '.$app);
+                array_splice($uri_array, 0, 1);
             }
         }
 
@@ -68,8 +69,10 @@ class Shwaark{
         $action = isset($routes['default'][ACTION]) ? $routes['default'][ACTION] : '';
         unset($routes['default']);
         
-        if(!is_array($uri_array))
+        if(!is_array($uri_array) || count($uri_array) == 0){
+            debug::log("Empty user uri, render default");
             return self::render($controller, $action);
+        }
 
         // check if we have routes to parse
         // impode current uri for control
@@ -120,7 +123,7 @@ class Shwaark{
 
         // third, if no routes look like our uri, try the 404 route
         if(isset($routes['404'])){
-            debug::log('Routed url 404 : '.$route, true);
+            debug::log('Routed url 404 : '.$path, true);
 
             $controller = $routes['404'][CONTROLLER];
             $action = $routes['404'][ACTION];
@@ -128,6 +131,7 @@ class Shwaark{
             return self::render($controller, $action);
         }
 
+        debug::log('Render default controller and action');
         return self::render($controller, $action);
     }
     
