@@ -2,10 +2,10 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title><?=$this->title?></title>
-    <link type="text/css" media="screen" rel="stylesheet" href="<?=ROOT?>/design/design.css" />
-    <?=$this->view->getBlock('css')?>
-    <?=$this->view->getBlock('meta')?>
+    <title><?php echo $this->title ?></title>
+    <link type="text/css" media="screen" rel="stylesheet" href="<?php echo ROOT?>/design/design.css" />
+    <?php echo $this->view->getBlock('css')?>
+    <?php echo $this->view->getBlock('meta')?>
 </head>
 
 <body>
@@ -13,8 +13,8 @@
         <h1>Congrats !</h1>
     </header>
     <section id="content">
-        <?=$this->view->getBlock('content')?>	
+        <?php echo $this->view->getBlock('content')?>	
     </section>
-    <?=$this->view->getBlock('javascript')?>
+    <?php echo $this->view->getBlock('javascript')?>
 </body>
 </html>

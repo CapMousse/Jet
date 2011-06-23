@@ -22,6 +22,7 @@
 */
 class debug{
     private static $markers = array();
+    
     public static $start;
     public static $log_all;
 
@@ -36,16 +37,21 @@ class debug{
      * @return	void 
      */	
     public static function log($data, $important = false){
-        if(!self::$log_all && !$important)
-            return false;
-        
         $bk = debug_backtrace();
-
-        $caller = substr($bk[1]['file'], strrpos($bk[1]['file'], "/") + 1);
+        
+        $caller = (isset($bk[1]['class']) && $bk[1]['class'] === "Controller") ?
+            substr($bk[1]['file'], strrpos($bk[1]['file'], "/") + 1) : 
+            substr($bk[0]['file'], strrpos($bk[0]['file'], "/") + 1) ;
+        
+        $line = (isset($bk[1]['class']) && $bk[1]['class'] === "Controller") ? 
+            $bk[1]['line'] : $bk[0]['line'];
+        
         $line = $bk[1]['line'];
         $time = microtime() - self::$start;
         $data = $data.' '.$caller.' at line '.$line.' ('.$time.')';
-        self::$markers[] = $data;
+        
+        if(self::$log_all)
+            self::$markers[] = $data;
                 
         if($important)
             error_log($data);

@@ -67,7 +67,7 @@ abstract class Controller{
             $file = VIEWS.$file.'.php';
         }else{
             debug::log("The asked view <b>$file</b> doesn't exists in <b>".get_class($this).".php</b>");
-            return false;
+            return;
         }
         
         include($file);
@@ -83,7 +83,7 @@ abstract class Controller{
      * @access	protected
      * @param	string	$file		name of the model file
      * @param 	bool 	$factoring 	do your want to return a factory model? - default true
-     * @return	void/Factory model 
+     * @return	false/Model Name/Factory model 
      */	
     protected function loadModel($file, $factoring = true){
 
@@ -91,7 +91,7 @@ abstract class Controller{
         if(!isset($this->models[$file])){
             if(!is_file(APPS.CURRENT_APP.'models/'.$file.'.php')){
                 trigger_error("The asked model <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />");
-                exit();
+                return false;
             }
 
             include(APPS.CURRENT_APP.'models/'.$file.'.php');
@@ -104,6 +104,8 @@ abstract class Controller{
         //return the intentiate model
         if($factoring)
             return Model::factory($this->models[$file]);
+        else
+            return $this->models[$file];
     }
 
     /**
@@ -114,12 +116,12 @@ abstract class Controller{
      *
      * @access	protected
      * @param	string	$file		name of the controller file
-     * @return	object
+     * @return	false/object
      */	
     protected function loadController($file){
         if(!is_file(APPS.CURRENT_APP.'controllers/'.$file.'.php')){
             trigger_error("The asked controller <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />");
-            exit();
+            return false;
         }
 
         include(APPS.CURRENT_APP.'controllers/'.$file.'.php');
@@ -139,25 +141,21 @@ abstract class Controller{
      * @param	array/string	$names		names of all wanted modules
      * @return	void
      */	
-    protected function loadModule($names){
+    protected function loadModule($name){
         //check if we have a array of name or convert it to array
-        if(!is_array($names)) $names = array($names);
+        if(!is_string($name)) return;
+        
+        //check if module and module conf exists
+        if(is_dir(MODULES.$name)){
 
-        foreach($names as $name){
-            //check if module and module conf exists
-            if(is_dir(MODULES.$name) && is_file(MODULES.$name.'/config.php')){
-                include(MODULES.$name.'/config.php');
+            //include all nececary files
+            foreach(glob(MODULES.$name.'/*.php') as $file)
+                include($file);
+            
+            $name = ucfirst($name);
+            $this->{$name} = new $name();
 
-                //include all nececary files
-                foreach($required_files['files'] as $file)
-                        include(MODULES.$name.'/'.$file.'.php');
-
-                //include and instentiate the core file
-                include(MODULES.$name.'/'.$required_files['module'].'.php');
-                $this->{$required_files['module']} = new $required_files['module']();
-
-                debug::log('Module loaded : '.$name);
-            }
+            debug::log('Module loaded : '.$name);
         }
     }
 

@@ -30,10 +30,8 @@ class Cache{
         $cache_path = NULL;
 
     public function __construct(){
-        global $config;
-
         if(is_null($this->cache_path)){
-            $this->cache_path = is_null($config['cache_dir']) ? BASEPATH.'cache/' : $config['cache_dir']; 
+            $this->cache_path = is_null(Shwaark::$config['cache_dir']) ? BASEPATH.'cache/' : Shwaark::$config['cache_dir']; 
         }
     }
 
