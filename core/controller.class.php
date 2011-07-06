@@ -60,9 +60,9 @@ abstract class Controller{
         //Control if options is defined, if yes, construct all var used in templates
         if(is_array($options))
             foreach($options as $name => $value){ $$name = $value; }
-            
-        if(is_file(APPS.CURRENT_APP.'views/'.$file.'.php')){
-            $file = APPS.CURRENT_APP.'views/'.$file.'.php';
+
+        if(is_file(APPS.Shwaark::$app.'views/'.$file.'.php')){
+            $file = APPS.Shwaark::$app.'views/'.$file.'.php';
         }else if(is_file(VIEWS.$file.'.php')){            
             $file = VIEWS.$file.'.php';
         }else{

@@ -33,10 +33,11 @@ class debug{
      *
      * @access	static method
      * @param	string	$data		data you want to log
-     * @param   bool    $important      default : false, set the loged info as important
+     * @param   bool    $important  default : false, set the loged info as important
+     * @param   bool    $crash      default : false, stop rendering
      * @return	void 
      */	
-    public static function log($data, $important = false){
+    public static function log($data, $important = false, $crash = false){
         $bk = debug_backtrace();
         
         $caller = (isset($bk[1]['class']) && $bk[1]['class'] === "Controller") ?
@@ -50,11 +51,17 @@ class debug{
         $time = microtime() - self::$start;
         $data = $data.' '.$caller.' at line '.$line.' ('.$time.')';
         
-        if(self::$log_all)
+        if(self::$log_all || $important){
             self::$markers[] = $data;
-                
-        if($important)
+        }
+
+        if($important){
             error_log($data);
+        }
+        
+        if($crash){
+            exit('Error detected, please alert the administrator');
+        }
     }
 
     /**
