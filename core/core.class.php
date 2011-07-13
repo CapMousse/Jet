@@ -93,7 +93,7 @@ class Shwaark{
      */
     private static function defineApp(){
         if(!is_array(self::$uri_array)){
-            return false;
+            return self::$config['routes']['default'].'/';
         }
 
         if(isset(self::$config['routes']['/'.self::$uri_array[0]])){

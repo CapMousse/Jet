@@ -59,7 +59,7 @@ class debug{
             error_log($data);
         }
         
-        if($crash){
+        if($crash && !Shwaark::$config['show_debug_log']){
             exit('Error detected, please alert the administrator');
         }
     }
