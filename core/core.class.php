@@ -179,7 +179,7 @@ class Shwaark{
 
         // third, if no routes look like our uri, try the 404 route
         if(isset(self::$routes['404'])){
-            debug::log('Routed url 404 : '.$path, true);
+            debug::log('Routed url 404 : '.$uri, true);
 
             self::$controller = self::$routes['404'][CONTROLLER];
             self::$action = self::$routes['404'][ACTION];
