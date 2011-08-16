@@ -1,7 +1,7 @@
 <?php
 
 # load needed files from current app
-$require = array(
+$requires['all'] = array(
     #'abstract/exemple.php',
     #'util/timelineCalculator.php'
     #...

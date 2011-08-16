@@ -1,8 +1,11 @@
 <?php
 
-$routes['dev'] = array(
-        'default' => array('index', 'congrats'),
-        'congrats' => array('index', 'congrats')
+$routes['all'] = array(
+    'default' => array('index', 'congrats')
 );
+
+$routes['dev'] = array(
+    'dev/mode' => array('index', 'congrats')
+)
 
 ?>
