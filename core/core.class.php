@@ -53,15 +53,18 @@ class Shwaark{
         self::$app = self::defineApp();
 
         // check and include route file app
-        if(!is_file(APPS.self::$app.'routes.php')){
+        if(!is_file(APPS.self::$app.'config/routes.php')){
             debug::log('No routes defined for '.self::$app, true, true);
         }
-        include(APPS.self::$app.'routes.php');
+        include(APPS.self::$app.'config/routes.php');
 
         self::$routes = $routes;
 
         //parse all routes with curent URI
         self::parseRoutes();
+        
+        //parse and include needed files
+        self::requireFiles();
 
         //launch render
         return self::render();
@@ -189,6 +192,27 @@ class Shwaark{
     }
     
     
+    /**
+     * requireFiles
+     * 
+     * parse and include needed files
+     * 
+     * @access  private static function
+     * @return  void
+     */
+    private static function requireFiles(){
+        if(!is_file(APPS.self::$app.'config/requires.php')){
+            return;
+        }
+        
+        include(APPS.self::$app.'config/requires.php');
+        
+        foreach($requires as $file){
+            if(is_file(APPS.self::$app.$file)){
+                include(APPS.self::$app.$file);
+            }
+        }
+    }
     
     /**
      * render
