@@ -23,10 +23,11 @@
 class Shwaark{
     public static 
             $config,
+            $environment,
             $app,
-            $routes,
             $controller,
             $action,
+            $modules = array(),
             $options = null;
 
     private static
@@ -52,19 +53,14 @@ class Shwaark{
 
         self::$app = self::defineApp();
 
-        // check and include route file app
-        if(!is_file(APPS.self::$app.'config/routes.php')){
-            debug::log('No routes defined for '.self::$app, true, true);
-        }
-        include(APPS.self::$app.'config/routes.php');
-
-        self::$routes = $routes;
-
         //parse all routes with curent URI
         self::parseRoutes();
         
-        //parse and include needed files
+        //parse and load needed files
         self::requireFiles();
+        
+        //parse and load needed modules
+        self::requireModules();
 
         //launch render
         return self::render();
@@ -95,16 +91,35 @@ class Shwaark{
      * @return  string/false
      */
     private static function defineApp(){
-        if(!is_array(self::$uri_array)){
-            return self::$config['routes']['default'].'/';
+        if(!is_file('config/routes.php')){
+            debug::log('Missing routes.php files to define apps in config/ dir', true, true);
+            return;
         }
 
-        if(isset(self::$config['routes']['/'.self::$uri_array[0]])){
-            $app = self::$config['routes']['/'.self::$uri_array[0]].'/';
+        include('config/routes.php');
+        
+        if(!is_array($routes)){
+            debug::log('Missing routes array in config/routes.php', true, true);
+            return;
+        }
+        
+        $routes = self::mergeEnvironment($routes);
+        
+        if(count($routes) == 0){
+            debug::log('No routes defined in config/routes.php', true, true);
+            return;
+        }
+
+        if(!is_array(self::$uri_array)){
+            return $routes['default'].'/';
+        }
+
+        if(isset($routes['/'.self::$uri_array[0]])){
+            $app = $routes['/'.self::$uri_array[0]].'/';
             debug::log('Set app to '.$app);
             array_splice(self::$uri_array, 0, 1);
         }else{
-            $app = self::$config['routes']['default'].'/';
+            $app = $routes['default'].'/';
         }
 
         return $app;
@@ -119,15 +134,29 @@ class Shwaark{
      * @return  void
      */
     private static function parseRoutes(){
+        // check and include route file app
+        if(!is_file(APPS.self::$app.'config/routes.php')){
+            debug::log('Missing routes file in '.APPS.self::$app.'config/', true, true);
+            return;
+        }
+        
+        include(APPS.self::$app.'config/routes.php');
+        
+        if(!is_array($routes)){
+            debug::log('$routes is not an array in '.APPS.self::$app.'config/routes.php', true, true);
+            return;
+        }
+             
+        $routes = self::mergeEnvironment($routes);
 
         //define default controller & action and unset them from array for route control
-        if(!isset(self::$routes['default'][CONTROLLER]) || !isset(self::$routes['default'][CONTROLLER])){
+        if(!isset($routes['default'][CONTROLLER]) || !isset($routes['default'][CONTROLLER])){
             debug::log('Default route must be declared in '.self::$app, true, true);
         }
 
-        self::$controller = self::$routes['default'][CONTROLLER];
-        self::$action = self::$routes['default'][ACTION];
-        unset(self::$routes['default']);
+        self::$controller = $routes['default'][CONTROLLER];
+        self::$action = $routes['default'][ACTION];
+        unset($routes['default']);
         
         if(!is_array(self::$uri_array) || count(self::$uri_array) == 0){
             debug::log("Empty user uri, render default");
@@ -139,16 +168,16 @@ class Shwaark{
         $uri = trim(implode('/', self::$uri_array), "/");
 
         // first, check if current raw uri look exactly to one route
-        if(isset(self::$routes[$uri])){
-            debug::log('Routed url '.self::$routes[$uri]);
+        if(isset($routes[$uri])){
+            debug::log('Routed url '.$routes[$uri]);
             
-            self::$controller = self::$routes[$uri][CONTROLLER];
-            self::$action = self::$routes[$uri][ACTION];
+            self::$controller = $routes[$uri][CONTROLLER];
+            self::$action = $routes[$uri][ACTION];
             return;
         }
 
         // second, check each routes
-        foreach (self::$routes as $route => $val){
+        foreach ($routes as $route => $val){
 
             // don't parse config routes
             if($route == '404') continue;
@@ -172,8 +201,8 @@ class Shwaark{
                 }
 
                 //now, let's rock!
-                self::$controller = self::$routes[$route][CONTROLLER];
-                self::$action = self::$routes[$route][ACTION];
+                self::$controller = $routes[$route][CONTROLLER];
+                self::$action = $routes[$route][ACTION];
                 self::$options = $method_args;
                 
                 return;
@@ -181,11 +210,11 @@ class Shwaark{
         }
 
         // third, if no routes look like our uri, try the 404 route
-        if(isset(self::$routes['404'])){
+        if(isset($routes['404'])){
             debug::log('Routed url 404 : '.$uri, true);
 
-            self::$controller = self::$routes['404'][CONTROLLER];
-            self::$action = self::$routes['404'][ACTION];
+            self::$controller = $routes['404'][CONTROLLER];
+            self::$action = $routes['404'][ACTION];
 
             return;
         }
@@ -195,21 +224,94 @@ class Shwaark{
     /**
      * requireFiles
      * 
-     * parse and include needed files
+     * parse and load needed files
      * 
      * @access  private static function
      * @return  void
      */
     private static function requireFiles(){
-        if(!is_file(APPS.self::$app.'config/requires.php')){
+        $dir = null;
+        $file = null;
+        
+        if(is_file('config/requires.php')){
+            $file = 'config/requires.php';
+        }
+        
+        if(is_file(APPS.self::$app.'config/requires.php')){
+            $dir = APPS.self::$app;
+            $file = APPS.self::$app.'config/requires.php';
+        }
+        
+        if(is_null($file)){
             return;
         }
         
-        include(APPS.self::$app.'config/requires.php');
+        include($file);
+
+        if(!isset($requires) || !is_array($requires)){
+            debug::log("Requires config file {$file} not contain a requires array", true);
+            return;
+        }
+        
+        $requires = self::mergeEnvironment($requires);
         
         foreach($requires as $file){
-            if(is_file(APPS.self::$app.$file)){
-                include(APPS.self::$app.$file);
+            if(is_file($dir.$file)){
+                include($dir.$file);
+            }
+        }
+    }
+    
+    /**
+     * requireModules
+     * 
+     * parse and load needed modules
+     * 
+     * @access  private static function
+     * @return  void
+     */
+    private static function requireModules(){
+        $dir = null;
+        $file = null;
+        
+        if(is_file('config/modules.php')){
+            $file = 'config/modules.php';
+        }
+        
+        if(is_file(APPS.self::$app.'config/modules.php')){
+            $file = APPS.self::$app.'config/modules.php';
+        }
+        
+        if(is_null($file)){
+            return;
+        }
+        
+        include($file);
+
+        if(!isset($modules) || !isset($modules[self::$environment])){
+            debug::log("Module config file {$file} not contain an array", true);
+            return;
+        }
+        
+        $modules = self::mergeEnvironment($modules);
+        
+        foreach($modules as $moduleName){
+            if(is_dir(MODULES.$moduleName)){
+
+                //include all nececary files
+                foreach(glob(MODULES.$moduleName.'/*.php') as $file)
+                    include($file);
+
+                $name = ucfirst($moduleName);
+                
+                if(!class_exists($moduleName)){
+                    debug::log("Module {$moduleName} don't have class with same name", true);
+                    continue;
+                }
+           
+                self::$modules[$name] = new $name();
+
+                debug::log('Module loaded : '.$name);
             }
         }
     }
@@ -231,14 +333,26 @@ class Shwaark{
         debug::log('Asked controller and action : '.self::$controller.'->'.self::$action);            
 
         if(!is_file(APPS.self::$app.'controllers/'.self::$controller.'.php')){
-            debug::log('Controller '.self::$controller.' does not exists', true, true);
+            debug::log('Controller file '.self::$controller.' does not exists on '.APPS.self::$app.'controllers/', true, true);
         }
 
         include(APPS.self::$app.'controllers/'.self::$controller.'.php');
             
+        
         // create the asked controller
         $controller = ucfirst(self::$controller);
+        
+        if(!class_exists($controller)){
+            debug::log('Controller class '.$controller.' is not declared on '.APPS.self::$app.'controllers/'.self::$controller.'.php', true, true);
+        }
+        
         $theApp = new $controller();
+        
+        if(count(self::$modules) > 0){
+            foreach(self::$modules as $name => $object){
+                $theApp->{$name} = $object;
+            }
+        }
         
         if(method_exists($theApp, 'before'.ucfirst(self::$action)))
             self::lauchAction($theApp, 'before'.ucfirst(self::$action), self::$options);
@@ -275,5 +389,24 @@ class Shwaark{
             @call_user_func_array(array($class, $method), $options);
         else
             $class->$method();
+    }
+    
+    
+    private static function mergeEnvironment($array){        
+        if(!isset($array[self::$environment]) && !isset($array['all'])){
+            debug::log("Given array dosen't containt ".self::$environment." and all environements", true, true);
+        }
+        
+        $returnArray = array();
+        
+        if(isset($array['all'])){
+            $returnArray = $array['all'];
+        }
+        
+        if(!isset($array[self::$environment])){
+            return $returnArray;
+        }else{
+            return array_merge($returnArray, $array[self::$environment]);
+        }
     }
 }

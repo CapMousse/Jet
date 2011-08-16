@@ -11,13 +11,13 @@
 */
 
 // load the debug class, used to log all events
-require(BASEPATH.'debug.class.php');
+require(SYSPATH.'debug.class.php');
 
 // load framework user config file
-require(BASEPATH.'config.inc.php');
+require('config/config.php');
 $config = $config[$environment];
 
-debug::$log_all = $config['log_all'];
+debug::$log_all = isset($config['log_all']) ? $config['log_all'] : false;
 debug::$start = microtime();
 debug::log('Init framework');
 
@@ -35,17 +35,17 @@ session_start();
 
 // load the abstract controler class, used to be extend by user controller
 debug::log('Load controller');
-require(BASEPATH.'controller.class.php');
+require(SYSPATH.'controller.class.php');
 
 // load the view controler class used by templates
 debug::log('Load view');
-require(BASEPATH.'view.class.php');
+require(SYSPATH.'view.class.php');
 
 // don't necesary load orm class if no sql needed
 if($config['sql']){
     debug::log('Load model');
-    require(BASEPATH.'idiorm.class.php');
-    require(BASEPATH.'paris.class.php');
+    require(SYSPATH.'idiorm.class.php');
+    require(SYSPATH.'paris.class.php');
     ORM::configure('mysql:host='.$config['host'].';dbname='.$config['base']);
     ORM::configure('username', $config['log']);
     ORM::configure('password', $config['pass']);
@@ -53,7 +53,7 @@ if($config['sql']){
 
 if($config['cache']){
     debug::log('Load cache');
-    require(BASEPATH.'cache.class.php');
+    require(SYSPATH.'cache.class.php');
 }
 
 /*
@@ -67,8 +67,9 @@ if($config['cache']){
  */
 
 debug::log('Load core');
-require(BASEPATH.'core.class.php');
+require(SYSPATH.'core.class.php');
 Shwaark::$config = $config;
+Shwaark::$environment = $environment;
 Shwaark::run();
 
 

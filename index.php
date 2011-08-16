@@ -3,7 +3,7 @@
 define('SELF', pathinfo(__FILE__, PATHINFO_BASENAME));
 
 //Define the root path for the core files
-define('BASEPATH', str_replace("\\", "/", 'core/'));
+define('SYSPATH', str_replace("\\", "/", 'core/'));
 
 //Define the root path for the apps
 define('APPS', str_replace("\\", "/", 'apps/'));
@@ -21,5 +21,5 @@ define('CONTROLLER', 0);
 define('ACTION', 1);
 
 //let's rock!
-require(BASEPATH.'init.php');
+require(SYSPATH.'init.php');
 ?>

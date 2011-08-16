@@ -10,9 +10,12 @@
 *	@version 1.1
 */
 
+// set the current environement
+$environment = 'dev'; 
+
 
 // set the database option
-$config['dev']['sql'] 		= false;
+$config['dev']['sql'] 		= true;
 $config['dev']['host'] 		= 'localhost';
 $config['dev']['log'] 		= 'root';
 $config['dev']['pass'] 		= 'root';
@@ -33,5 +36,3 @@ $config['dev']['log_all']	= true;
 $config['dev']['routes'] 	= array(
 	'default' => 'install'
 );
-
-$environment = 'dev'; 

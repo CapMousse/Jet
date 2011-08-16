@@ -49,7 +49,7 @@ class debug{
         
         $line = $bk[1]['line'];
         $time = microtime() - self::$start;
-        $data = $data.' '.$caller.' at line '.$line.' ('.$time.')';
+        $data = "{$data} <em>{$caller} at line {$line} ({$time})</em>";
         
         if(self::$log_all || $important){
             self::$markers[] = $data;
@@ -59,8 +59,8 @@ class debug{
             error_log($data);
         }
         
-        if($crash && !Shwaark::$config['show_debug_log']){
-            exit('Error detected, please alert the administrator');
+        if($crash){
+            exit("<html><body><h1>Error detected, please alert the administrator</h1><hr><p>{$data}</p></body></html>");
         }
     }
 
