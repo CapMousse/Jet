@@ -89,12 +89,12 @@ abstract class Controller{
 
         //Control if model file exists
         if(!isset($this->models[$file])){
-            if(!is_file(APPS.CURRENT_APP.'models/'.$file.'.php')){
+            if(!is_file(APPS.Shwaark::$app.'models/'.$file.'.php')){
                 trigger_error("The asked model <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />");
                 return false;
             }
 
-            include(APPS.CURRENT_APP.'models/'.$file.'.php');
+            include(APPS.Shwaark::$app.'models/'.$file.'.php');
             $file = ucfirst($file);      
             $this->models[$file] = $file;   
         }
@@ -119,12 +119,12 @@ abstract class Controller{
      * @return   false/object
      */   
     protected function loadController($file){
-        if(!is_file(APPS.CURRENT_APP.'controllers/'.$file.'.php')){
+        if(!is_file(APPS.Shwaark::$app.'controllers/'.$file.'.php')){
             trigger_error("The asked controller <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />");
             return false;
         }
 
-        include(APPS.CURRENT_APP.'controllers/'.$file.'.php');
+        include(APPS.Shwaark::$app.'controllers/'.$file.'.php');
 
         debug::log('Controller loaded : '.$file);
 

@@ -15,24 +15,21 @@ $environment = 'dev';
 
 
 // set the database option
-$config['dev']['sql'] 		= true;
-$config['dev']['host'] 		= 'localhost';
-$config['dev']['log'] 		= 'root';
-$config['dev']['pass'] 		= 'root';
-$config['dev']['base'] 		= 'shwaarkframework';
+$config['dev']  = array(
+    'sql' 		=> true,
+    'host'      => 'localhost',
+    'log'       => 'root',
+    'pass'      => 'root',
+    'base'      => 'shwaarkframework',
 
-// activate caching
-$config['dev']['cache']		= false;
-$config['dev']['cache_dir']	= 'cache/';
+    // activate caching
+    'cache'     => false,
+    'cache_dir' => 'cache/',
 
-// where are your statics files
-$config['dev']['statics'] 	= 'http://your.static.domain/dir/';
+    // where are your statics files
+    'statics'   => 'http://your.static.domain/dir/',
 
-// active the debug mode
-$config['dev']['show_debug_log']= true;
-$config['dev']['log_all']	= true;
-
-// your app routes
-$config['dev']['routes'] 	= array(
-	'default' => 'install'
+    // active the debug mode
+    'show_debug_log'    =>  true,
+    'log_all'           => true
 );

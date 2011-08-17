@@ -27,16 +27,12 @@ require(SYSPATH.'debug.class.php');
 
 // load framework user config file
 require('config/config.php');
-$config = $config[$environment];
 
-debug::$log_all = isset($config['log_all']) ? $config['log_all'] : false;
 debug::$start = microtime();
 debug::log('Init framework');
 
 ob_start('ob_gzhandler');
 
-//create the Static constant, for statics files
-define('STATICS', $config['statics']);
 
 session_start();
 
@@ -44,6 +40,17 @@ session_start();
 /**** Include class framework and init them ****/
 /***********************************************/
 
+// load the KORE KLASS
+debug::log('Load core');
+require(SYSPATH.'core.class.php');
+Shwaark::$environment = $environment;
+Shwaark::$config = Shwaark::mergeEnvironment($config);
+
+debug::$log_all = isset(Shwaark::$config['log_all']) ? Shwaark::$config['log_all'] : false;
+define('STATICS', Shwaark::$config['statics']);
+//create the Static constant, for statics files
+
+// Get current environment config
 
 // load the abstract controler class, used to be extend by user controller
 debug::log('Load controller');
@@ -54,16 +61,16 @@ debug::log('Load view');
 require(SYSPATH.'view.class.php');
 
 // don't necesary load orm class if no sql needed
-if($config['sql']){
+if(Shwaark::$config['sql']){
     debug::log('Load model');
     require(SYSPATH.'idiorm.class.php');
     require(SYSPATH.'paris.class.php');
-    ORM::configure('mysql:host='.$config['host'].';dbname='.$config['base']);
-    ORM::configure('username', $config['log']);
-    ORM::configure('password', $config['pass']);
+    ORM::configure('mysql:host='.Shwaark::$config['host'].';dbname='.Shwaark::$config['base']);
+    ORM::configure('username', Shwaark::$config['log']);
+    ORM::configure('password', Shwaark::$config['pass']);
 }
 
-if($config['cache']){
+if(Shwaark::$config['cache']){
     debug::log('Load cache');
     require(SYSPATH.'cache.class.php');
 }
@@ -77,15 +84,10 @@ if($config['cache']){
     |______|______|  |_| |_____/  |_|  \_\\____/ \_____|_|\_\
  
  */
-
-debug::log('Load core');
-require(SYSPATH.'core.class.php');
-Shwaark::$config = $config;
-Shwaark::$environment = $environment;
 Shwaark::run();
 
 
-if($config['show_debug_log']){
+if(Shwaark::$config['show_debug_log']){
     debug::displayLog();
 }
 

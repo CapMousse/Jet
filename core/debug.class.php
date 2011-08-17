@@ -51,9 +51,10 @@ class debug{
         $time = microtime() - self::$start;
         $data = "{$data} <em>{$caller} at line {$line} ({$time})</em>";
         
-        if(self::$log_all || $important){
-            self::$markers[] = $data;
-        }
+        self::$markers[] = array(
+            $important,
+            $data
+        );
 
         if($important){
             error_log($data);
@@ -75,8 +76,12 @@ class debug{
     public static function displayLog(){
         echo '<h1>DEBUG</h1><ul>';
         foreach(self::$markers as $marker){
+            if(!$marker[0] && !self::$log_all){
+                continue;
+            }
+
             echo '<li>';
-            print_r($marker);
+            print_r($marker[1]);
             echo '</li>';
         }
         echo '</ul>';

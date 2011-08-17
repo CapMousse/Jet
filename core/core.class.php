@@ -242,7 +242,7 @@ class Shwaark{
         include($fileInfo[0]);
 
         if(!isset($requires) || !is_array($requires)){
-            debug::log("Requires config file {$fileInfo[0]} not contain a requires array", true);
+            debug::log("Requires config file {$fileInfo[0]} not contain a requires array");
             return;
         }
         
@@ -271,7 +271,7 @@ class Shwaark{
         include($file[0]);
 
         if(!isset($modules)){
-            debug::log("Module config file {$file[0]} not contain an array", true);
+            debug::log("Module config file {$file[0]} not contain an array");
             return;
         }
         
@@ -365,7 +365,6 @@ class Shwaark{
     private static function lauchAction($class, $method, $options = null){
         debug::log('LauchAction : '.$method);
         
-        $options = is_null($options) ? array() : $options;
         // lauch the asked action, with our options
         if(!is_null($options))
             @call_user_func_array(array($class, $method), $options);
@@ -405,9 +404,9 @@ class Shwaark{
      * @param   $array  array   the array with environment to be merge
      * @return  array
      */
-    private static function mergeEnvironment($array){        
+    public static function mergeEnvironment($array){        
         if(!isset($array[self::$environment]) && !isset($array['all'])){
-            debug::log("Given array dosen't containt ".self::$environment." and all environements", true, true);
+            debug::log("Given array doesn't containt '".self::$environment."' or 'all' environements", true, true);
         }
         
         $returnArray = array();

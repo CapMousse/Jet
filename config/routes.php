@@ -12,6 +12,6 @@
 
 
 // your app routes
-$routes['dev'] = array(
+$routes['all'] = array(
 	'default' => 'install'
 );
