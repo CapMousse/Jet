@@ -1,24 +1,24 @@
 <?php
 /**
-*	ShwaarkFramework
-*	A lightweigth and fast framework for developper who don't need hundred of files
-* 	
-*	@package SwhaarkFramework
-*	@author  Jérémy Barbe
-*	@license BSD
-*	@link 	 https://github.com/CapMousse/ShwaarkFramework
-*	@version 1.1
+*   ShwaarkFramework
+*   A lightweigth and fast framework for developper who don't need hundred of files
+*    
+*   @package SwhaarkFramework
+*   @author  Jérémy Barbe
+*   @license BSD
+*   @link     https://github.com/CapMousse/ShwaarkFramework
+*   @version 0.3
 */
 
 /**
-*	Cache class
-*	Do you have memory?
-* 	
-*	@package SwhaarkFramework
-*	@author  Jérémy Barbe
-*	@license BSD
-*	@link 	 https://github.com/CapMousse/ShwaarkFramework
-*	@version 0.1
+*   Cache class
+*   Do you have memory?
+*    
+*   @package SwhaarkFramework
+*   @author  Jérémy Barbe
+*   @license BSD
+*   @link     https://github.com/CapMousse/ShwaarkFramework
+*   @version 0.2
 */
 
 class Cache{
@@ -41,10 +41,10 @@ class Cache{
      *
      * read a cache file
      *
-     * @access	public
-     * @param	string	$cache	name of the cached data
-     * @return	mixed 	false or data
-     */	
+     * @access   public
+     * @param   string   $cache   name of the cached data
+     * @return   mixed    false or data
+     */   
     public function get($cache){
         if(!is_file($this->cache_path.$cache))
                 return false;
@@ -66,11 +66,11 @@ class Cache{
      *
      * save data to cache
      *
-     * @access	public
-     * @param	string	$cache	name of the cached data
-     * @param	mixed	$data	data to be cached
-     * @param	int		$time	add time to cached data
-     * @return	bool
+     * @access   public
+     * @param   string   $cache   name of the cached data
+     * @param   mixed   $data   data to be cached
+     * @param   int      $time   add time to cached data
+     * @return   bool
      */
     public function set($cache, $data, $time = 0){
         $data_cache = array(
@@ -92,9 +92,9 @@ class Cache{
      *
      * deelte a cache file
      *
-     * @access	public
-     * @param	string/array	$cache	name of the cached data
-     * @return	void
+     * @access   public
+     * @param   string/array   $cache   name of the cached data
+     * @return   void
      */
     public function delete($cache){
         if(!isset($cache['0'])) 

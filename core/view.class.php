@@ -1,24 +1,24 @@
 <?php
 /**
-*	ShwaarkFramework
-*	A lightweigth and fast framework for developper who don't need hundred of files
-* 	
-*	@package SwhaarkFramework
-*	@author  Jérémy Barbe
-*	@license BSD
-*	@link 	 https://github.com/CapMousse/ShwaarkFramework
-*	@version 1.1
+*   ShwaarkFramework
+*   A lightweigth and fast framework for developper who don't need hundred of files
+*    
+*   @package SwhaarkFramework
+*   @author  Jérémy Barbe
+*   @license BSD
+*   @link     https://github.com/CapMousse/ShwaarkFramework
+*   @version 0.3
 */
 
 /**
-*	View class
-*	Make the block magic!
-* 	
-*	@package SwhaarkFramework
-*	@author  Jérémy Barbe
-*	@license BSD
-*	@link 	 https://github.com/CapMousse/ShwaarkFramework
-*	@version 1.1
+*   View class
+*   Make the block magic!
+*    
+*   @package SwhaarkFramework
+*   @author  Jérémy Barbe
+*   @license BSD
+*   @link     https://github.com/CapMousse/ShwaarkFramework
+*   @version 1.1
 */
 
 
@@ -31,10 +31,10 @@ class View{
      *
      * alias of beginBlock
      *
-     * @access	public
-     * @param	string	$block	name of the block
-     * @return	void
-     */	
+     * @access   public
+     * @param   string   $block   name of the block
+     * @return   void
+     */   
     public function createBlock($block){
         $this->beginBlock($block);
     }
@@ -44,10 +44,10 @@ class View{
      *
      * Start to cache rendered html to make the final render
      *
-     * @access	public
-     * @param	string	$block	name of the block
-     * @return	void
-     */	
+     * @access   public
+     * @param   string   $block   name of the block
+     * @return   void
+     */   
     public function beginBlock($block){
         $this->blockName = $block;
 
@@ -63,10 +63,10 @@ class View{
      * save the cached html to the block name
      * if the parameters is empty, end the last beginBlock
      *
-     * @access	public
-     * @param	string	$block	name of the block
-     * @return	void
-     */	
+     * @access   public
+     * @param   string   $block   name of the block
+     * @return   void
+     */   
     public function endBlock($block = null){
 
             $value = ob_get_clean();
@@ -81,10 +81,10 @@ class View{
      *
      * give the asked rendered block
      *
-     * @access	public
-     * @param	string	$block	name of the block
-     * @return	string
-     */	
+     * @access   public
+     * @param   string   $block   name of the block
+     * @return   string
+     */   
     public function getBlock($block){
         return isset($this->blocks[$block]) ? $this->blocks[$block] : '';
     }
@@ -95,10 +95,10 @@ class View{
      *
      * check if the asked block exists
      *
-     * @access	public
-     * @param	string	$block	name of the block
-     * @return	bool
-     */	
+     * @access   public
+     * @param   string   $block   name of the block
+     * @return   bool
+     */   
     public function issetBlock($block){
             return isset($this->blocks[$block]) ? true : false;
     }
@@ -108,10 +108,10 @@ class View{
      *
      * delete the asked block
      *
-     * @access	public
-     * @param	string	$block	name of the block
-     * @return	void
-     */	
+     * @access   public
+     * @param   string   $block   name of the block
+     * @return   void
+     */   
     public function destroyBlock($block){
         unset($this->blocks[$block]);
     }
@@ -121,10 +121,10 @@ class View{
      *
      * return a defined public var from the controller
      *
-     * @access	public
-     * @param	string	$var	name of the var
-     * @return	string
-     */	
+     * @access   public
+     * @param   string   $var   name of the var
+     * @return   string
+     */   
     public function getVar($var){
         global $theApp;
 
@@ -136,10 +136,10 @@ class View{
      *
      * Remove and replace all special caractère to be url friendly
      *
-     * @access	public
-     * @param	string	$text	the text to be slugify
-     * @return	string
-     */	
+     * @access   public
+     * @param   string   $text   the text to be slugify
+     * @return   string
+     */   
     public function slugify($text){
         $text = preg_replace('~[^\\pL\d]+~u', '-', $text);
         $text = trim($text, '-');

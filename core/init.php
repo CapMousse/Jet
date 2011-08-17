@@ -1,13 +1,25 @@
-<?php	
+<?php   
 /**
-*	ShwaarkFramework
-*	A lightweigth and fast framework for developper who don't need hundred of files
-* 	
-*	@package SwhaarkFramework
-*	@author  Jérémy Barbe
-*	@license BSD
-*	@link 	 https://github.com/CapMousse/ShwaarkFramework
-*	@version 1.1
+*   ShwaarkFramework
+*   A lightweigth and fast framework for developper who don't need hundred of files
+*    
+*   @package SwhaarkFramework
+*   @author  Jérémy Barbe
+*   @license BSD
+*   @link    https://github.com/CapMousse/ShwaarkFramework
+*   @version 0.3
+*/
+
+
+/**
+*   Init file
+*   Sometime we need to lauch the core
+*    
+*   @package SwhaarkFramework
+*   @author  Jérémy Barbe
+*   @license BSD
+*   @link     https://github.com/CapMousse/ShwaarkFramework
+*   @version 1.3
 */
 
 // load the debug class, used to log all events

@@ -7,11 +7,11 @@
 *	@author  Jérémy Barbe
 *	@license BSD
 *	@link 	 https://github.com/CapMousse/ShwaarkFramework
-*	@version 1.1
+*	@version 0.3
 */
 
 
 // your app routes
-$routes['all'] = array(
+$routes['dev'] = array(
 	'default' => 'install'
 );

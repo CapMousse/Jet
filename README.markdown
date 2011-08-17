@@ -18,36 +18,11 @@ Features
 Changelog
 ---------
 
-#### V0.2 - release 2011-05-25
-* Added *Core* : Move all route parsing to a core class
-* Added *Debug* : Create a class to log all debug message
-
-* Change *Route parsing* : now you can name your route like "test/[id]:num/"
-* Change *route action call* : Now action il call with arguments ($id for above exemple)
-* Change *config access* : Now with ```Shwaark::$config```
-
-* Bugfix: controller now loaded propreply
-* Bugfix: perf drop on route parsing resolved
-* Bugfix: view can now load an other view
-* Bugfix: debug now log error to log file
-* Bugfix: module are now loaded propreply
-* Bugfix: loadView not working prepreply
-
-#### V0.1 - released 2011-05-13
-* Added *Cache*: Now, you have memory!
-* Added *Controller: **loadController** you can include other controller in your controller
-
-* Change *View* : **createBlock** change by **beginBlock**
-* Change *Controller*: **loadModel** you can now load and don't factory a model. Usefull for relation
-
-* Removed *Controller*: remove **isController** and **isAction**
-
-Plus global optimisation, changes and other stuffs
-
-#### beta 1 - released 2011-04-10
-
-* Initial release
-
+###v0.3
+* Add : each app have now a config directory with requires, modules and routes files. App modules/requires replace the root modules/requires. (like symfony) 
+* Add : A environment 'all' appear and be apply on all asked environment
+* Add : A module exemple
+* Change : Crash log more informative
 
 First time here!
 ----------------

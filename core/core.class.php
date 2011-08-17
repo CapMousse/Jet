@@ -1,24 +1,24 @@
 <?php
 /**
-*	ShwaarkFramework
-*	A lightweigth and fast framework for developper who don't need hundred of files
-* 	
-*	@package SwhaarkFramework
-*	@author  Jérémy Barbe
-*	@license BSD
-*	@link 	 https://github.com/CapMousse/ShwaarkFramework
-*	@version 1.1
+*   ShwaarkFramework
+*   A lightweigth and fast framework for developper who don't need hundred of files
+*    
+*   @package SwhaarkFramework
+*   @author  Jérémy Barbe
+*   @license BSD
+*   @link     https://github.com/CapMousse/ShwaarkFramework
+*   @version 0.3
 */
 
 /**
-*	Shwaark class
-*	The main core class
-* 	
-*	@package SwhaarkFramework
-*	@author  Jérémy Barbe
-*	@license BSD
-*	@link 	 https://github.com/CapMousse/ShwaarkFramework
-*	@version 1.2
+*   Shwaark class
+*   The main core class
+*    
+*   @package SwhaarkFramework
+*   @author  Jérémy Barbe
+*   @license BSD
+*   @link     https://github.com/CapMousse/ShwaarkFramework
+*   @version 1.5
 */
 class Shwaark{
     public static 
@@ -39,8 +39,8 @@ class Shwaark{
      *
      * launch the framework
      *
-     * @access	static method
-     * @return	void 
+     * @access   static method
+     * @return   void 
      */
     public static function run(){
         /**********************/
@@ -107,6 +107,11 @@ class Shwaark{
         
         if(count($routes) == 0){
             debug::log('No routes defined in config/routes.php', true, true);
+            return;
+        }
+        
+        if(!isset($routes['default'])){
+            debug::log('No default app routes defined in config/routes.php', true, true);
             return;
         }
 
@@ -229,35 +234,23 @@ class Shwaark{
      * @access  private static function
      * @return  void
      */
-    private static function requireFiles(){
-        $dir = null;
-        $file = null;
-        
-        if(is_file('config/requires.php')){
-            $file = 'config/requires.php';
-        }
-        
-        if(is_file(APPS.self::$app.'config/requires.php')){
-            $dir = APPS.self::$app;
-            $file = APPS.self::$app.'config/requires.php';
-        }
-        
-        if(is_null($file)){
+    private static function requireFiles(){        
+        if(!$fileInfo = self::checkFile('config/requires.php')){
             return;
         }
         
-        include($file);
+        include($fileInfo[0]);
 
         if(!isset($requires) || !is_array($requires)){
-            debug::log("Requires config file {$file} not contain a requires array", true);
+            debug::log("Requires config file {$fileInfo[0]} not contain a requires array", true);
             return;
         }
         
         $requires = self::mergeEnvironment($requires);
         
         foreach($requires as $file){
-            if(is_file($dir.$file)){
-                include($dir.$file);
+            if(is_file($fileInfo[1].$file)){
+                include($fileInfo[1].$file);
             }
         }
     }
@@ -270,26 +263,15 @@ class Shwaark{
      * @access  private static function
      * @return  void
      */
-    private static function requireModules(){
-        $dir = null;
-        $file = null;
-        
-        if(is_file('config/modules.php')){
-            $file = 'config/modules.php';
-        }
-        
-        if(is_file(APPS.self::$app.'config/modules.php')){
-            $file = APPS.self::$app.'config/modules.php';
-        }
-        
-        if(is_null($file)){
+    private static function requireModules(){        
+        if(!$file = self::checkFile('config/modules.php')){
             return;
         }
         
-        include($file);
+        include($file[0]);
 
-        if(!isset($modules) || !isset($modules[self::$environment])){
-            debug::log("Module config file {$file} not contain an array", true);
+        if(!isset($modules)){
+            debug::log("Module config file {$file[0]} not contain an array", true);
             return;
         }
         
@@ -391,7 +373,38 @@ class Shwaark{
             $class->$method();
     }
     
+    /**
+     * checkFile
+     * 
+     * check if file exist in root dir or app dir
+     * 
+     * @access  private static function
+     * @param   $file   string  file to be check
+     * @return  $file/false
+     */
+    private static function checkFile($file){
+        $return = null;
+        
+        if(is_file($file)){
+            $return = array($file, null);
+        }
+        
+        if(is_file(APPS.self::$app.$file)){
+            $return = array(APPS.self::$app.$file, APPS.self::$app);
+        }
+        
+        return is_null($return) ? false : $return;
+    }
     
+     /**
+     * mergeEnvironment
+     * 
+     * merge array of 'all' environment and current environment
+     * 
+     * @access  private static function
+     * @param   $array  array   the array with environment to be merge
+     * @return  array
+     */
     private static function mergeEnvironment($array){        
         if(!isset($array[self::$environment]) && !isset($array['all'])){
             debug::log("Given array dosen't containt ".self::$environment." and all environements", true, true);
@@ -403,10 +416,10 @@ class Shwaark{
             $returnArray = $array['all'];
         }
         
-        if(!isset($array[self::$environment])){
-            return $returnArray;
-        }else{
-            return array_merge($returnArray, $array[self::$environment]);
+        if(isset($array[self::$environment])){
+            $returnArray = array_merge($returnArray, $array[self::$environment]);
         }
+        
+        return $returnArray;
     }
 }

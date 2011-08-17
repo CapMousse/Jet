@@ -1,24 +1,24 @@
 <?php
 /**
-*	ShwaarkFramework
-*	A lightweigth and fast framework for developper who don't need hundred of files
-* 	
-*	@package SwhaarkFramework
-*	@author  Jérémy Barbe
-*	@license BSD
-*	@link 	 https://github.com/CapMousse/ShwaarkFramework
-*	@version 1.1
+*   ShwaarkFramework
+*   A lightweigth and fast framework for developper who don't need hundred of files
+*    
+*   @package SwhaarkFramework
+*   @author  Jérémy Barbe
+*   @license BSD
+*   @link     https://github.com/CapMousse/ShwaarkFramework
+*   @version 0.3
 */
 
 /**
-*	Debug class
-*	Do you need to log something?
-* 	
-*	@package SwhaarkFramework
-*	@author  Jérémy Barbe
-*	@license BSD
-*	@link 	 https://github.com/CapMousse/ShwaarkFramework
-*	@version 1.2
+*   Debug class
+*   Do you need to log something?
+*    
+*   @package SwhaarkFramework
+*   @author  Jérémy Barbe
+*   @license BSD
+*   @link     https://github.com/CapMousse/ShwaarkFramework
+*   @version 1.2
 */
 class debug{
     private static $markers = array();
@@ -31,12 +31,12 @@ class debug{
      *
      * add a log data to the log pile
      *
-     * @access	static method
-     * @param	string	$data		data you want to log
+     * @access   static method
+     * @param   string   $data      data you want to log
      * @param   bool    $important  default : false, set the loged info as important
      * @param   bool    $crash      default : false, stop rendering
-     * @return	void 
-     */	
+     * @return   void 
+     */   
     public static function log($data, $important = false, $crash = false){
         $bk = debug_backtrace();
         
@@ -69,8 +69,8 @@ class debug{
      *
      * show log pile
      *
-     * @access	static method
-     * @return	void 
+     * @access   static method
+     * @return   void 
      */
     public static function displayLog(){
         echo '<h1>DEBUG</h1><ul>';

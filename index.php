@@ -1,4 +1,27 @@
 <?php
+/**
+*   ShwaarkFramework
+*   A lightweigth and fast framework for developper who don't need hundred of files
+* 
+*   @package SwhaarkFramework
+*   @author  Jérémy Barbe
+*   @license BSD
+*   @link    https://github.com/CapMousse/ShwaarkFramework
+*   @version 0.3
+*/
+
+
+/**
+*   Index file
+*   BECAUSE NO INDEX = DIVIDE BY ZERO
+*
+*   @package SwhaarkFramework
+*   @author  Jérémy Barbe
+*   @license BSD
+*   @link    https://github.com/CapMousse/ShwaarkFramework
+*   @version 1.5
+*/
+
 //Define the root path for the route rewrite module
 define('SELF', pathinfo(__FILE__, PATHINFO_BASENAME));
 

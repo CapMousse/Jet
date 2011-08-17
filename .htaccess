@@ -1,4 +1,18 @@
-## for people who use OVH, just uncomment thoses 2 lines
+# ShwaarkFramework
+# A lightweigth and fast framework for developper who don't need hundred of files
+# @package  SwhaarkFramework
+# @author   Jérémy Barbe
+# @license  BSD
+# @link     https://github.com/CapMousse/ShwaarkFramework
+# @version  0.3
+
+
+###############################################################
+###############################################################
+#### for people who use OVH, just uncomment thoses 3 lines ####
+###############################################################
+###############################################################
+
 #SetEnv REGISTER_GLOBALS 0
 #SetEnv PHP_VER 5
 #SetEnv MAGIC_QUOTES 0

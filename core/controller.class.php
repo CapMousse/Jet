@@ -1,25 +1,25 @@
 <?php
 
 /**
-*	ShwaarkFramework
-*	A lightweigth and fast framework for developper who don't need hundred of files
-* 	
-*	@package SwhaarkFramework
-*	@author  Jérémy Barbe
-*	@license BSD
-*	@link 	 https://github.com/CapMousse/ShwaarkFramework
-*	@version 1.1
+*   ShwaarkFramework
+*   A lightweigth and fast framework for developper who don't need hundred of files
+*    
+*   @package SwhaarkFramework
+*   @author  Jérémy Barbe
+*   @license BSD
+*   @link     https://github.com/CapMousse/ShwaarkFramework
+*   @version 0.3
 */
 
 /**
-*	Controller abstract class
-*	the controller model
-* 	
-*	@package SwhaarkFramework
-*	@author  Jérémy Barbe
-*	@license BSD
-*	@link 	 https://github.com/CapMousse/ShwaarkFramework
-*	@version 1.2
+*   Controller abstract class
+*   the controller model
+*    
+*   @package SwhaarkFramework
+*   @author  Jérémy Barbe
+*   @license BSD
+*   @link     https://github.com/CapMousse/ShwaarkFramework
+*   @version 1.3
 */
 abstract class Controller{
     public 
@@ -51,11 +51,11 @@ abstract class Controller{
      *
      * load the asked view. Important for display data... or not
      *
-     * @access	protected
-     * @param	string	$file		name of the view file
-     * @param 	array 	$options 	data used by the view
-     * @return	void 
-     */	
+     * @access   protected
+     * @param   string   $file      name of the view file
+     * @param    array    $options    data used by the view
+     * @return   void 
+     */   
     protected function loadView($file, $options = null){
         //Control if options is defined, if yes, construct all var used in templates
         if(is_array($options))
@@ -80,11 +80,11 @@ abstract class Controller{
      * load the asked model. 
      * Y U R SO AHRD WIHT MEH?
      *
-     * @access	protected
-     * @param	string	$file		name of the model file
-     * @param 	bool 	$factoring 	do your want to return a factory model? - default true
-     * @return	false/Model Name/Factory model 
-     */	
+     * @access   protected
+     * @param   string   $file      name of the model file
+     * @param    bool    $factoring    do your want to return a factory model? - default true
+     * @return   false/Model Name/Factory model 
+     */   
     protected function loadModel($file, $factoring = true){
 
         //Control if model file exists
@@ -95,8 +95,8 @@ abstract class Controller{
             }
 
             include(APPS.CURRENT_APP.'models/'.$file.'.php');
-            $file = ucfirst($file);		
-            $this->models[$file] = $file;	
+            $file = ucfirst($file);      
+            $this->models[$file] = $file;   
         }
 
         debug::log('Model loaded : '.$file);
@@ -114,10 +114,10 @@ abstract class Controller{
      * load the asked model. 
      * We need to go deeper.
      *
-     * @access	protected
-     * @param	string	$file		name of the controller file
-     * @return	false/object
-     */	
+     * @access   protected
+     * @param   string   $file      name of the controller file
+     * @return   false/object
+     */   
     protected function loadController($file){
         if(!is_file(APPS.CURRENT_APP.'controllers/'.$file.'.php')){
             trigger_error("The asked controller <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />");
@@ -137,10 +137,10 @@ abstract class Controller{
      *
      * load the asked module with all attached files. 
      *
-     * @access	protected
-     * @param	array/string	$names		names of all wanted modules
-     * @return	void
-     */	
+     * @access   protected
+     * @param   array/string   $names      names of all wanted modules
+     * @return   void
+     */   
     protected function loadModule($name){
         //check if we have a array of name or convert it to array
         if(!is_string($name)) return;
@@ -162,10 +162,10 @@ abstract class Controller{
     /**
      * setLayout
      *
-     * @access	public
-     * @param	bool 	$bool
-     * @return	void
-     */	
+     * @access   public
+     * @param   bool    $bool
+     * @return   void
+     */   
     public function setLayout($bool){
         $this->layout = $bool;
     }
@@ -173,8 +173,8 @@ abstract class Controller{
     /**
      * hasLayout
      *
-     * @access	public
-     * @return	bool
+     * @access   public
+     * @return   bool
      */
     public function hasLayout(){
         return $this->layout;
@@ -183,8 +183,8 @@ abstract class Controller{
     /**
      * render
      *
-     * @access	public
-     * @return	void
+     * @access   public
+     * @return   void
      */
     public function render(){
         if($this->hasLayout())
