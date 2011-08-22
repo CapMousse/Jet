@@ -24,21 +24,14 @@
 
 //Define the root path for the route rewrite module
 define('SELF', pathinfo(__FILE__, PATHINFO_BASENAME));
+define('WEB_DIR', str_replace('\\', '/', dirname(__FILE__)));
+define('TOP', WEB_DIR.'/../');
 
-//Define the root path for the core files
-define('SYSPATH', str_replace("\\", "/", 'core/'));
-
-//Define the root path for the apps
-define('APPS', str_replace("\\", "/", 'apps/'));
-
-//Define the root path for the apps
-define('MODULES', str_replace("\\", "/", 'modules/'));
-
-//Define the root path for root views
-define('VIEWS', str_replace("\\", "/", 'views/'));
-
-//Define the root path for internal links
-define('ROOT', 'http://'.$_SERVER['HTTP_HOST']);
+//Define important dir
+define('SYSPATH', TOP.'core/');
+define('APPS', TOP.'apps/');
+define('MODULES', TOP.'modules/');
+define('VIEWS', TOP.'views/');
 
 define('CONTROLLER', 0);
 define('ACTION', 1);

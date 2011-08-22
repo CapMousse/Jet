@@ -21,17 +21,13 @@
 *   @version 1.5
 */
 class Shwaark{
-    public static 
-            $config,
-            $environment,
-            $app,
-            $controller,
-            $action,
-            $modules = array(),
-            $options = null;
-
-    private static
-        $uri_array = array();
+    public static
+        $config = array(),
+        $environment,
+        $routes = array(),
+        $modules = array(),
+        $uri_array = array(),
+        $infos = array();
 
 
     /**
@@ -51,10 +47,11 @@ class Shwaark{
 
         self::$uri_array = self::parsePath();
 
-        self::$app = self::defineApp();
+        self::set('app', self::defineApp());
 
         //parse all routes with curent URI
-        self::parseRoutes();
+        self::getRoutes();
+        Router::launch();
         
         //parse and load needed files
         self::requireFiles();
@@ -91,38 +88,35 @@ class Shwaark{
      * @return  string/false
      */
     private static function defineApp(){
-        if(!is_file('config/routes.php')){
+        $routes = array();
+        $uri = self::$uri_array;
+        
+        if(!is_file(TOP.'config/routes.php')){
             debug::log('Missing routes.php files to define apps in config/ dir', true, true);
             return;
         }
 
-        include('config/routes.php');
+        include(TOP.'config/routes.php');
         
-        if(!is_array($routes)){
+        if(!is_array($routes) || count($routes) == 0){
             debug::log('Missing routes array in config/routes.php', true, true);
             return;
         }
         
         $routes = self::mergeEnvironment($routes);
         
-        if(count($routes) == 0){
-            debug::log('No routes defined in config/routes.php', true, true);
-            return;
-        }
-        
         if(!isset($routes['default'])){
             debug::log('No default app routes defined in config/routes.php', true, true);
             return;
         }
 
-        if(!is_array(self::$uri_array)){
+        if(!is_array($uri)){
             return $routes['default'].'/';
         }
 
-        if(isset($routes['/'.self::$uri_array[0]])){
-            $app = $routes['/'.self::$uri_array[0]].'/';
-            debug::log('Set app to '.$app);
-            array_splice(self::$uri_array, 0, 1);
+        if(isset($routes['/'.$uri[0]])){
+            $app = $routes['/'.$uri[0]].'/';
+            array_splice($uri, 0, 1);
         }else{
             $app = $routes['default'].'/';
         }
@@ -138,90 +132,26 @@ class Shwaark{
      * @access  private static function
      * @return  void
      */
-    private static function parseRoutes(){
+    private static function getRoutes(){
+        $_currentApp = APPS.self::get('app');
         // check and include route file app
-        if(!is_file(APPS.self::$app.'config/routes.php')){
-            debug::log('Missing routes file in '.APPS.self::$app.'config/', true, true);
+        if(!is_file($_currentApp.'config/routes.php')){
+            debug::log('Missing routes file in '.$_currentApp.'config/', true, true);
             return;
         }
         
-        include(APPS.self::$app.'config/routes.php');
+        include($_currentApp.'config/routes.php');
         
         if(!is_array($routes)){
-            debug::log('$routes is not an array in '.APPS.self::$app.'config/routes.php', true, true);
+            debug::log('$routes is not an array in '.$_currentApp.'config/routes.php', true, true);
             return;
         }
              
-        $routes = self::mergeEnvironment($routes);
-
-        //define default controller & action and unset them from array for route control
-        if(!isset($routes['default'][CONTROLLER]) || !isset($routes['default'][CONTROLLER])){
-            debug::log('Default route must be declared in '.self::$app, true, true);
-        }
-
-        self::$controller = $routes['default'][CONTROLLER];
-        self::$action = $routes['default'][ACTION];
-        unset($routes['default']);
+        self::$routes = self::mergeEnvironment($routes);
         
-        if(!is_array(self::$uri_array) || count(self::$uri_array) == 0){
-            debug::log("Empty user uri, render default");
-            return;
-        }
-
-        // check if we have routes to parse
-        // impode current uri for control
-        $uri = trim(implode('/', self::$uri_array), "/");
-
-        // first, check if current raw uri look exactly to one route
-        if(isset($routes[$uri])){
-            debug::log('Routed url '.$routes[$uri]);
-            
-            self::$controller = $routes[$uri][CONTROLLER];
-            self::$action = $routes[$uri][ACTION];
-            return;
-        }
-
-        // second, check each routes
-        foreach ($routes as $route => $val){
-
-            // don't parse config routes
-            if($route == '404') continue;
-
-            // for each route, replace the :any, :alpha and :num by regex for control
-            // check if asked route have argument name for action
-            $parsedRoute = preg_replace('#\[([a-zA-Z_-]+)\]:(any|num|alpha)#', '(?<$1>:$2)', $route);
-
-            $search = array(':any',':num',':alpha');
-            $replace = array('([a-zA-Z0-9_-]+)','([0-9]+)','([a-zA-Z_-]+)');
-            $parsedRoute = str_replace($search, $replace, $parsedRoute);
-
-            // try if current uri look like the parsed route
-            if (preg_match('#^'.$parsedRoute.'$#', $uri, $array)){
-                debug::log('Routed url '.$route);
-
-                $method_args = array();
-                foreach($array as $name => $value){
-                    if(is_int($name)) continue;                                
-                    $method_args[$name] = $value;
-                }
-
-                //now, let's rock!
-                self::$controller = $routes[$route][CONTROLLER];
-                self::$action = $routes[$route][ACTION];
-                self::$options = $method_args;
-                
-                return;
-            }
-        }
-
-        // third, if no routes look like our uri, try the 404 route
-        if(isset($routes['404'])){
-            debug::log('Routed url 404 : '.$uri, true);
-
-            self::$controller = $routes['404'][CONTROLLER];
-            self::$action = $routes['404'][ACTION];
-
-            return;
+        //check if default controller/action exists
+        if(count(self::$routes['default']) != 2){
+            debug::log('Default route must be declared in '.self::get('app'), true, true);
         }
     }
     
@@ -275,9 +205,10 @@ class Shwaark{
             return;
         }
         
-        $modules = self::mergeEnvironment($modules);
+        $modulesList = self::mergeEnvironment($modules);
+        $modules = array();
         
-        foreach($modules as $moduleName){
+        foreach($modulesList as $moduleName){
             if(is_dir(MODULES.$moduleName)){
 
                 //include all nececary files
@@ -291,11 +222,13 @@ class Shwaark{
                     continue;
                 }
            
-                self::$modules[$name] = new $name();
+                $modules[$name] = new $name();
 
                 debug::log('Module loaded : '.$name);
             }
         }
+        
+        self::set('modules', $modules);
     }
     
     /**
@@ -311,38 +244,44 @@ class Shwaark{
      */
     
     private static function render(){
+        $_currentApp = APPS.self::get('app');
+        $_currentController = self::get('controller');
+        $_currentAction = self::get('action');
+        $_currentOptions = self::get('options') ? self::get('options') : array();
+        $_currentModules = self::get('modules') ? self::get('modules') : array();
+        
         // include the asked controller            
-        debug::log('Asked controller and action : '.self::$controller.'->'.self::$action);            
+        debug::log('Asked controller and action : '.$_currentController.'->'.$_currentAction);            
 
-        if(!is_file(APPS.self::$app.'controllers/'.self::$controller.'.php')){
-            debug::log('Controller file '.self::$controller.' does not exists on '.APPS.self::$app.'controllers/', true, true);
+        if(!is_file($_currentApp.'controllers/'.$_currentController.'.php')){
+            debug::log('Controller file '.$_currentController.' does not exists on '.$_currentApp.'controllers/', true, true);
         }
 
-        include(APPS.self::$app.'controllers/'.self::$controller.'.php');
+        include($_currentApp.'controllers/'.$_currentController.'.php');
             
         
         // create the asked controller
-        $controller = ucfirst(self::$controller);
+        $controller = ucfirst($_currentController);
         
         if(!class_exists($controller)){
-            debug::log('Controller class '.$controller.' is not declared on '.APPS.self::$app.'controllers/'.self::$controller.'.php', true, true);
+            debug::log('Controller class '.$controller.' is not declared on '.$_currentApp.'controllers/'.$_currentController.'.php', true, true);
         }
         
         $theApp = new $controller();
         
-        if(count(self::$modules) > 0){
-            foreach(self::$modules as $name => $object){
+        if(count($_currentModules) > 0){
+            foreach($_currentModules as $name => $object){
                 $theApp->{$name} = $object;
             }
         }
         
-        if(method_exists($theApp, 'before'.ucfirst(self::$action)))
-            self::lauchAction($theApp, 'before'.ucfirst(self::$action), self::$options);
+        if(method_exists($theApp, 'before'.ucfirst($_currentAction)))
+            self::lauchAction($theApp, 'before'.ucfirst($_currentAction), $_currentOptions);
         
-        self::lauchAction($theApp, self::$action, self::$options);
+        self::lauchAction($theApp, $_currentAction, $_currentOptions);
         
-        if(method_exists($theApp, 'after'.ucfirst(self::$action)))
-            self::lauchAction($theApp, 'after'.ucfirst(self::$action),self:: $options);
+        if(method_exists($theApp, 'after'.ucfirst($_currentAction)))
+            self::lauchAction($theApp, 'after'.ucfirst($_currentAction), $_currentOptions);
 
         // check if we our app need to be rendered
         if($theApp->hasLayout()){
@@ -384,12 +323,12 @@ class Shwaark{
     private static function checkFile($file){
         $return = null;
         
-        if(is_file($file)){
+        if(is_file(TOP.$file)){
             $return = array($file, null);
         }
         
-        if(is_file(APPS.self::$app.$file)){
-            $return = array(APPS.self::$app.$file, APPS.self::$app);
+        if(is_file(APPS.self::get('app').$file)){
+            $return = array(APPS.self::get('app').$file, APPS.self::get('app'));
         }
         
         return is_null($return) ? false : $return;
@@ -420,5 +359,13 @@ class Shwaark{
         }
         
         return $returnArray;
+    }
+    
+    public static function set($name, $value){
+        self::$infos[$name] = $value;
+    }
+    
+    public static function get($name){      
+        return isset(self::$infos[$name]) ? self::$infos[$name]  : false;
     }
 }

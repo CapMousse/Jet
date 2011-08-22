@@ -22,19 +22,18 @@
 *   @version 1.3
 */
 
+ob_start('ob_gzhandler');
+session_start();
+
 // load the debug class, used to log all events
-require(SYSPATH.'debug.class.php');
+require(SYSPATH.'debug.php');
 
 // load framework user config file
-require('config/config.php');
+require(TOP.'config/config.php');
+
 
 debug::$start = microtime();
 debug::log('Init framework');
-
-ob_start('ob_gzhandler');
-
-
-session_start();
 
 /***********************************************/
 /**** Include class framework and init them ****/
@@ -42,29 +41,30 @@ session_start();
 
 // load the KORE KLASS
 debug::log('Load core');
-require(SYSPATH.'core.class.php');
+require(SYSPATH.'core.php');
 Shwaark::$environment = $environment;
 Shwaark::$config = Shwaark::mergeEnvironment($config);
 
-debug::$log_all = isset(Shwaark::$config['log_all']) ? Shwaark::$config['log_all'] : false;
-define('STATICS', Shwaark::$config['statics']);
-//create the Static constant, for statics files
+$doc_root = explode('/', $_SERVER['DOCUMENT_ROOT']);
+$web_dir = explode('/', WEB_DIR);
+$web_root = "/".implode('/' , array_diff($web_dir, $doc_root))."/";
+Shwaark::set('web_url', $web_root);
 
-// Get current environment config
+debug::$log_all = isset(Shwaark::$config['log_all']) ? Shwaark::$config['log_all'] : false;
 
 // load the abstract controler class, used to be extend by user controller
 debug::log('Load controller');
-require(SYSPATH.'controller.class.php');
+require(SYSPATH.'controller.php');
 
 // load the view controler class used by templates
 debug::log('Load view');
-require(SYSPATH.'view.class.php');
+require(SYSPATH.'view.php');
 
 // don't necesary load orm class if no sql needed
 if(Shwaark::$config['sql']){
     debug::log('Load model');
-    require(SYSPATH.'idiorm.class.php');
-    require(SYSPATH.'paris.class.php');
+    require(SYSPATH.'idiorm.php');
+    require(SYSPATH.'paris.php');
     ORM::configure('mysql:host='.Shwaark::$config['host'].';dbname='.Shwaark::$config['base']);
     ORM::configure('username', Shwaark::$config['log']);
     ORM::configure('password', Shwaark::$config['pass']);
@@ -72,8 +72,13 @@ if(Shwaark::$config['sql']){
 
 if(Shwaark::$config['cache']){
     debug::log('Load cache');
-    require(SYSPATH.'cache.class.php');
+    require(SYSPATH.'cache.php');
 }
+
+debug::log('Load router');
+require(SYSPATH.'router.php');
+
+
 
 /*
      _      ______ _______ _____   _____   ____   _____ _  __

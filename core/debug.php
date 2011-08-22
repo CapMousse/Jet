@@ -39,15 +39,16 @@ class debug{
      */   
     public static function log($data, $important = false, $crash = false){
         $bk = debug_backtrace();
+
+        foreach(debug_backtrace() as $file){
+            if(isset($file['class']) && $file['class'] != "debug"){
+                break;
+            }
+        }
         
-        $caller = (isset($bk[1]['class']) && $bk[1]['class'] === "Controller") ?
-            substr($bk[1]['file'], strrpos($bk[1]['file'], "/") + 1) : 
-            substr($bk[0]['file'], strrpos($bk[0]['file'], "/") + 1) ;
+        $caller = substr($file['file'], strrpos($file['file'], "/") + 1);
         
-        $line = (isset($bk[1]['class']) && $bk[1]['class'] === "Controller") ? 
-            $bk[1]['line'] : $bk[0]['line'];
-        
-        $line = $bk[1]['line'];
+        $line = $file['line'];
         $time = microtime() - self::$start;
         $data = "{$data} <em>{$caller} at line {$line} ({$time})</em>";
         

@@ -6,6 +6,7 @@
 # @link     https://github.com/CapMousse/ShwaarkFramework
 # @version  0.3
 
+Options +FollowSymLinks +ExecCGI
 
 ###############################################################
 ###############################################################

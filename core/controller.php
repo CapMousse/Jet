@@ -56,13 +56,14 @@ abstract class Controller{
      * @param    array    $options    data used by the view
      * @return   void 
      */   
-    protected function loadView($file, $options = null){
+    protected function loadView($file, $options = null){        
+        $_currentApp = APPS.Shwaark::get('app');
         //Control if options is defined, if yes, construct all var used in templates
         if(is_array($options))
-            foreach($options as $name => $value){ $$name = $value; }
+            foreach($options as $name => $value){ ${$name} = $value; }
 
-        if(is_file(APPS.Shwaark::$app.'views/'.$file.'.php')){
-            $file = APPS.Shwaark::$app.'views/'.$file.'.php';
+        if(is_file($_currentApp.'views/'.$file.'.php')){
+            $file = $_currentApp.'views/'.$file.'.php';
         }else if(is_file(VIEWS.$file.'.php')){            
             $file = VIEWS.$file.'.php';
         }else{
@@ -86,15 +87,16 @@ abstract class Controller{
      * @return   false/Model Name/Factory model 
      */   
     protected function loadModel($file, $factoring = true){
-
+        $_currentApp = APPS.Shwaark::get('app');
+        
         //Control if model file exists
         if(!isset($this->models[$file])){
-            if(!is_file(APPS.Shwaark::$app.'models/'.$file.'.php')){
+            if(!is_file($_currentApp.'models/'.$file.'.php')){
                 trigger_error("The asked model <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />");
                 return false;
             }
 
-            include(APPS.Shwaark::$app.'models/'.$file.'.php');
+            include($_currentApp.'models/'.$file.'.php');
             $file = ucfirst($file);      
             $this->models[$file] = $file;   
         }
@@ -119,12 +121,14 @@ abstract class Controller{
      * @return   false/object
      */   
     protected function loadController($file){
-        if(!is_file(APPS.Shwaark::$app.'controllers/'.$file.'.php')){
+        $_currentApp = APPS.Shwaark::get('app');
+        
+        if(!is_file($_currentApp.'controllers/'.$file.'.php')){
             trigger_error("The asked controller <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />");
             return false;
         }
 
-        include(APPS.Shwaark::$app.'controllers/'.$file.'.php');
+        include($_currentApp.'controllers/'.$file.'.php');
 
         debug::log('Controller loaded : '.$file);
 

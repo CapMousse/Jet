@@ -26,10 +26,10 @@ $config['dev']  = array(
     'cache'     => false,
     'cache_dir' => 'cache/',
 
-    // where are your statics files
-    'statics'   => 'http://your.static.domain/dir/',
+    // where is your web dir
+    'web_dir'   => 'http://your.static.domain/dir/',
 
     // active the debug mode
-    'show_debug_log'    =>  true,
-    'log_all'           => true
+    'show_debug_log'    => false,
+    'log_all'           => false
 );
