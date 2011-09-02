@@ -45,11 +45,6 @@ require(SYSPATH.'core.php');
 Shwaark::$environment = $environment;
 Shwaark::$config = Shwaark::mergeEnvironment($config);
 
-$doc_root = explode('/', $_SERVER['DOCUMENT_ROOT']);
-$web_dir = explode('/', WEB_DIR);
-$web_root = "/".implode('/' , array_diff($web_dir, $doc_root))."/";
-Shwaark::set('web_url', $web_root);
-
 debug::$log_all = isset(Shwaark::$config['log_all']) ? Shwaark::$config['log_all'] : false;
 
 // load the abstract controler class, used to be extend by user controller

@@ -39,6 +39,13 @@ class Shwaark{
      * @return   void 
      */
     public static function run(){
+        
+        $doc_root = explode('/', $_SERVER['DOCUMENT_ROOT']);
+        $web_dir = explode('/', WEB_DIR);
+        $diff_dir = array_diff($web_dir, $doc_root);
+        $web_root = ((count($diff_dir) > 0) ? "/" : "").implode('/' , $diff_dir)."/";
+        self::set('web_url', $web_root);
+        
         /**********************/
         /**** Parse routes ****/
         /**********************/
