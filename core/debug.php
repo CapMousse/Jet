@@ -39,18 +39,17 @@ class debug{
      */   
     public static function log($data, $important = false, $crash = false){
         $bk = debug_backtrace();
-
-        foreach(debug_backtrace() as $file){
-            if(isset($file['class']) && $file['class'] != "debug"){
-                break;
-            }
+        
+        if(strpos($bk[0]['file'], 'controller.php') !== FALSE){
+            $file = $bk[1];
+        }else{
+            $file = $bk[0];
         }
         
         $caller = substr($file['file'], strrpos($file['file'], "/") + 1);
-        
         $line = $file['line'];
         $time = microtime() - self::$start;
-        $data = "{$data} <em>{$caller} at line {$line} ({$time})</em>";
+        $data = array($data, $caller, $line, $time);
         
         self::$markers[] = array(
             $important,
@@ -58,11 +57,11 @@ class debug{
         );
 
         if($important){
-            error_log($data);
+            error_log($data[0]." ".$data[1]." ".$data[2]." (".$data[3].")");
         }
         
         if($crash){
-            exit("<html><body><h1>Error detected, please alert the administrator</h1><hr><p>{$data}</p></body></html>");
+            exit("<html><body><h1>Error detected, please alert the administrator</h1><hr><p>".$data[0]." <em>line ".$data[2]."</em>  file <strong>".$data[1]." </strong> (".$data[3].")</p></body></html>");
         }
     }
 
@@ -75,17 +74,19 @@ class debug{
      * @return   void 
      */
     public static function displayLog(){
-        echo '<h1>DEBUG</h1><ul>';
+        echo '<div id="debugButton" style="background: black; color: white; cursor: pointer; padding: 2px 5px; font: 12px arial; position: fixed; top: 0px; left: 0px">Show debug log</div>';
+        echo '<div id="debugBar" style="display: none; position: fixed; top: 18px; left: 0px; background: #eee; border: 1px solid #666; padding: 5px; max-height: 300px; overflow: auto;">';
         foreach(self::$markers as $marker){
             if(!$marker[0] && !self::$log_all){
                 continue;
             }
+            
+            $data = $marker[1];
 
-            echo '<li>';
-            print_r($marker[1]);
-            echo '</li>';
+            echo $data[0]." <em>line ".$data[2]."</em>  file <strong>".$data[1]." </strong> (".$data[3].")<br />";
         }
-        echo '</ul>';
+        echo '</div>';
+        echo '<script>var a = document.getElementById("debugBar"), b = document.getElementById("debugButton"); b.onclick = function(e){ if(a.style.display == "none") a.style.display = "block"; else a.style.display = "none"; }</script>';
     }
 }
 ?>
