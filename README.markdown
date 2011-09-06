@@ -1,8 +1,7 @@
-ShwaarkFramework
+Jet
 ================
 
 A lightweight, easy modifiable and fast PHP framework with MVC.
-
 Tested on PHP 5.2+, PHP 5.3+
 
 Features
@@ -14,15 +13,6 @@ Features
 * Personnal routes support
 * Highly modifiable
 * Light and fast
-
-Changelog
----------
-
-###v0.3
-* Add : each app have now a config directory with requires, modules and routes files. App modules/requires replace the root modules/requires. (like symfony) 
-* Add : A environment 'all' appear and be apply on all asked environment
-* Add : A module exemple
-* Change : Crash log more informative
 
 First time here!
 ----------------

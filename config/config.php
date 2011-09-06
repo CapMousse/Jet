@@ -1,12 +1,12 @@
 <?php
 /**
-*	ShwaarkFramework
+*	Jet
 *	A lightweigth and fast framework for developper who don't need hundred of files
 * 	
-*	@package SwhaarkFramework
+*	@package Jet
 *	@author  Jérémy Barbe
 *	@license BSD
-*	@link 	 https://github.com/CapMousse/ShwaarkFramework
+*	@link 	 https://github.com/CapMousse/Jet
 *	@version 1.1
 */
 
@@ -20,7 +20,7 @@ $config['dev']  = array(
     'host'      => 'localhost',
     'log'       => 'root',
     'pass'      => 'root',
-    'base'      => 'shwaarkframework',
+    'base'      => 'Jet',
 
     // activate caching
     'cache'     => false,

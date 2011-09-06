@@ -1,23 +1,23 @@
 <?php
 /**
-*   ShwaarkFramework
+*   Jet
 *   A lightweigth and fast framework for developper who don't need hundred of files
 *    
 *   @package SwhaarkFramework
 *   @author  Jérémy Barbe
 *   @license BSD
-*   @link     https://github.com/CapMousse/ShwaarkFramework
-*   @version 0.3
+*   @link     https://github.com/CapMousse/Jet
+*   @version 1
 */
 
 /**
 *   Form validator
 *   Don't waste time on small things
 *    
-*   @package SwhaarkFramework
+*   @package Jet
 *   @author  Jérémy Barbe
 *   @license BSD
-*   @link     https://github.com/CapMousse/ShwaarkFramework
+*   @link     https://github.com/CapMousse/Jet
 *   @version 1
 */
 

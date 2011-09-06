@@ -1,25 +1,25 @@
 <?php
 
 /**
-*   ShwaarkFramework
+*   Jet
 *   A lightweigth and fast framework for developper who don't need hundred of files
 *    
-*   @package SwhaarkFramework
+*   @package Jet
 *   @author  Jérémy Barbe
 *   @license BSD
-*   @link     https://github.com/CapMousse/ShwaarkFramework
-*   @version 0.3
+*   @link     https://github.com/CapMousse/Jet
+*   @version 1
 */
 
 /**
 *   Controller abstract class
 *   the controller model
 *    
-*   @package SwhaarkFramework
+*   @package Jet
 *   @author  Jérémy Barbe
 *   @license BSD
-*   @link     https://github.com/CapMousse/ShwaarkFramework
-*   @version 1.3
+*   @link     https://github.com/CapMousse/Jet
+*   @version 1
 */
 abstract class Controller{
     public 
