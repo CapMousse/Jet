@@ -30,6 +30,6 @@ $config['dev']  = array(
     'web_dir'   => 'http://your.static.domain/dir/',
 
     // active the debug mode
-    'show_debug_log'    => false,
-    'log_all'           => false
+    'show_debug_log'    => true,
+    'log_all'           => true
 );

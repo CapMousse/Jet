@@ -74,8 +74,8 @@ class debug{
      * @return   void 
      */
     public static function displayLog(){
-        echo '<div id="debugButton" style="background: black; color: white; cursor: pointer; padding: 2px 5px; font: 12px arial; position: fixed; top: 0px; left: 0px">Show debug log</div>';
-        echo '<div id="debugBar" style="display: none; position: fixed; top: 18px; left: 0px; background: #eee; border: 1px solid #666; padding: 5px; max-height: 300px; overflow: auto;">';
+        echo '<div id="debugButton" style="background: black; color: white; cursor: pointer; padding: 2px 5px; font: 12px arial; position: fixed; top: 0px; right: 0px">Show debug log</div>';
+        echo '<div id="debugBar" style="display: none; position: fixed; top: 18px; right: 0px; background: #eee; border: 1px solid #666; padding: 5px; max-height: 300px; overflow: auto;">';
         foreach(self::$markers as $marker){
             if(!$marker[0] && !self::$log_all){
                 continue;

@@ -22,7 +22,8 @@
 */
 
 $routes['all'] = array(
-    'default' => array('index', 'congrats')
+    'default' => array('index', 'congrats'),
+    'contact' => array('index', 'contactForm')
 );
 
 $routes['dev'] = array(

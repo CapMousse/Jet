@@ -78,7 +78,7 @@ class Cache{
             'time' => time() + $time * 60 * 1000 
         );
 
-        $data_cache = serialize($data_cache);
+        $data_cache = str_replace("\n", "", serialize($data_cache));
 
         if(!file_put_contents($this->cache_path.$cache, $data_cache) || $this->emulate)
             return false;

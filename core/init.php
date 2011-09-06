@@ -57,7 +57,7 @@ require(SYSPATH.'view.php');
 
 // don't necesary load orm class if no sql needed
 if(Shwaark::$config['sql']){
-    debug::log('Load model');
+    debug::log('Load ORM');
     require(SYSPATH.'idiorm.php');
     require(SYSPATH.'paris.php');
     ORM::configure('mysql:host='.Shwaark::$config['host'].';dbname='.Shwaark::$config['base']);
@@ -73,6 +73,8 @@ if(Shwaark::$config['cache']){
 debug::log('Load router');
 require(SYSPATH.'router.php');
 
+debug::log('Load form validation');
+require(SYSPATH.'validation.php');
 
 
 /*
