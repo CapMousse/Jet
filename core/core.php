@@ -40,14 +40,8 @@ class Jet{
      */
     public static function run(){
         
-        $server['PHP_SELF'] = substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/') + 1);
-        if(($left = strpos($server['PHP_SELF'], 'index.php')) === 0) {
-            $server['URL'] = $server['PHP_SELF'];
-        }else{
-            $server['URL'] = substr($server['PHP_SELF'], 0, $left);
-        }
-        
-        self::set('web_url', $server['URL']);
+        #set the root url to easy access, thanks to Taluu
+        self::set('web_url', substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/') + 1));
         
         /**********************/
         /**** Parse routes ****/
