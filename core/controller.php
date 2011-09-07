@@ -39,7 +39,7 @@ abstract class Controller{
     public function __construct(){
         debug::log('Layout set to : '.$this->template);
 
-        if(Shwaark::$config['cache'])
+        if(Jet::$config['cache'])
             $this->cache = new Cache();
 
         //enable view model for template control
@@ -57,7 +57,7 @@ abstract class Controller{
      * @return   void 
      */   
     protected function loadView($file, $options = null){        
-        $_currentApp = APPS.Shwaark::get('app');
+        $_currentApp = APPS.Jet::get('app');
         //Control if options is defined, if yes, construct all var used in templates
         if(is_array($options))
             foreach($options as $name => $value){ ${$name} = $value; }
@@ -87,7 +87,7 @@ abstract class Controller{
      * @return   false/Model Name/Factory model 
      */   
     protected function loadModel($file, $factoring = true){
-        $_currentApp = APPS.Shwaark::get('app');
+        $_currentApp = APPS.Jet::get('app');
         
         //Control if model file exists
         if(!isset($this->models[$file])){
@@ -121,7 +121,7 @@ abstract class Controller{
      * @return   false/object
      */   
     protected function loadController($file){
-        $_currentApp = APPS.Shwaark::get('app');
+        $_currentApp = APPS.Jet::get('app');
         
         if(!is_file($_currentApp.'controllers/'.$file.'.php')){
             trigger_error("The asked controller <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />");

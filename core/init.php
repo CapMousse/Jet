@@ -42,10 +42,10 @@ debug::log('Init framework');
 // load the KORE KLASS
 debug::log('Load core');
 require(SYSPATH.'core.php');
-Shwaark::$environment = $environment;
-Shwaark::$config = Shwaark::mergeEnvironment($config);
+Jet::$environment = $environment;
+Jet::$config = Jet::mergeEnvironment($config);
 
-debug::$log_all = isset(Shwaark::$config['log_all']) ? Shwaark::$config['log_all'] : false;
+debug::$log_all = isset(Jet::$config['log_all']) ? Jet::$config['log_all'] : false;
 
 // load the abstract controler class, used to be extend by user controller
 debug::log('Load controller');
@@ -56,16 +56,16 @@ debug::log('Load view');
 require(SYSPATH.'view.php');
 
 // don't necesary load orm class if no sql needed
-if(Shwaark::$config['sql']){
+if(Jet::$config['sql']){
     debug::log('Load ORM');
     require(SYSPATH.'idiorm.php');
     require(SYSPATH.'paris.php');
-    ORM::configure('mysql:host='.Shwaark::$config['host'].';dbname='.Shwaark::$config['base']);
-    ORM::configure('username', Shwaark::$config['log']);
-    ORM::configure('password', Shwaark::$config['pass']);
+    ORM::configure('mysql:host='.Jet::$config['host'].';dbname='.Jet::$config['base']);
+    ORM::configure('username', Jet::$config['log']);
+    ORM::configure('password', Jet::$config['pass']);
 }
 
-if(Shwaark::$config['cache']){
+if(Jet::$config['cache']){
     debug::log('Load cache');
     require(SYSPATH.'cache.php');
 }
@@ -86,10 +86,10 @@ require(SYSPATH.'validation.php');
     |______|______|  |_| |_____/  |_|  \_\\____/ \_____|_|\_\
  
  */
-Shwaark::run();
+Jet::run();
 
 
-if(Shwaark::$config['show_debug_log']){
+if(Jet::$config['show_debug_log']){
     debug::displayLog();
 }
 

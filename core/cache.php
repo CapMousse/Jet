@@ -31,7 +31,7 @@ class Cache{
 
     public function __construct(){
         if(is_null($this->cache_path)){
-            $this->cache_path = is_null(Shwaark::$config['cache_dir']) ? BASEPATH.'cache/' : Shwaark::$config['cache_dir']; 
+            $this->cache_path = is_null(Jet::$config['cache_dir']) ? BASEPATH.'cache/' : Jet::$config['cache_dir']; 
         }
     }
 

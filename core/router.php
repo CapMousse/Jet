@@ -35,7 +35,7 @@ class Router{
         );
 
     public static function launch(){
-        self::$routes = Shwaark::$routes;
+        self::$routes = Jet::$routes;
         self::$default = self::$routes['default'];
         unset(self::$routes['default']);
         
@@ -63,21 +63,21 @@ class Router{
     
     protected static function match(){
         
-        Shwaark::set('controller', self::$default[CONTROLLER]);
-        Shwaark::set('action', self::$default[ACTION]);
+        Jet::set('controller', self::$default[CONTROLLER]);
+        Jet::set('action', self::$default[ACTION]);
         
-        if(!is_array(Shwaark::$uri_array) || count(Shwaark::$uri_array) == 0){
+        if(!is_array(Jet::$uri_array) || count(Jet::$uri_array) == 0){
             debug::log("Empty user uri, render default");
             return;
         }
         
-        $uri = trim(implode('/', Shwaark::$uri_array), "/");
+        $uri = trim(implode('/', Jet::$uri_array), "/");
         
         if(isset(self::$routes[$uri])){
             debug::log('Routed url '.$uri);
             
-            Shwaark::set('controller', self::$routes[$uri][CONTROLLER]);
-            Shwaark::set('action', self::$routes[$uri][ACTION]);
+            Jet::set('controller', self::$routes[$uri][CONTROLLER]);
+            Jet::set('action', self::$routes[$uri][ACTION]);
             return;
         }
         
@@ -91,9 +91,9 @@ class Router{
                 }
 
                 //now, let's rock!
-                Shwaark::set('controller', self::$parsed_routes[$route][CONTROLLER]);
-                Shwaark::set('action', self::$parsed_routes[$route][ACTION]);
-                Shwaark::set('options', $method_args);
+                Jet::set('controller', self::$parsed_routes[$route][CONTROLLER]);
+                Jet::set('action', self::$parsed_routes[$route][ACTION]);
+                Jet::set('options', $method_args);
                 
                 return;
             }
@@ -103,8 +103,8 @@ class Router{
         
         if(count(self::$error) ==  0) return;
         
-        Shwaark::set('controller', self::$error[CONTROLLER]);
-        Shwaark::set('action', self::$error[ACTION]);
+        Jet::set('controller', self::$error[CONTROLLER]);
+        Jet::set('action', self::$error[ACTION]);
 
         return;
     }

@@ -11,7 +11,7 @@
 */
 
 /**
-*   Shwaark class
+*   Jet class
 *   The main core class
 *    
 *   @package Jet
@@ -20,7 +20,7 @@
 *   @link     https://github.com/CapMousse/Jet
 *   @version 1
 */
-class Shwaark{
+class Jet{
     public static
         $config = array(),
         $environment,
