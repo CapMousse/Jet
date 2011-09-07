@@ -40,11 +40,14 @@ class Jet{
      */
     public static function run(){
         
-        $doc_root = explode('/', $_SERVER['DOCUMENT_ROOT']);
-        $web_dir = explode('/', WEB_DIR);
-        $diff_dir = array_diff($web_dir, $doc_root);
-        $web_root = ((count($diff_dir) > 0) ? "/" : "").implode('/' , $diff_dir)."/";
-        self::set('web_url', $web_root);
+        $server['PHP_SELF'] = substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/') + 1);
+        if(($left = strpos($server['PHP_SELF'], 'index.php')) === 0) {
+            $server['URL'] = $server['PHP_SELF'];
+        }else{
+            $server['URL'] = substr($server['PHP_SELF'], 0, $left);
+        }
+        
+        self::set('web_url', $server['URL']);
         
         /**********************/
         /**** Parse routes ****/
