@@ -52,7 +52,7 @@ class Cache{
         $data_cache = file_get_contents($this->cache_path.$cache);
         $data_cache = unserialize($data_cache);
 
-        if(time() > $data_cache['time'] + $this->cache_time || $this->emulate){
+        if(time() > $this->cache_time || $this->emulate){
             @unlink($this->cache_path.$cache);
             return false;
         }
@@ -72,10 +72,10 @@ class Cache{
      * @param   int      $time   add time to cached data
      * @return   bool
      */
-    public function set($cache, $data, $time = 0){
+    public function set($cache, $data){
         $data_cache = array(
             'cache' => $data,
-            'time' => time() + $time * 60 * 1000 
+            'time' => time() + $this->cache_time
         );
 
         $data_cache = str_replace("\n", "", serialize($data_cache));
