@@ -29,7 +29,7 @@ session_start();
 require(SYSPATH.'debug.php');
 
 // load framework user config file
-require(TOP.'config/config.php');
+require(CONFIG.'config.php');
 
 
 debug::$start = microtime();
@@ -41,7 +41,7 @@ debug::log('Init framework');
 
 // load the KORE KLASS
 debug::log('Load core');
-require(SYSPATH.'core.php');
+require(SYSPATH.'jet.php');
 Jet::$environment = $environment;
 Jet::$config = Jet::mergeEnvironment($config);
 

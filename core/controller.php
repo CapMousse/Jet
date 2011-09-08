@@ -29,8 +29,7 @@ abstract class Controller{
 
     private 
         $view,
-        $models = array(),
-        $debug = null;
+        $models = array();
 
     protected
         $cache;
@@ -67,7 +66,7 @@ abstract class Controller{
         }else if(is_file(VIEWS.$file.'.php')){            
             $file = VIEWS.$file.'.php';
         }else{
-            debug::log("The asked view <b>$file</b> doesn't exists in <b>".get_class($this).".php</b>");
+            debug::log("The asked view <b>$file</b> doesn't exists in <b>".get_class($this).".php</b>", true, true);
             return;
         }
         
@@ -92,7 +91,7 @@ abstract class Controller{
         //Control if model file exists
         if(!isset($this->models[$file])){
             if(!is_file($_currentApp.'models/'.$file.'.php')){
-                trigger_error("The asked model <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />");
+                trigger_error("The asked model <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />", true, true);
                 return false;
             }
 
@@ -124,7 +123,7 @@ abstract class Controller{
         $_currentApp = APPS.Jet::get('app');
         
         if(!is_file($_currentApp.'controllers/'.$file.'.php')){
-            trigger_error("The asked controller <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />");
+            trigger_error("The asked controller <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />", true, true);
             return false;
         }
 

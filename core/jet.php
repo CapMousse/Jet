@@ -95,12 +95,12 @@ class Jet{
         $routes = array();
         $uri = self::$uri_array;
         
-        if(!is_file(TOP.'config/routes.php')){
+        if(!is_file(CONFIG.'routes.php')){
             debug::log('Missing routes.php files to define apps in config/ dir', true, true);
             return;
         }
 
-        include(TOP.'config/routes.php');
+        include(CONFIG.'routes.php');
         
         if(!is_array($routes) || count($routes) == 0){
             debug::log('Missing routes array in config/routes.php', true, true);
@@ -318,7 +318,7 @@ class Jet{
     /**
      * checkFile
      * 
-     * check if file exist in root dir or app dir
+     * check if file exist in project dir or app dir
      * 
      * @access  private static function
      * @param   $file   string  file to be check
@@ -327,7 +327,7 @@ class Jet{
     private static function checkFile($file){
         $return = null;
         
-        if(is_file(TOP.$file)){
+        if(is_file(PROJECT.$file)){
             $return = array($file, null);
         }
         

@@ -29,9 +29,11 @@ define('TOP', WEB_DIR.'/../');
 
 //Define important dir
 define('SYSPATH', TOP.'core/');
-define('APPS', TOP.'apps/');
-define('MODULES', TOP.'modules/');
-define('VIEWS', TOP.'views/');
+define('PROJECT', TOP.'project/');
+define('CONFIG', PROJECT.'config/');
+define('APPS', PROJECT.'apps/');
+define('MODULES', PROJECT.'modules/');
+define('VIEWS', PROJECT.'views/');
 
 define('CONTROLLER', 0);
 define('ACTION', 1);
