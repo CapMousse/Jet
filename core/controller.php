@@ -60,17 +60,15 @@ abstract class Controller{
         //Control if options is defined, if yes, construct all var used in templates
         if(is_array($options))
             foreach($options as $name => $value){ ${$name} = $value; }
-
-        if(is_file($_currentApp.'views/'.$file.'.php')){
-            $file = $_currentApp.'views/'.$file.'.php';
-        }else if(is_file(VIEWS.$file.'.php')){            
-            $file = VIEWS.$file.'.php';
-        }else{
+        
+        $appFile = @include($_currentApp.'views/'.$file.'.php');
+        $globalFile = @include(PROJECT.'views/'.$file.'.php');
+        
+        if(!($appFile || $globalFile)){
             debug::log("The asked view <b>$file</b> doesn't exists in <b>".get_class($this).".php</b>", true, true);
             return;
         }
         
-        include($file);
         debug::log('Loaded view : '.$file);
     }
 
