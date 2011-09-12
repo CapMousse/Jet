@@ -145,6 +145,7 @@ class OrmWrapper {
     }
     
     private function parseTableName(){
+        $this->class = get_called_class();
         $this->tableName = strtolower(preg_replace('/(?!^)[[:upper:]]/', '_\0', $this->class));
     }
     

@@ -101,7 +101,7 @@ abstract class Controller{
         Debug::log('Model loaded : '.$file);
 
         //return the intentiate model
-        return new $_className($_className);
+        return new $_className();
     }
 
     /**
