@@ -4,6 +4,9 @@ class Index extends Controller{
     
     public function congrats(){
         $this->loadView('partial/home');
+        $model = $this->loadModel('essaiModel');
+        
+        var_dump($model->findOne(1));
     }
     
     public function contactForm(){

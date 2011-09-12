@@ -22,22 +22,32 @@
 *   @version 1
 */
 
-//Define the root path for the route rewrite module
+//Define important constant
 define('SELF', pathinfo(__FILE__, PATHINFO_BASENAME));
-define('WEB_DIR', str_replace('\\', '/', dirname(__FILE__)));
-define('TOP', WEB_DIR.'/../');
-
-//Define important dir
-define('SYSPATH', TOP.'core/');
-define('PROJECT', TOP.'project/');
-define('CONFIG', PROJECT.'config/');
-define('APPS', PROJECT.'apps/');
-define('MODULES', PROJECT.'modules/');
-define('VIEWS', PROJECT.'views/');
-
+define('SYSPATH', __DIR__.'/../core/');
+define('PROJECT', __DIR__.'/../project/');
 define('CONTROLLER', 0);
 define('ACTION', 1);
 
 //let's rock!
-require(SYSPATH.'init.php');
+try{
+    ob_start('ob_gzhandler');
+    
+
+/*
+     _      ______ _______ _____   _____   ____   _____ _  __
+    | |    |  ____|__   __/ ____| |  __ \ / __ \ / ____| |/ /
+    | |    | |__     | | | (___   | |__) | |  | | |    | ' / 
+    | |    |  __|    | |  \___ \  |  _  /| |  | | |    |  <  
+    | |____| |____   | |  ____) | | | \ \| |__| | |____| . \ 
+    |______|______|  |_| |_____/  |_|  \_\\____/ \_____|_|\_\
+ 
+ */
+    
+    require(SYSPATH.'init.php');
+    
+    ob_end_flush();
+}catch(Exception $e){
+    echo $e;
+}
 ?>

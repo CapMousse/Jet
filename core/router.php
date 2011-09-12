@@ -67,14 +67,14 @@ class Router{
         Jet::set('action', self::$default[ACTION]);
         
         if(!is_array(Jet::$uri_array) || count(Jet::$uri_array) == 0){
-            debug::log("Empty user uri, render default");
+            Debug::log("Empty user uri, render default");
             return;
         }
         
         $uri = trim(implode('/', Jet::$uri_array), "/");
         
         if(isset(self::$routes[$uri])){
-            debug::log('Routed url '.$uri);
+            Debug::log('Routed url '.$uri);
             
             Jet::set('controller', self::$routes[$uri][CONTROLLER]);
             Jet::set('action', self::$routes[$uri][ACTION]);
@@ -83,7 +83,7 @@ class Router{
         
         foreach (self::$parsed_routes as $route => $val){
             if (preg_match('#'.$route.'$#', $uri, $array)){
-                debug::log('Routed url '.$route);
+                Debug::log('Routed url '.$route);
 
                 $method_args = array();
                 foreach($array as $name => $value){
@@ -99,7 +99,7 @@ class Router{
             }
         }
         // third, if no routes look like our uri, try the 404 route
-        debug::log('Routed url 404 : '.$uri, true);
+        Debug::log('Routed url 404 : '.$uri, true);
         
         if(count(self::$error) ==  0) return;
         

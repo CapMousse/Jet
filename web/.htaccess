@@ -18,6 +18,12 @@ Options +FollowSymLinks +ExecCGI
 #SetEnv PHP_VER 5
 #SetEnv MAGIC_QUOTES 0
 
+###############################################################
+###############################################################
+#### for people who use OVH, just uncomment thoses 3 lines ####
+###############################################################
+###############################################################
+
 RewriteEngine on
 
 <IfModule mod_setenvif.c>
@@ -41,24 +47,13 @@ RewriteEngine on
 </IfModule>
 
 <IfModule mod_expires.c>
-    Header set Cache-Control "public"
     ExpiresActive on
 
     # Perhaps better to whitelist expires rules? Perhaps.
-    ExpiresDefault                          "access plus 1 month"
+    ExpiresDefault                          "access plus 1 hour"
 
     # cache.manifest needs re-requests in FF 3.6 (thx Remy ~Introducing HTML5)
     ExpiresByType text/cache-manifest       "access plus 0 seconds"
-
-    # your document html
-    ExpiresByType text/html                 "access plus 0 seconds"
-
-    ExpiresByType text/xml                  "access plus 0 seconds"
-    ExpiresByType application/xml           "access plus 0 seconds"
-    ExpiresByType application/json          "access plus 0 seconds"
-
-    # rss feed
-    ExpiresByType application/rss+xml       "access plus 1 hour"
 
     # favicon (cannot be renamed)
     ExpiresByType image/vnd.microsoft.icon  "access plus 1 week"
@@ -84,6 +79,10 @@ RewriteEngine on
     ExpiresByType text/css                  "access plus 1 month"
     ExpiresByType application/javascript    "access plus 1 month"
     ExpiresByType text/javascript           "access plus 1 month"
+    
+    <IfModule mod_headers.c>
+        Header append Cache-Control "private"
+    </IfModule>
 </IfModule>
 
 

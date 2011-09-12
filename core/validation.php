@@ -40,7 +40,7 @@ class Validation{
      * @access   public
      * @return   voir
      */   
-    public function __construct($returnType = 'array'){
+    function __construct($returnType = 'array'){
         $this->returnType = $returnType;
     }
     

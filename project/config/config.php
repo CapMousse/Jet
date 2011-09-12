@@ -16,7 +16,9 @@ $environment = 'dev';
 
 // set the database option
 $config['dev']  = array(
-    'sql' 		=> true,
+    
+    //ORM config (if no db used, don't create/call model)
+    'type'      => 'mysql',
     'host'      => 'localhost',
     'log'       => 'root',
     'pass'      => 'root',
@@ -26,10 +28,10 @@ $config['dev']  = array(
     'cache'     => false,
     'cache_dir' => 'cache/',
 
-    // where is your web dir
-    'web_dir'   => 'http://your.static.domain/dir/',
+    // where are hosted your static files (not obligatory)
+    'static'   => 'http://your.static.domain/dir/',
 
-    // active the debug mode
-    'show_debug_log'    => true,
+    // active the Debug mode
+    'show_Debug_log'    => true,
     'log_all'           => true
 );

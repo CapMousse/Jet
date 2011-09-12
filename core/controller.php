@@ -35,8 +35,8 @@ abstract class Controller{
         $cache;
 
     //if you want to made your own __construct, add parent::__construct() to your code
-    public function __construct(){
-        debug::log('Layout set to : '.$this->template);
+    function __construct(){
+        Debug::log('Layout set to : '.$this->template);
 
         if(Jet::$config['cache'])
             $this->cache = new Cache();
@@ -56,7 +56,7 @@ abstract class Controller{
      * @return   void 
      */   
     protected function loadView($file, $options = null){        
-        $_currentApp = APPS.Jet::get('app');
+        $_currentApp = PROJECT.'apps/'.Jet::get('app');
         //Control if options is defined, if yes, construct all var used in templates
         if(is_array($options))
             foreach($options as $name => $value){ ${$name} = $value; }
@@ -65,11 +65,11 @@ abstract class Controller{
         $globalFile = @include(PROJECT.'views/'.$file.'.php');
         
         if(!($appFile || $globalFile)){
-            debug::log("The asked view <b>$file</b> doesn't exists in <b>".get_class($this).".php</b>", true, true);
+            Debug::log("The asked view <b>$file</b> doesn't exists in <b>".get_class($this).".php</b>", true, true);
             return;
         }
         
-        debug::log('Loaded view : '.$file);
+        Debug::log('Loaded view : '.$file);
     }
 
     /**
@@ -84,27 +84,24 @@ abstract class Controller{
      * @return   false/Model Name/Factory model 
      */   
     protected function loadModel($file, $factoring = true){
-        $_currentApp = APPS.Jet::get('app');
+        $_currentApp = PROJECT.'apps/'.Jet::get('app');
+        $_className = ucfirst($file);
         
         //Control if model file exists
-        if(!isset($this->models[$file])){
+        if(!isset($this->models[$_className])){
             if(!is_file($_currentApp.'models/'.$file.'.php')){
                 trigger_error("The asked model <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />", true, true);
                 return false;
             }
 
             include($_currentApp.'models/'.$file.'.php');
-            $file = ucfirst($file);      
-            $this->models[$file] = $file;   
+            $this->models[$_className] = true;   
         }
-
-        debug::log('Model loaded : '.$file);
+        
+        Debug::log('Model loaded : '.$file);
 
         //return the intentiate model
-        if($factoring)
-            return Model::factory($this->models[$file]);
-        else
-            return $this->models[$file];
+        return new $_className($_className);
     }
 
     /**
@@ -118,7 +115,7 @@ abstract class Controller{
      * @return   false/object
      */   
     protected function loadController($file){
-        $_currentApp = APPS.Jet::get('app');
+        $_currentApp = PROJECT.'apps/'.Jet::get('app');
         
         if(!is_file($_currentApp.'controllers/'.$file.'.php')){
             trigger_error("The asked controller <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />", true, true);
@@ -127,7 +124,7 @@ abstract class Controller{
 
         include($_currentApp.'controllers/'.$file.'.php');
 
-        debug::log('Controller loaded : '.$file);
+        Debug::log('Controller loaded : '.$file);
 
         $controller = ucfirst($file);
         return new $controller();
@@ -147,16 +144,16 @@ abstract class Controller{
         if(!is_string($name)) return;
         
         //check if module and module conf exists
-        if(is_dir(MODULES.$name)){
+        if(is_dir(PROJECT.'modules/'.$name)){
 
             //include all nececary files
-            foreach(glob(MODULES.$name.'/*.php') as $file)
+            foreach(glob(PROJECT.'modules/'.$name.'/*.php') as $file)
                 include($file);
             
             $name = ucfirst($name);
             $this->{$name} = new $name();
 
-            debug::log('Module loaded : '.$name);
+            Debug::log('Module loaded : '.$name);
         }
     }
 

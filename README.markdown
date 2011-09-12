@@ -9,10 +9,16 @@ Jet is currently in development, beta will come very soon
 Features
 --------
 
-* PHP 5.3 support
-* MVC support in OOP
+Jet provide lot of tools for your project :
+
+* Easy configuration
+* MVC structure
+* Routing
+  * Route parsing
+  * Route segment and named segment (article/[id]:num/:slug)
+  * Custom *Not Found* page
 * Modules support
-* Personnal routes support
+* External lib support (templating class like Twig, custom lib...)
 * Highly modifiable
 * Light and fast
 

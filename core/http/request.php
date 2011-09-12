@@ -21,7 +21,7 @@
 *   @version 1
 */
 
-class Cache{
+class HttpRequest{
     public
         $emulate = false, // if you want to develop with an always empty cache
         $cache_time = 350000; // default to 5 minutes
