@@ -21,12 +21,8 @@ $config['dev']  = array(
     'type'      => 'mysql',
     'host'      => 'localhost',
     'log'       => 'root',
-    'pass'      => 'root',
+    'pass'      => '',
     'base'      => 'Jet',
-
-    // activate caching
-    'cache'     => false,
-    'cache_dir' => 'cache/',
 
     // where are hosted your static files (not obligatory)
     'static'   => 'http://your.static.domain/dir/',

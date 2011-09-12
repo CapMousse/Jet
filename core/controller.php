@@ -31,15 +31,9 @@ abstract class Controller{
         $view,
         $models = array();
 
-    protected
-        $cache;
-
     //if you want to made your own __construct, add parent::__construct() to your code
     function __construct(){
         Debug::log('Layout set to : '.$this->template);
-
-        if(Jet::$config['cache'])
-            $this->cache = new Cache();
 
         //enable view model for template control
         $this->view = new View();
