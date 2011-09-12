@@ -73,7 +73,11 @@ class OrmWrapper {
     }
     
     private function buildJoin(){
+        if(!count($this->_join)){
+            return;
+        }
         
+        return join(" ", $this->_join);
     }
     
     private function buildWhere(){
@@ -96,7 +100,7 @@ class OrmWrapper {
             return;
         }
         
-        return "GROUP BY ".joind(",", $this->_groupBy);
+        return "GROUP BY ".join(",", $this->_groupBy);
     }
     
     private function buildOrderBy(){
@@ -104,7 +108,7 @@ class OrmWrapper {
             return;
         }
         
-        return "ORBER BY ".joind(",", $this->_orderBy).' '.$this->_order;
+        return "ORBER BY ".join(",", $this->_orderBy).' '.$this->_order;
     }
     
     private function buildLimit(){
