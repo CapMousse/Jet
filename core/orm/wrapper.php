@@ -4,7 +4,9 @@ class OrmWrapper {
     public 
         $class,
         $connector,
-        $tableName = "",
+        $tableName = "";
+    
+    public static
         $log = array();
     
     private
@@ -28,8 +30,13 @@ class OrmWrapper {
     }
     
     private function run(){
+        if(!$this->connector){
+            return false;
+        }
+        
         $query = $this->buildSelect();
-        Debug::log($query);
+        self::$log[] = $query;
+        
         $query = $this->connector->prepare($query);
         $query->execute($this->_values);
         

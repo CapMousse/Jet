@@ -24,23 +24,12 @@ class OrmConnector {
         }
     }
     
-    /**
-     * Set the PDO object used by Idiorm to communicate with the database.
-     * This is public in case the ORM should use a ready-instantiated
-     * PDO object as its database connection.
-     */
     public function setConnector($connector) {
         self::$connector = $connector;
-        $this->setQuoteSeparator();
+        self::setQuoteSeparator();
     }
 
-    /**
-     * Detect and initialise the character used to quote identifiers
-     * (table names, column names etc). If this has been specified
-     * manually using ORM::configure('identifier_quote_character', 'some-char'),
-     * this will do nothing.
-     */
-    public function setQuoteSeparator() {
+    public static function setQuoteSeparator() {
         if (is_null(self::$quoteSeparator)) {
             switch(self::$connector->getAttribute(PDO::ATTR_DRIVER_NAME)) {
                 case 'pgsql':
