@@ -1,0 +1,3 @@
+[submodule "core/orm"]
+	path = core/orm
+	url = git@github.com:CapMousse/Jet-ORM.git
