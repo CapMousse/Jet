@@ -384,7 +384,7 @@ class OrmWrapper {
      * 
      * @param   string $type        type of join
      * @param   string $table       table to be join
-     * @param   strong $condition   condition of the join
+     * @param   array/string $condition   condition of the join
      * @return  current model
      */
     public function join($type, $table, $conditions){
@@ -392,8 +392,6 @@ class OrmWrapper {
         $table = $this->setQuotes($table);
         
         $this->_join[] = "$type $table ON ".$this->listJoinCondition($conditions);
-        
-        var_dump($this->_join);
         
         return $this;
     }
@@ -406,35 +404,10 @@ class OrmWrapper {
      */
     private function listJoinCondition($conditions){
         if(is_array($conditions)){
-            if(count($conditions) != 3 || is_array($conditions[3])){
-                foreach($conditions as &$condition){
-                    $condition = $this->makeJoinCondition($condition);
-                }
-                
-                return join(" AND ", $conditions);
-            }
-        
-            return $this->makeJoinCondition($conditions);
+            return join(" AND ", $conditions);
         }
         
         return $conditions;
-    }
-    
-    /*
-     * makeJoinCondition
-     * 
-     * @param   array    $condition
-     * @return  string
-     */
-    private function makeJoinCondition($condition){
-        if(is_array($condition)){
-            list($firstCol, $operator, $secondCol) = $condition;
-            $firstCol = $this->setQuotes($firstCol);
-            $seconCol = $this->setQuotes($secondCol);
-            return "$firstCol $operator $seconCol";
-        }
-        
-        return $condition;
     }
     
     /*
