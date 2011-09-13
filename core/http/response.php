@@ -99,7 +99,7 @@ class HttpResponse{
      */
     public function setHeader($header, $value = null, $erase = false, $code = 200){
         if(!isset($this->header[$header]) || $erase){
-            $this->header[$header] = new Header($header, $value, $erase, $code);
+            $this->header[$header] = new HttpHeader($header, $value, $erase, $code);
         }
         
         return $this->header[$header];

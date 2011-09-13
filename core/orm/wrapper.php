@@ -7,7 +7,7 @@ class OrmWrapper {
         $tableName = "";
     
     private
-        $_id = "id",
+        $_idSelector = "id",
         $_isNew = false,
         $_distinct = false,
         $_resultSelector = array("*"),
@@ -233,7 +233,7 @@ class OrmWrapper {
             $listFields[] = "$field = ?";
         }
         
-        $query = "UPDATE ".$this->setQuotes($this->tableName)." SET ".join(", ", $listFields)." WHERE ".$this->_id." = ?";
+        $query = "UPDATE ".$this->setQuotes($this->tableName)." SET ".join(", ", $listFields)." WHERE ".$this->_idSelector." = ?";
         
         return $query;
     }
@@ -326,7 +326,7 @@ class OrmWrapper {
      * @return  int
      */
     public function getId(){
-        return $this->__get($this->_id);
+        return $this->__get($this->_idSelector);
     }
     
     /*
@@ -357,7 +357,7 @@ class OrmWrapper {
             $value = array($value);
         }
         
-        $column = $this->setQuotes($columns);
+        $column = $this->setQuotes($column);
         
         $this->_where[] = array(" $column $statement ? ", $value);
         
@@ -373,7 +373,7 @@ class OrmWrapper {
      * @return  current model
      */
     public function whereId($id){
-        $this->where($this->_id, "=", $id);
+        $this->where($this->_idSelector, "=", $id);
         return $this;
     }
     
@@ -387,20 +387,54 @@ class OrmWrapper {
      * @param   strong $condition   condition of the join
      * @return  current model
      */
-    public function join($type, $table, $condition){
-        $type = trime("$type JOIN");
+    public function join($type, $table, $conditions){
+        $type = trim(strtoupper($type)." JOIN");
         $table = $this->setQuotes($table);
         
+        $this->_join[] = "$type $table ON ".$this->listJoinCondition($conditions);
+        
+        var_dump($this->_join);
+        
+        return $this;
+    }
+    
+    /*
+     * listJoinCondition
+     * 
+     * @param   array/string    $conditions
+     * @return  string
+     */
+    private function listJoinCondition($conditions){
+        if(is_array($conditions)){
+            if(count($conditions) != 3 || is_array($conditions[3])){
+                foreach($conditions as &$condition){
+                    $condition = $this->makeJoinCondition($condition);
+                }
+                
+                return join(" AND ", $conditions);
+            }
+        
+            return $this->makeJoinCondition($conditions);
+        }
+        
+        return $conditions;
+    }
+    
+    /*
+     * makeJoinCondition
+     * 
+     * @param   array    $condition
+     * @return  string
+     */
+    private function makeJoinCondition($condition){
         if(is_array($condition)){
             list($firstCol, $operator, $secondCol) = $condition;
             $firstCol = $this->setQuotes($firstCol);
             $seconCol = $this->setQuotes($secondCol);
-            $condition = "$firstCol $operator $seconCol";
+            return "$firstCol $operator $seconCol";
         }
         
-        $this->_join[] = "$type $table ON $condition";
-        
-        return $this;
+        return $condition;
     }
     
     /*
@@ -532,7 +566,7 @@ class OrmWrapper {
             $this->_isNew = false;
             
             if(is_null($this->getId())){
-                $this->__set[$this->_id] = $this->connector->lastInsertId();
+                $this->__set[$this->_idSelector] = $this->connector->lastInsertId();
             }
         }
         
@@ -547,7 +581,7 @@ class OrmWrapper {
      * @return  boolean
      */
     public function delete(){
-        $query = "DELETE FROM ".$this->setQuotes($this->tableName)." WHERE ".$this->setQuotes($this->_id)." = ?";
+        $query = "DELETE FROM ".$this->setQuotes($this->tableName)." WHERE ".$this->setQuotes($this->_idSelector)." = ?";
         $params = array($this->getId());
         
         Debug::log($query);
