@@ -12,7 +12,6 @@ class OrmWrapper {
         $_distinct = false,
         $_resultSelector = array("*"),
         $_data = array(),
-        $_dirty = array(),
         $_values = array(),
         $_join = array(),
         $_where = array(),
@@ -213,8 +212,8 @@ class OrmWrapper {
      * @return string
      */
     private function buildInsert(){
-        $listFields = array_map(array($this, "setQuotes"), array_keys($this->_dirty));
-        $values = $this->createPlaceholder($this->_dirty);
+        $listFields = array_map(array($this, "setQuotes"), array_keys($this->_data));
+        $values = $this->createPlaceholder($this->_data);
         $query = "INSERT INTO ".$this->setQuotes($this->tableName)." (".join(", ", $listFields).") VALUES ($values)";
         
         return $query;
@@ -230,7 +229,7 @@ class OrmWrapper {
     private function buildUpdate(){
         $listFields = array();
         
-        foreach($this->_dirty as $field => $value){
+        foreach($this->_data as $field => $value){
             $listFields[] = "$field = ?";
         }
         
@@ -249,7 +248,7 @@ class OrmWrapper {
      */
     private function hydrate($data = array()){
         $this->_data = $data;
-        $this->_dirty = $data;
+        $this->_data = $data;
         return $this;
     }
     
@@ -507,7 +506,7 @@ class OrmWrapper {
         }
         
         $query = "";
-        $values = array_values($this->_dirty);
+        $values = array_values($this->_data);
         
         if($this->_isNew){
             $query = $this->buildInsert();
@@ -570,7 +569,6 @@ class OrmWrapper {
     
     public function __set($name, $value){
         $this->_data[$name] = $value;
-        $this->_dirty[$name] = $value;
     }
     
     /*public function __isset(){
