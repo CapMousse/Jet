@@ -5,8 +5,17 @@ class Index extends Controller{
     public function congrats(){
         $this->loadView('partial/home');
         $model = $this->loadModel('essaiModel');
+        $test = $model->findOne(2);
         
-        var_dump($model->findOne(1));
+        //$test->description = "Test d'édition";
+        //$test->save();
+        
+        /*$test2 = $model->create(array(
+            'nom' => 'autre test',
+            'description' => 'test'
+        ));
+        
+        $test2->save();*/
     }
     
     public function contactForm(){

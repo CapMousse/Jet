@@ -21,7 +21,7 @@ $config['dev']  = array(
     'type'      => 'mysql',
     'host'      => 'localhost',
     'log'       => 'root',
-    'pass'      => '',
+    'pass'      => 'root',
     'base'      => 'Jet',
 
     // where are hosted your static files (not obligatory)
