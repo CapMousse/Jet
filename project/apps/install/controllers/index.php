@@ -5,7 +5,7 @@ class Index extends Controller{
     public function congrats(){
         $this->loadView('partial/home');
         $model = $this->loadModel('essaiModel');
-        $test = $model->join('left', 'a', array('b = c' , 'd = e' ))->findOne(2);
+        $test = $model->findMany();
         
         //$test->description = "Test d'édition";
         //$test->save();

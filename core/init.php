@@ -59,6 +59,7 @@ Debug::log('Init framework');
 // init the KORE KLASS
 Jet::$environment = $environment;
 Jet::$config = Jet::mergeEnvironment($config);
+OrmConnector::$config = Jet::$config;
 Debug::$log_all = isset(Jet::$config['log_all']) ? Jet::$config['log_all'] : false;
 
 Jet::run();
