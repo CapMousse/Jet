@@ -25,6 +25,7 @@ abstract class Controller{
     public 
         $view,
         $response,
+        $request,
         $status = HttpResponse::OK,
         $models = array();
 
@@ -32,6 +33,7 @@ abstract class Controller{
     function __construct(){
         $this->view = new Jet::$config['template']();
         $this->response = new HttpResponse($this->status);
+        $this->request = new HttpRequest();
     }
 
     /**
