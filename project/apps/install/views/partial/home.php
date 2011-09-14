@@ -1,3 +1,3 @@
-<?php $this->view->beginBlock('content'); ?>
+<?php $this->beginBlock('content'); ?>
 <p>Vous avez installé Jet avec succès!</p>
-<?php $this->view->endBlock(); ?>
+<?php $this->endBlock(); ?>

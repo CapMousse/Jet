@@ -23,54 +23,21 @@
 */
 abstract class Controller{
     public 
-        $layout = true,
-        $template = "index",
-        $title = "";
-
-    private 
         $view,
+        $response,
+        $status = HttpResponse::OK,
         $models = array();
 
     //if you want to made your own __construct, add parent::__construct() to your code
     function __construct(){
-        Debug::log('Layout set to : '.$this->template);
-
-        //enable view model for template control
-        $this->view = new View();
-    }
-
-    /**
-     * loadView
-     *
-     * load the asked view. Important for display data... or not
-     *
-     * @access   protected
-     * @param   string   $file      name of the view file
-     * @param    array    $options    data used by the view
-     * @return   void 
-     */   
-    protected function loadView($file, $options = null){        
-        $_currentApp = PROJECT.'apps/'.Jet::get('app');
-        //Control if options is defined, if yes, construct all var used in templates
-        if(is_array($options))
-            foreach($options as $name => $value){ ${$name} = $value; }
-        
-        $appFile = @include($_currentApp.'views/'.$file.'.php');
-        $globalFile = @include(PROJECT.'views/'.$file.'.php');
-        
-        if(!($appFile || $globalFile)){
-            Debug::log("The asked view <b>$file</b> doesn't exists in <b>".get_class($this).".php</b>", true, true);
-            return;
-        }
-        
-        Debug::log('Loaded view : '.$file);
+        $this->view = new Jet::$config['template']();
+        $this->response = new HttpResponse($this->status);
     }
 
     /**
      * loadModel
      *
      * load the asked model. 
-     * Y U R SO AHRD WIHT MEH?
      *
      * @access   protected
      * @param   string   $file      name of the model file
@@ -101,8 +68,10 @@ abstract class Controller{
     /**
      * loadController
      *
-     * load the asked model. 
-     * We need to go deeper.
+     * load the asked controller. 
+     * 
+     * SUP DAWG. I HEARD YOU LOVE CONTROLLER, SO WE PUT A CONTROLLER IN YOUR CONTROLLER SO YOU CAN CONTROL WHILE YOU CONTROL
+     * 
      *
      * @access   protected
      * @param   string   $file      name of the controller file
@@ -112,7 +81,7 @@ abstract class Controller{
         $_currentApp = PROJECT.'apps/'.Jet::get('app');
         
         if(!is_file($_currentApp.'controllers/'.$file.'.php')){
-            trigger_error("The asked controller <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />", true, true);
+            Debug::log("The asked controller <b>$file</b> doesn't exists in <b>".get_called_class()."</b> <br />", true, true);
             return false;
         }
 
@@ -149,38 +118,6 @@ abstract class Controller{
 
             Debug::log('Module loaded : '.$name);
         }
-    }
-
-    /**
-     * setLayout
-     *
-     * @access   public
-     * @param   bool    $bool
-     * @return   void
-     */   
-    public function setLayout($bool){
-        $this->layout = $bool;
-    }
-
-    /**
-     * hasLayout
-     *
-     * @access   public
-     * @return   bool
-     */
-    public function hasLayout(){
-        return $this->layout;
-    }
-
-    /**
-     * render
-     *
-     * @access   public
-     * @return   void
-     */
-    public function render(){
-        if($this->hasLayout())
-            $this->loadView($this->template);
     }
 }
 ?>

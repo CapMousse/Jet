@@ -31,9 +31,6 @@ define('ACTION', 1);
 
 //let's rock!
 try{
-    ob_start('ob_gzhandler');
-    
-
 /*
      _      ______ _______ _____   _____   ____   _____ _  __
     | |    |  ____|__   __/ ____| |  __ \ / __ \ / ____| |/ /
@@ -45,8 +42,6 @@ try{
  */
     
     require(SYSPATH.'init.php');
-    
-    ob_end_flush();
 }catch(Exception $e){
     echo $e;
 }

@@ -3,9 +3,11 @@ class Index extends Controller{
     public $title = 'Congratulation';
     
     public function congrats(){
-        $this->loadView('partial/home');
-        $model = $this->loadModel('essaiModel');
-        $test = $model->findMany();
+        
+        $this->view->setLayout('index');
+        $this->view->load('partial/home');
+        //$model = $this->loadModel('essaiModel');
+        //$test = $model->findMany();
         
         //$test->description = "Test d'édition";
         //$test->save();
@@ -19,7 +21,7 @@ class Index extends Controller{
     }
     
     public function contactForm(){
-        $this->loadView('partial/form');
+        $this->view->loadView('partial/form');
         
         if(Validation::method() == 'POST'){
             $val = new Validation('JSON');
