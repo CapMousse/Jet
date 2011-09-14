@@ -25,7 +25,7 @@ class HttpResponse{
     const
         OK = 200,
         ERROR = 500,
-        NOT_FOUND = 400;
+        NOT_FOUND = 404;
     
     protected 
         $httpVersion = "1.1",
