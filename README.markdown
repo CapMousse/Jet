@@ -19,6 +19,7 @@ Jet provide lot of tools for your project :
   * Custom *Not Found* page
 * Modules support
 * External lib support (templating class like Twig, custom lib...)
+* Light ORM
 * Highly modifiable
 * Light and fast
 
@@ -42,5 +43,5 @@ Released under a [BSD license](http://en.wikipedia.org/wiki/BSD_licenses)
 Credits
 -------
 
-* Build with [Paris](http://github.com/j4mie/paris) & [Idiorm](http://github.com/j4mie/idiorm) from j4mie for ORM support
-* Thanks to [Taluu](https://github.com/Taluu) for help for the routing solution
+* ORM inspired of [Paris](http://github.com/j4mie/paris) & [Idiorm](http://github.com/j4mie/idiorm) from j4mie
+* Thanks to [Taluu](https://github.com/Taluu) for help and support
