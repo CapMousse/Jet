@@ -22,6 +22,10 @@
 */
 
 class HttpResponse{
+    const
+        OK = 200,
+        ERROR = 500,
+        NOT_FOUND = 400;
     
     protected 
         $httpVersion = "1.1",
@@ -113,7 +117,7 @@ class HttpResponse{
             Debug::log("Headers already send", true, true);
         }
         
-        foreach($this->header as $header){
+        foreach($this->headers as $header){
             $header->send();
         }
     }

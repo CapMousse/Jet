@@ -21,8 +21,7 @@
 *   @version    1
 */
 
-class HttpHeader{
-    
+class HttpHeader{            
     protected 
         $header = null,
         $value = null,

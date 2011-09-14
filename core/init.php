@@ -47,10 +47,10 @@ spl_autoload_register(function($class){
 });
 
 
-// load framework user config file
-require(PROJECT.'config/config.php');
-
 Debug::log('Init framework');
+
+// load framework user config file
+require(PROJECT.'config/global.php');
 
 /***********************************************/
 /**** Include class framework and init them ****/
@@ -59,7 +59,12 @@ Debug::log('Init framework');
 // init the KORE KLASS
 Jet::$environment = $environment;
 Jet::$config = Jet::mergeEnvironment($config);
-OrmConnector::$config = Jet::$config;
+
+// init orm
+require(PROJECT.'config/orm.php');
+OrmConnector::$config = Jet::mergeEnvironment($orm);
+
+
 Debug::$log_all = isset(Jet::$config['log_all']) ? Jet::$config['log_all'] : false;
 
 Jet::run();

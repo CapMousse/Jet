@@ -290,10 +290,14 @@ class Jet{
         
         
         // check if our app need to be rendered
-        if($theApp->hasLayout()){
-            Debug::log('Render layout');
-            $theApp->render();
-        }
+        Debug::log('Render layout');
+        $body = $theApp->view->render();
+        
+        Debug::log('Render Http Response');
+        $theApp->response->setBody($body);
+        
+        echo $theApp->response->send();
+        
     }
     
     /**
