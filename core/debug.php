@@ -78,9 +78,9 @@ class Debug{
      * @access   static method
      * @return   void 
      */
-    public static function displayLog(){
-        echo '<div id="DebugButton" style="background: black; color: white; cursor: pointer; padding: 2px 5px; font: 12px arial; position: fixed; top: 0px; right: 0px">Show Debug log</div>';
-        echo '<div id="DebugBar" style="display: none; position: fixed; top: 18px; right: 0px; background: #eee; border: 1px solid #666; padding: 5px; max-height: 300px; overflow: auto;">';
+    public static function getLog(){
+        $return = '<div id="DebugButton" style="background: black; color: white; cursor: pointer; padding: 2px 5px; font: 12px arial; position: fixed; top: 0px; right: 0px">Show Debug log</div>';
+        $return .='<div id="DebugBar" style="display: none; position: fixed; top: 18px; right: 0px; background: #eee; border: 1px solid #666; padding: 5px; max-height: 300px; overflow: auto;">';
         foreach(self::$markers as $marker){
             if(!$marker[0] && !self::$log_all){
                 continue;
@@ -88,10 +88,12 @@ class Debug{
             
             $data = $marker[1];
 
-            echo $data[0]." <em>line ".$data[2]."</em>  file <strong>".$data[1]." </strong> (".$data[3].")<br />";
+            $return .= $data[0]." <em>line ".$data[2]."</em>  file <strong>".$data[1]." </strong> (".$data[3].")<br />";
         }
-        echo '</div>';
-        echo '<script>var a = document.getElementById("DebugBar"), b = document.getElementById("DebugButton"); b.onclick = function(e){ if(a.style.display == "none") a.style.display = "block"; else a.style.display = "none"; }</script>';
+        $return .= '</div>';
+        $return .= '<script>var a = document.getElementById("DebugBar"), b = document.getElementById("DebugButton"); b.onclick = function(e){ if(a.style.display == "none") a.style.display = "block"; else a.style.display = "none"; }</script>';
+        
+        return $return;
     }
 }
 ?>

@@ -294,10 +294,14 @@ class Jet{
         $body = $theApp->view->render();
         
         Debug::log('Render Http Response');
+        
+        if(Jet::$config['show_Debug_log']){
+            $body .= Debug::getLog();
+        }
+        
         $theApp->response->setBody($body);
         
-        echo $theApp->response->send();
-        
+        echo $theApp->response->send();       
     }
     
     /**

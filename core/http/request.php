@@ -22,19 +22,23 @@
 */
 
 class HttpRequest{
-    public function get($key){
+    public static function get($key){
         return isset($_GET[$key]) ? $_GET[$key] : false;
     }
     
-    public function post($key){
+    public static function post($key){
         return isset($_POST[$key]) ? $_POST[$key] : false;
     }
     
-    public function cookie($key){
+    public static function cookie($key){
         return isset($_COOKIE[$key]) ? $_COOKIE[$key] : false;
     }
     
-    public function getQueryString() {
+    public static function server($key){
+        return isset($_SERVER[$key]) ? $_SERVER[$key] : false;
+    }
+    
+    public static function getQueryString() {
         return $_SERVER['QUERY_STRING'];
     }
 }

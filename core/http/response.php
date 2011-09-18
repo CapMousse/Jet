@@ -30,9 +30,11 @@ class HttpResponse{
     protected 
         $httpVersion = "1.1",
         $status = 200,
+        $halt = false,
         $body = "",
         $length = 0,
-        $headers = array();          
+        $headers = array(),
+        $cacheControl = array();          
     
     protected static 
         $statusList = array(
@@ -102,24 +104,54 @@ class HttpResponse{
      * 
      */
     public function setHeader($header, $value = null, $erase = false, $code = 200){
-        if(!isset($this->header[$header]) || $erase){
-            $this->header[$header] = new HttpHeader($header, $value, $erase, $code);
+        if(isset($this->headers[$header]) && !$erase){
+            $this->headers[$header]->addValue($value);
+        }else{
+            $this->headers[$header] = new HttpHeader($header, $value, $erase, $code);
         }
         
-        return $this->header[$header];
+        return $this->headers[$header];
+    }
+    
+    /*
+     * removeHeader
+     * 
+     * @param   string  $header     the header to be removed
+     * 
+     * @return  void
+     * 
+     */
+    public function removeHeader($header){
+        if(isset($this->headers[$header])){
+            unset($this->headers[$header]);
+        }
     }
     
     /*
      * Send all headers
      */
-    public function sendHeaders(){
-        if(headers_sent()){
-            Debug::log("Headers already send", true, true);
-        }
-        
+    public function sendHeaders(){        
         foreach($this->headers as $header){
             $header->send();
         }
+        
+        if(count($this->cacheControl) !== 0){
+            $this->sendCacheControlHeader();
+        }
+    }
+    
+    /*
+     * Send the Cache-Control header
+     */
+    private function sendCacheControlHeader(){
+        $cacheControlHeader = array();
+        foreach($this->cacheControl as $name => $value){
+            $cacheControlHeader[] = is_null($value) ? $name : $name."=".$value;
+        }
+        
+        $cacheControlHeader[] = "cache";
+        $cacheControlHeader = new HttpHeader("Cache-Control", join(", ", $cacheControlHeader), true);
+        $cacheControlHeader->send();
     }
     
     /*
@@ -133,8 +165,27 @@ class HttpResponse{
         }
         
         $header = sprintf('%1$s %2$d %3$s', $_SERVER['SERVER_PROTOCOL'], $status, self::$statusList[$status]);
-        $this->setHeader($header, null, true, $status);
+        $this->setHeader($header);
         $this->status = $status;
+    }
+    
+    /*
+     * Set a value for the Cache-Control header
+     * 
+     * @param   string  $name   name of the property
+     * @param   string  $value  value of the property
+     */
+    public function addCacheControl($name, $value = null){
+        $this->cacheControl[$name] = $value;
+    }
+    
+    /*
+     * Remove a value from the Cache-Control header
+     * 
+     * @param   string  $name   name of the property
+     */
+    public function removeCacheControl($name){
+        unset($this->cacheControl[$name]);
     }
     
     /*
@@ -153,15 +204,196 @@ class HttpResponse{
      */
     public function setBody($value){
         $this->body = $value;
+        $this->setHeader("Content-Length", strlen($this->body), true);
+    }
+    
+    /*
+     * setPublic
+     * 
+     * Set the http cache public
+     * 
+     * @return  void
+     */
+    public function setPublic($set = true){
+        if($set){
+            $this->addCacheControl('public');
+        }else{
+            $this->removeCacheControl('public');
+        }
+    }
+    
+    /*
+     * setPrivate
+     * 
+     * Set the http cache private
+     * 
+     * @return  void
+     */
+    public function setPrivate($set = true){
+        if($set){
+            $this->addCacheControl('private');
+        }else{
+            $this->removeCacheControl('private');
+        }
+    }
+    
+    /*
+     * setCacheControl
+     * 
+     * Set the Cache-Control max age
+     * 
+     * @param   $maxAge   expire time in second
+     * @return  void
+     */
+    public function setMaxAge($maxAge = null){
+        if(null === $maxAge){
+            $this->removeCacheControl('max-age');
+        }else{
+            $this->addCacheControl('max-age', $maxAge);
+        }
+    }
+    
+    /*
+     * setServerMaxAge
+     * 
+     * Set the Cache-Control procy max age
+     * 
+     * @param   $maxAge   expire time in second
+     * @return  void
+     */
+    public function setServerMaxAge($maxAge){
+        if(null === $maxAge){
+            $this->removeCacheControl('s-maxage');
+        }else{
+            $this->addCacheControl('s-maxage', $maxAge);
+        }
+    }
+    
+    /*
+     * setMustRevalidate
+     * 
+     * Set the Cache-Control must revalidate
+     * 
+     * @param   bool $must  activate/disactivate
+     * @return  void
+     */
+    public function setMustRevalidate($revalidate = true){
+        if(!$revalidate){
+            $this->removeCacheControl('must-revalidate');
+        }else{
+            $this->addCacheControl('must-revalidate');
+        }
+    }
+    
+    /*
+     * setProxyRevalidate
+     * 
+     * Set the Cache-Control proxy revalidate
+     * 
+     * @param   bool $revalidate    set/unset the proxy-revalidate
+     * @return  void
+     */
+    public function setProxyRevalidate($revalidate = true){
+        if(!$revalidate){
+            $this->removeCacheControl('proxy-revalidate');
+        }else{
+            $this->addCacheControl('proxy-revalidate');
+        }
+    }
+    
+    /*
+     * setLastModified
+     * 
+     * Set the last modified date for cache
+     * 
+     * @param   int $time   timestamp
+     * @return  void
+     */
+    public function setLastModified($time = null){
+        if(null === $time){
+            $this->removeHeader("Last-Modified");
+            return;
+        }
+        
+        
+        $date = date(DATE_RFC1123, $time);
+        $this->setHeader("Last-Modified", "$date GMT");
+        
+        $lastModifiedHeader = HttpRequest::server('HTTP_IF_MODIFIED_SINCE');
+        if($time === strtotime(HttpRequest::server('HTTP_IF_MODIFIED_SINCE'))){
+            $this->halt = 304;
+            return;
+        }
+    }
+    
+    /*
+     * setEtag
+     * 
+     * Set the Etag header
+     * 
+     * @param   strin $tag   the Etag hash (must be unique)
+     * @return  void
+     */
+    public function setEtag($tag = null, $type = 'strong'){
+        if(null === $tag){
+            $this->removeHeader("Etag");
+            return;
+        }
+        
+        if(!in_array($type, array('strong', 'weak'))){
+            debug::log("Etag type atribut don't exists", true);
+            return;
+        }
+        
+        $tag = '"'.$tag.'"';
+        if($type === "weak"){
+            $tag = "W/".$tag;
+        }
+        
+        $this->setHeader("ETag", $tag);
+        
+        $etagHeader = HttpRequest::server('HTTP_IF_NONE_MATCH');
+        if($etagHeader){
+            $etags = preg_split('@\s*,\s*@', $etagHeader);
+            if (in_array($tag, $etags) || in_array('*', $etags)){
+                $this->halt = 304;
+                return;
+            }
+        }
+    }
+    
+    /*
+     * setExpire
+     * 
+     * Set the Expire header
+     * 
+     * @param   $time   expire time in second
+     * @return  void
+     */
+    public function setExpires($time = null){
+        if(null === $time){
+            $this->removeHeader("Expires");
+        }else{
+            $date = date(DATE_RFC1123, time()+$time);
+            $this->setHeader("Expires", $date, true);
+        }
     }
     
     /*
      * Send header and body to the client
+     * 
+     * @pram string $body
      */
     public function send(){
+        if($this->halt !== false){
+            $this->setStatus($this->halt);
+        }
+        
         $this->sendHeaders();
         
-        return $this->body;
+        if(false === $this->halt){
+            return $this->body;
+        }
     }
 }
 ?>

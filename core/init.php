@@ -68,7 +68,3 @@ OrmConnector::$config = Jet::mergeEnvironment($orm);
 Debug::$log_all = isset(Jet::$config['log_all']) ? Jet::$config['log_all'] : false;
 
 Jet::run();
-
-if(Jet::$config['show_Debug_log']){
-    Debug::displayLog();
-}

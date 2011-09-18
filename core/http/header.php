@@ -24,32 +24,55 @@
 class HttpHeader{            
     protected 
         $header = null,
-        $value = null,
+        $value = array(),
         $erase = false,
-        $status = 200,
         $sent = false;        
     
     /*
-     * Response constructor
+     * Header constructor
      * 
-     * @param   int $status status code to respond
+     * @param   string $header    type of header (Cache-Control, expire...)
+     * @param   string $value     value of the header
+     * @param   bool   $erase     erase header if already exists
+     * @param   int    $code      current page status
      */
-    function __construct($header, $value = null, $erase = false, $code = 200){
+    function __construct($header, $value = null, $erase = false){
         $this->header = $header;
-        $this->value = $value;
+        $this->value[$value] = 1;
         $this->erase = $erase;
-        $this->code = $code;
+       Debug::log("Set header ".$header." : ".$value);
     }
     
-   public function send(){
+    /*
+     * addValue
+     * 
+     * @param   string $value    add a value to the header
+     */
+    public function addValue($value){
+        $this->value[$value] = 1;
+    }
+    
+    /*
+     * removeValue
+     * 
+     * @param   string $value    remove a value from the header
+     */
+    public function removeValue($value){
+        unset($this->value[$value]);
+    }
+    
+    /*
+     * send
+     * 
+     * send the current header
+     */
+    public function send(){
        if($this->sent){
            return;
        }
        
-       $header = is_null($this->value) ? $this->header : $this->header." : ".$this->value;
-
-       Debug::log("Send header ".$header);
-       header($header, $this->erase, $this->status);
+       $header = count($this->value) === 0 ? $this->header : $this->header.": ".join(",", array_keys($this->value));
+       header($header, $this->erase);
        
        $this->sent = true;
    }
