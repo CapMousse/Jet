@@ -224,8 +224,20 @@ class ViewJet extends ViewBridge{
         return join(",", $return);
     }
     
-    public function __get($name){
+    public function get($name){
         return isset($this->_vars[$name]) ? $this->_vars[$name] : '';
+    }
+    
+    public function set($name, $value){
+        return $this->_vars[$name] = $value;
+    }
+    
+    public function __set($name, $value){
+        return $this->set($name, $value);
+    }
+    
+    public function __get($name){
+        return $this->get($name);
     }
 }
 ?>
