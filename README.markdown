@@ -17,6 +17,10 @@ Jet provide lot of tools for your project :
   * Route parsing
   * Route segment and named segment (article/[id]:num/:slug)
   * Custom *Not Found* page
+* HTTP Request/Response
+  * Cache-Control
+  * Etags
+  * LastModified
 * Modules support
 * External lib support (templating class like Twig, custom lib...)
 * Light ORM

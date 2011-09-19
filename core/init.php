@@ -62,8 +62,11 @@ Jet::$config = Jet::mergeEnvironment($config);
 
 // init orm
 require(PROJECT.'config/orm.php');
-OrmConnector::$config = Jet::mergeEnvironment($orm);
-
+$ormConfig = Jet::mergeEnvironment($orm);
+if(isset($ormConfig['use_db']) && $ormConfig['use_db']){
+    OrmConnector::$config = $ormConfig['use_db'];
+}
+unset($ormConfig);
 
 Debug::$log_all = isset(Jet::$config['log_all']) ? Jet::$config['log_all'] : false;
 
