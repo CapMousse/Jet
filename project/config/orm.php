@@ -11,12 +11,12 @@
 */
 
 // set the database option
+// if no db used, don't create/call model
 $orm['dev']  = array(
-    
-    //ORM config (if no db used, don't create/call model)
+    'use_db'    => true,
     'type'      => 'mysql',
     'host'      => 'localhost',
     'log'       => 'root',
-    'pass'      => 'root',
+    'pass'      => '',
     'base'      => 'Jet',
 );

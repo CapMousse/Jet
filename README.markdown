@@ -2,9 +2,7 @@ Jet
 ================
 
 A lightweight, easy modifiable and fast PHP framework with MVC.
-Tested on PHP 5.2+, PHP 5.3+
-
-Jet is currently in development, beta will come very soon
+Work on PHP5.3+
 
 Features
 --------
