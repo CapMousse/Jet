@@ -4,6 +4,8 @@ Jet
 A lightweight, easy modifiable and fast PHP framework with MVC.
 Work on PHP5.3+
 
+Now RC1. Try and report bugs !
+
 Features
 --------
 
