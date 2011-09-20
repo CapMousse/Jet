@@ -81,7 +81,7 @@ class HttpResponse{
             505 => '505 HTTP Version Not Supported'
         );
     
-    /*
+    /**
      * Response constructor
      * 
      * @param   int $status status code to respond
@@ -92,7 +92,7 @@ class HttpResponse{
         }
     }
     
-    /*
+    /**
      * Set header for client
      * 
      * @param   string  $header     the header to be send
@@ -113,7 +113,7 @@ class HttpResponse{
         return $this->headers[$header];
     }
     
-    /*
+    /**
      * removeHeader
      * 
      * @param   string  $header     the header to be removed
@@ -127,7 +127,7 @@ class HttpResponse{
         }
     }
     
-    /*
+    /**
      * Send all headers
      */
     public function sendHeaders(){        
@@ -140,7 +140,7 @@ class HttpResponse{
         }
     }
     
-    /*
+    /**
      * Send the Cache-Control header
      */
     private function sendCacheControlHeader(){
@@ -154,22 +154,7 @@ class HttpResponse{
         $cacheControlHeader->send();
     }
     
-    /*
-     * Set the current status
-     * 
-     * @param   int  $status    the status code 
-     */
-    public function setStatus($status){
-        if(!isset(self::$statusList[$status])){
-            Debug::log("Status ".$status." Unknown", true, true);
-        }
-        
-        $header = sprintf('%1$s %2$d %3$s', $_SERVER['SERVER_PROTOCOL'], $status, self::$statusList[$status]);
-        $this->setHeader($header);
-        $this->status = $status;
-    }
-    
-    /*
+    /**
      * Set a value for the Cache-Control header
      * 
      * @param   string  $name   name of the property
@@ -179,7 +164,7 @@ class HttpResponse{
         $this->cacheControl[$name] = $value;
     }
     
-    /*
+    /**
      * Remove a value from the Cache-Control header
      * 
      * @param   string  $name   name of the property
@@ -188,7 +173,21 @@ class HttpResponse{
         unset($this->cacheControl[$name]);
     }
     
-    /*
+    /**
+     * Set the current status
+     * 
+     * @param   int  $status    the status code 
+     */
+    public function setStatus($status){
+        if(array_key_exists($status, self::$statusList)) return; 
+        
+        $header = sprintf('%1$s %2$d %3$s', $_SERVER['SERVER_PROTOCOL'], $status, self::$statusList[$status]);
+        $this->setHeader($header);
+        
+        $this->status = $status;
+    }
+    
+    /**
      * Get the current status
      * 
      * @retuen  the current status code 
@@ -197,7 +196,7 @@ class HttpResponse{
         return $this->status;
     }
     
-    /*
+    /**
      * Set the response body
      * 
      * @param   string $value   the body of the response
@@ -207,7 +206,7 @@ class HttpResponse{
         $this->setHeader("Content-Length", strlen($this->body), true);
     }
     
-    /*
+    /**
      * setPublic
      * 
      * Set the http cache public
@@ -222,7 +221,7 @@ class HttpResponse{
         }
     }
     
-    /*
+    /**
      * setPrivate
      * 
      * Set the http cache private
@@ -237,7 +236,7 @@ class HttpResponse{
         }
     }
     
-    /*
+    /**
      * setCacheControl
      * 
      * Set the Cache-Control max age
@@ -253,7 +252,7 @@ class HttpResponse{
         }
     }
     
-    /*
+    /**
      * setServerMaxAge
      * 
      * Set the Cache-Control procy max age
@@ -269,7 +268,7 @@ class HttpResponse{
         }
     }
     
-    /*
+    /**
      * setMustRevalidate
      * 
      * Set the Cache-Control must revalidate
@@ -285,7 +284,7 @@ class HttpResponse{
         }
     }
     
-    /*
+    /**
      * setProxyRevalidate
      * 
      * Set the Cache-Control proxy revalidate
@@ -301,7 +300,7 @@ class HttpResponse{
         }
     }
     
-    /*
+    /**
      * setLastModified
      * 
      * Set the last modified date for cache
@@ -326,7 +325,7 @@ class HttpResponse{
         }
     }
     
-    /*
+    /**
      * setEtag
      * 
      * Set the Etag header
@@ -362,7 +361,7 @@ class HttpResponse{
         }
     }
     
-    /*
+    /**
      * setExpire
      * 
      * Set the Expire header
@@ -379,7 +378,38 @@ class HttpResponse{
         }
     }
     
-    /*
+    /**
+     * redirect
+     * 
+     * @param $address string url of redirect
+     * @param $type int type of redirect
+     * @param $time int time before redirecting
+     * @return void
+     */
+    public function redirect($address, $type = 304, $time = 0){
+        if(!array_key_exists($type, self::$statusList)){
+            return false;
+        }
+        
+        $header = "Location";
+        $value = $address;
+        
+        if(0 !== $time){
+            $header = "Refresh";
+            $value = $time . ';url=' . $address;
+        }
+        
+        $this->setStatus($type);
+        $this->setHeader($header, $value);
+        $this->sendHeaders();
+        
+        if(!$time){
+            //prevent framework from redering
+            exit();
+        }
+    }
+    
+    /**
      * Send header and body to the client
      * 
      * @pram string $body
@@ -391,7 +421,7 @@ class HttpResponse{
         
         $this->sendHeaders();
         
-        if(false === $this->halt){
+        if(304 !== $this->halt){
             return $this->body;
         }
     }
