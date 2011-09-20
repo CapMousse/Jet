@@ -16,9 +16,6 @@ $environment = 'dev';
 
 // set the database option
 $config['dev']  = array(
-    // where are hosted your static files (not obligatory)
-    'static'   => 'http://your.static.domain/dir/',
-
     // active the Debug mode
     'show_Debug_log'    => true,
     'log_all'           => true,
