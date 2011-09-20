@@ -33,8 +33,6 @@ abstract class ViewBridge{
     
     protected function _assign(){}
     
-    abstract public function bind($name, &$value);
-    
     public function load(){}
     
     final public function render(){
@@ -45,5 +43,11 @@ abstract class ViewBridge{
     abstract protected function _render();
     
     abstract public function getInfo($infos = self::INFO_ALL);
+    
+    abstract public function bind($name, &$value);
+    
+    abstract public function __get($name);
+    
+    abstract public function __set($name, $value);
 }
 ?>

@@ -30,11 +30,6 @@ class ViewJet extends ViewBridge{
         $blockName = null,
         $_vars = array();
     
-    /*
-     * @ignore
-     */
-    public function bind($name, &$value){}
-    
     /**
      * load
      *
@@ -239,5 +234,11 @@ class ViewJet extends ViewBridge{
     public function __get($name){
         return $this->get($name);
     }
+    
+
+    /*
+     * @ignore
+     */
+    public function bind($name, &$value){}
 }
 ?>
