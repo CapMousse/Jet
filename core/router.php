@@ -34,6 +34,10 @@ class Router{
             ':num'      => '[0-9]+'
         );
 
+    /**
+     * Launch the route parsing
+     * @return void
+     */
     public static function launch(){
         self::$routes = Jet::$routes;
         self::$default = self::$routes['default'];
@@ -47,7 +51,11 @@ class Router{
         self::parse();
         self::match();
     }
-    
+
+    /**
+     * Parse all routes for uri matching
+     * @return void
+     */
     protected static function parse(){
         
         # transform routes into usable routes for the router
@@ -59,8 +67,11 @@ class Router{
             self::$parsed_routes[$key] = $value;
         }
     }
-    
-    
+
+    /**
+     * Try to match the current uri with all routes
+     * @return void
+     */
     protected static function match(){
         
         Jet::set('controller', self::$default[CONTROLLER]);

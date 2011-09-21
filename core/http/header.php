@@ -28,7 +28,7 @@ class HttpHeader{
         $erase = false,
         $sent = false;        
     
-    /*
+    /**
      * Header constructor
      * 
      * @param   string $header    type of header (Cache-Control, expire...)
@@ -43,7 +43,7 @@ class HttpHeader{
        Debug::log("Set header ".$header." : ".$value);
     }
     
-    /*
+    /**
      * addValue
      * 
      * @param   string $value    add a value to the header
@@ -52,7 +52,7 @@ class HttpHeader{
         $this->value[$value] = 1;
     }
     
-    /*
+    /**
      * removeValue
      * 
      * @param   string $value    remove a value from the header
@@ -61,7 +61,7 @@ class HttpHeader{
         unset($this->value[$value]);
     }
     
-    /*
+    /**
      * send
      * 
      * send the current header

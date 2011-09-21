@@ -27,7 +27,7 @@ class HttpResponse{
         ERROR = 500,
         NOT_FOUND = 404;
     
-    protected 
+    protected
         $httpVersion = "1.1",
         $status = 200,
         $halt = false,
@@ -85,6 +85,7 @@ class HttpResponse{
      * Response constructor
      * 
      * @param   int $status status code to respond
+     * @return  void
      */
     function __construct($status = null){
         if(!is_null($status) && isset(self::$statusList[$status])){
@@ -99,9 +100,7 @@ class HttpResponse{
      * @param   string  $value      value of the header
      * @param   boolean $erase      erase header if already exists
      * @param   int     $code       the status code of the header
-     * 
      * @return  current header
-     * 
      */
     public function setHeader($header, $value = null, $erase = false, $code = 200){
         if(isset($this->headers[$header]) && !$erase){
@@ -117,9 +116,7 @@ class HttpResponse{
      * removeHeader
      * 
      * @param   string  $header     the header to be removed
-     * 
      * @return  void
-     * 
      */
     public function removeHeader($header){
         if(isset($this->headers[$header])){
@@ -129,6 +126,7 @@ class HttpResponse{
     
     /**
      * Send all headers
+     * @return  void
      */
     public function sendHeaders(){        
         foreach($this->headers as $header){
@@ -142,6 +140,7 @@ class HttpResponse{
     
     /**
      * Send the Cache-Control header
+     * @return  void
      */
     private function sendCacheControlHeader(){
         $cacheControlHeader = array();
@@ -159,6 +158,7 @@ class HttpResponse{
      * 
      * @param   string  $name   name of the property
      * @param   string  $value  value of the property
+     * @return  void
      */
     public function addCacheControl($name, $value = null){
         $this->cacheControl[$name] = $value;
@@ -168,6 +168,7 @@ class HttpResponse{
      * Remove a value from the Cache-Control header
      * 
      * @param   string  $name   name of the property
+     * @return  void
      */
     public function removeCacheControl($name){
         unset($this->cacheControl[$name]);
@@ -177,6 +178,7 @@ class HttpResponse{
      * Set the current status
      * 
      * @param   int  $status    the status code 
+     * @return  void
      */
     public function setStatus($status){
         if(array_key_exists($status, self::$statusList)) return; 
@@ -190,7 +192,7 @@ class HttpResponse{
     /**
      * Get the current status
      * 
-     * @retuen  the current status code 
+     * @return  the current status code 
      */
     public function getStatus(){
         return $this->status;
@@ -200,6 +202,7 @@ class HttpResponse{
      * Set the response body
      * 
      * @param   string $value   the body of the response
+     * @return  void
      */
     public function setBody($value){
         $this->body = $value;
@@ -388,6 +391,7 @@ class HttpResponse{
      */
     public function redirect($address, $type = 304, $time = 0){
         if(!array_key_exists($type, self::$statusList)){
+            debug::log("The asked status doesn't exists : ".$type, true);
             return false;
         }
         
@@ -403,7 +407,7 @@ class HttpResponse{
         $this->setHeader($header, $value);
         $this->sendHeaders();
         
-        if(!$time){
+        if(0 === $time){
             //prevent framework from redering
             exit();
         }
@@ -412,7 +416,8 @@ class HttpResponse{
     /**
      * Send header and body to the client
      * 
-     * @pram string $body
+     * @param string $body
+     * @return  void
      */
     public function send(){
         if($this->halt !== false){
