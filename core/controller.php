@@ -22,6 +22,7 @@
 *   @version 1
 */
 abstract class Controller{
+    
     public 
         $view,
         $response,
@@ -37,16 +38,11 @@ abstract class Controller{
     }
 
     /**
-     * loadModel
-     *
      * load the asked model. 
-     *
-     * @access   protected
-     * @param   string   $file      name of the model file
-     * @param    bool    $factoring    do your want to return a factory model? - default true
-     * @return   false/Model Name/Factory model 
+     * @param    string $model      name of the model file
+     * @return   Model/false
      */   
-    protected function loadModel($file, $factoring = true){
+    protected function loadModel($file){
         $_currentApp = PROJECT.'apps/'.Jet::get('app');
         $_className = ucfirst($file);
         
@@ -68,16 +64,10 @@ abstract class Controller{
     }
 
     /**
-     * loadController
-     *
      * load the asked controller. 
-     * 
      * SUP DAWG. I HEARD YOU LOVE CONTROLLER, SO WE PUT A CONTROLLER IN YOUR CONTROLLER SO YOU CAN CONTROL WHILE YOU CONTROL
-     * 
-     *
-     * @access   protected
-     * @param   string   $file      name of the controller file
-     * @return   false/object
+     * @param    string   $file      name of the controller file
+     * @return   Controller/false
      */   
     protected function loadController($file){
         $_currentApp = PROJECT.'apps/'.Jet::get('app');
@@ -96,13 +86,9 @@ abstract class Controller{
     }
 
     /**
-     * loadModule
-     *
-     * load the asked module with all attached files. 
-     *
-     * @access   protected
-     * @param   array/string   $names      names of all wanted modules
-     * @return   void
+     * load the asked module
+     * @param   string   $names      names of all wanted modules
+     * @return  void
      */   
     protected function loadModule($name){
         //check if we have a array of name or convert it to array

@@ -21,6 +21,7 @@ Jet provide lot of tools for your project :
   * Cache-Control
   * Etags
   * LastModified
+* RESTfull support
 * Modules support
 * External lib support (templating class like Twig, custom lib...)
 * Light ORM

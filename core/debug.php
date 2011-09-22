@@ -27,11 +27,7 @@ class Debug{
     public static $log_all;
 
     /**
-     * log
-     *
      * add a log data to the log pile
-     *
-     * @access   static method
      * @param   string   $data      data you want to log
      * @param   bool    $important  default : false, set the loged info as important
      * @param   bool    $crash      default : false, stop rendering
@@ -71,12 +67,9 @@ class Debug{
     }
 
     /**
-     * displayLog
-     *
      * show log pile
-     *
      * @access   static method
-     * @return   void 
+     * @return   string 
      */
     public static function getLog(){
         $return = '<div id="DebugButton" style="background: black; color: white; cursor: pointer; padding: 2px 5px; font: 12px arial; position: fixed; top: 0px; right: 0px">Show Debug log</div>';
