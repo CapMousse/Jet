@@ -18,7 +18,7 @@
 *   @author  Jérémy Barbe
 *   @license BSD
 *   @link     https://github.com/CapMousse/Jet
-*   @version 1
+*   @version 1.1
 */
 
 class HttpRequest{
@@ -27,7 +27,8 @@ class HttpRequest{
         $_post = null,
         $_put = null,
         $_del = null,
-        $_cookie = null;
+        $_cookie = null,
+        $_root = null;
     
     /**
      * Get a value form the $_GET array
@@ -109,5 +110,17 @@ class HttpRequest{
      */
     public static function getQueryString() {
         return $_SERVER['QUERY_STRING'];
+    }
+    
+    /**
+     * Get the root dir
+     * @return string;
+     */
+    public static function getRoot(){
+        if(null == self::$_root){
+            self::$_root = substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/') + 1);
+        }
+        
+        return self::$_root;
     }
 }

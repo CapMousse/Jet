@@ -19,7 +19,7 @@
 *   @author  Jérémy Barbe
 *   @license BSD
 *   @link     https://github.com/CapMousse/Jet
-*   @version 1
+*   @version 1.1
 */
 abstract class Controller{
     
@@ -100,10 +100,15 @@ abstract class Controller{
             //include all nececary files
             foreach(glob(PROJECT.'modules/'.$name.'/*.php') as $file)
                 include($file);
+                
             
             $name = ucfirst($name);
-            $this->{$name} = new $name();
-
+            if(!class_exists($moduleName)){
+                Debug::log("Module {$moduleName} don't have class with same name", true);
+            }else{
+                $this->{$name} = new $name();
+            }
+            
             Debug::log('Module loaded : '.$name);
         }
     }

@@ -18,7 +18,7 @@
 *   @author  Jérémy Barbe
 *   @license BSD
 *   @link     https://github.com/CapMousse/Jet
-*   @version 1
+*   @version 1.1
 */
 class Jet{
     public static
@@ -31,18 +31,11 @@ class Jet{
 
 
     /**
-     * run
-     *
      * launch the framework
      *
-     * @access   static method
      * @return   void 
      */
-    public static function run(){
-        
-        #set the root url to easy access, thanks to Taluu
-        self::set('web_url', substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/') + 1));
-        
+    public static function run(){        
         /**********************/
         /**** Parse routes ****/
         /**********************/
@@ -50,17 +43,14 @@ class Jet{
         Debug::log('Begining route parsing');
 
         self::$uri_array = self::parsePath();
-
         self::set('app', self::defineApp());
 
         //parse all routes with curent URI
         self::getRoutes();
         Router::launch();
         
-        //parse and load needed files
+        //parse and load needed files and modules
         self::requireFiles();
-        
-        //parse and load needed modules
         self::requireModules();
 
         //launch render
@@ -68,9 +58,7 @@ class Jet{
     }
 
     /**
-     * function parsePath
-     *
-     * parse current URI to array
+     * parse current path to be used by the router
      *
      * @access  private static function
      * @return  Array/null
@@ -84,11 +72,8 @@ class Jet{
     }
 
     /**
-     * function defineApp
+     * Define app asked by the current uri
      *
-     * parse current URI to array
-     *
-     * @access  private static function
      * @return  string/false
      */
     private static function defineApp(){
@@ -129,11 +114,8 @@ class Jet{
     }
 
     /**
-     * function parseRoutes
-     *
      * parse current URI to fetch all routes
      *
-     * @access  private static function
      * @return  void
      */
     private static function getRoutes(){
@@ -161,11 +143,8 @@ class Jet{
     
     
     /**
-     * requireFiles
-     * 
      * parse and load needed files
      * 
-     * @access  private static function
      * @return  void
      */
     private static function requireFiles(){        
@@ -190,11 +169,8 @@ class Jet{
     }
     
     /**
-     * requireModules
-     * 
      * parse and load needed modules
      * 
-     * @access  private static function
      * @return  void
      */
     private static function requireModules(){        
@@ -236,14 +212,8 @@ class Jet{
     }
     
     /**
-     * render
+     * launch the render of the current page
      * 
-     * launch the render
-     * 
-     * @access  private static function
-     * @param   $controller string : the class to be instanciated
-     * @param   $action string : the method to be launched
-     * @param   $options array [optional] : the arguments for the method
      * @return  void
      */
     
@@ -271,27 +241,27 @@ class Jet{
             Debug::log('Controller class '.$controller.' is not declared on '.$_currentApp.'controllers/'.$_currentController.'.php', true, true);
         }
         
-        $theApp = new $controller();
+        $app = new $controller();
         
         if(count($_currentModules) > 0){
             foreach($_currentModules as $name => $object){
-                $theApp->{$name} = $object;
+                $app->{$name} = $object;
             }
         }
         
-        if(method_exists($theApp, 'before'.ucfirst($_currentAction)))
-            self::lauchAction($theApp, 'before'.ucfirst($_currentAction), $_currentOptions);
+        if(method_exists($app, 'before'.ucfirst($_currentAction)))
+            self::lauchAction($app, 'before'.ucfirst($_currentAction), $_currentOptions);
         
-        self::lauchAction($theApp, $_currentAction, $_currentOptions);
+        self::lauchAction($app, $_currentAction, $_currentOptions);
         
-        if(method_exists($theApp, 'after'.ucfirst($_currentAction)))
-            self::lauchAction($theApp, 'after'.ucfirst($_currentAction), $_currentOptions);
+        if(method_exists($app, 'after'.ucfirst($_currentAction)))
+            self::lauchAction($app, 'after'.ucfirst($_currentAction), $_currentOptions);
 
         
         
         // check if our app need to be rendered
         Debug::log('Render layout');
-        $body = $theApp->view->render();
+        $body = $app->view->render();
         
         Debug::log('Render Http Response');
         
@@ -299,14 +269,12 @@ class Jet{
             $body .= Debug::getLog();
         }
         
-        $theApp->response->setBody($body);
+        $app->response->setBody($body);
         
-        echo $theApp->response->send();       
+        echo $app->response->send();       
     }
     
-    /**
-     * lauchAction
-     * 
+    /** 
      * lauch the specified action form class with sent options
      * 
      * @access  private static function
@@ -326,8 +294,6 @@ class Jet{
     }
     
     /**
-     * checkFile
-     * 
      * check if file exist in project dir or app dir
      * 
      * @access  private static function
@@ -349,11 +315,8 @@ class Jet{
     }
     
      /**
-     * mergeEnvironment
-     * 
      * merge array of 'all' environment and current environment
      * 
-     * @access  private static function
      * @param   $array  array   the array with environment to be merge
      * @return  array
      */

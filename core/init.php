@@ -19,7 +19,7 @@
 *   @author  Jérémy Barbe
 *   @license BSD
 *   @link     https://github.com/CapMousse/Jet
-*   @version 1
+*   @version 1.1
 */
 session_start();
 
