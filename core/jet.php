@@ -22,39 +22,104 @@
 */
 class Jet{
     public static
-        $config = array(),
+        $global = array(),
         $environment,
+        $apps = array(),
         $routes = array(),
         $modules = array(),
+        $requires = array(),
         $uri_array = array(),
+        $app = null,
         $infos = array();
 
-
+    /**
+     * @param string $environement 
+     */
+    function __construct($environement) {
+        self::$environment = $environement;
+    }
+    
+    /**
+     * set and merge config type
+     * 
+     * @param array $config
+     * @return void
+     */
+    public function setConfig($config){
+        $config = $this->mergeEnvironment($config);
+        
+        if(isset($config['global'])){
+            self::$global = $config['global'];
+        }
+        
+        if(isset($config['apps'])){
+            self::$apps = $config['apps'];
+        }
+        if(isset($config['routes'])){
+            self::$routes = $config['routes'];
+        }
+        
+        if(isset($config['orm'])){
+            OrmConnector::$config = $config['orm'];
+        }
+        
+        if(isset($config['modules'])){
+            self::$modules = array_merge($config['modules'], self::$modules);
+        }
+        
+        if(isset($config['requires'])){
+            self::$requires = array_merge($config['requires'], self::$requires);
+        }
+    }
+     /**
+     * merge array of 'all' environment and current environment
+     * 
+     * @param   $array  array   the array with environment to be merge
+     * @return  array
+     */
+    public function mergeEnvironment($array){        
+        if(!isset($array[self::$environment]) && !isset($array['all'])){
+            Log::save("Given array doesn't containt '".self::$environment."' or 'all' environements", Log::WARNING);
+        }
+        
+        $returnArray = array();
+        
+        if(isset($array['all'])){
+            $returnArray = $array['all'];
+        }
+        
+        if(isset($array[self::$environment])){
+            $returnArray = array_merge($array[self::$environment], $returnArray);
+        }
+        
+        return $returnArray;
+    }
+    
     /**
      * launch the framework
      *
      * @return   void 
      */
-    public static function run(){        
+    public function run(){        
         /**********************/
         /**** Parse routes ****/
         /**********************/
         
-        Debug::log('Begining route parsing');
+        Log::save('Begining route parsing');
 
-        self::$uri_array = self::parsePath();
-        self::set('app', self::defineApp());
-
+        $this->parsePath();
+        $this->defineApp();
+        $this->getAppConfig();
+        
         //parse all routes with curent URI
-        self::getRoutes();
         Router::launch();
         
         //parse and load needed files and modules
-        self::requireFiles();
-        self::requireModules();
+        $this->requireFiles();
+        $this->requireModules();
 
         //launch render
-        return self::render();
+        return $this->render();
     }
 
     /**
@@ -63,12 +128,12 @@ class Jet{
      * @access  private static function
      * @return  Array/null
      */
-    private static function parsePath(){
+    private function parsePath(){
         // get current adresse path
         $path = (isset($_SERVER['PATH_INFO'])) ? $_SERVER['PATH_INFO'] : @getenv('PATH_INFO');
 
         // check if current path is not root url or core url, else return array of current route
-        return (trim($path, '/') != '' && $path != "/".SELF) ? explode('/', trim($path, '/')) : null;
+        self::$uri_array = (trim($path, '/') != '' && $path != "/".SELF) ? explode('/', trim($path, '/')) : null;
     }
 
     /**
@@ -76,94 +141,60 @@ class Jet{
      *
      * @return  string/false
      */
-    private static function defineApp(){
+    private function defineApp(){
         $routes = array();
         $uri = self::$uri_array;
         
-        if(!is_file(PROJECT.'config/routes.php')){
-            Debug::log('Missing routes.php files to define apps in config/ dir', true, true);
-            return;
-        }
-
-        include(PROJECT.'config/routes.php');
-        
-        if(!is_array($routes) || count($routes) == 0){
-            Debug::log('Missing routes array in config/routes.php', true, true);
+        if(!is_array(self::$apps) || count(self::$apps) == 0){
+            Log::save('Missing routes array in project/config.php', Log::FATAL);
             return;
         }
         
-        $routes = self::mergeEnvironment($routes);
-        
-        if(!isset($routes['default'])){
-            Debug::log('No default app routes defined in config/routes.php', true, true);
+        if(!isset(self::$apps)){
+            Log::save('No default app routes defined in config/routes.php', Log::FATAL);
             return;
         }
 
         if(!is_array($uri)){
-            return $routes['default'].'/';
+            self::$app = self::$apps['default'].'/';
         }
 
-        if(isset($routes['/'.$uri[0]])){
-            $app = $routes['/'.$uri[0]].'/';
+        if(isset(self::$apps['/'.$uri[0]])){
+            $app = self::$apps['/'.$uri[0]].'/';
             array_splice($uri, 0, 1);
         }else{
-            $app = $routes['default'].'/';
+            $app = self::$apps['default'].'/';
         }
 
-        return $app;
-    }
-
-    /**
-     * parse current URI to fetch all routes
-     *
-     * @return  void
-     */
-    private static function getRoutes(){
-        $_currentApp = PROJECT.'apps/'.self::get('app');
-        // check and include route file app
-        if(!is_file($_currentApp.'config/routes.php')){
-            Debug::log('Missing routes file in '.$_currentApp.'config/', true, true);
-            return;
-        }
-        
-        include($_currentApp.'config/routes.php');
-        
-        if(!is_array($routes)){
-            Debug::log('$routes is not an array in '.$_currentApp.'config/routes.php', true, true);
-            return;
-        }
-             
-        self::$routes = self::mergeEnvironment($routes);
-        
-        //check if default controller/action exists
-        if(count(self::$routes['default']) != 2){
-            Debug::log('Default route must be declared in '.self::get('app'), true, true);
-        }
+        self::$app = $app;
     }
     
+    /**
+     * @return void
+     */
+    private function getAppConfig(){        
+        if(!self::$app){
+            return false;
+        }
+        
+        if(!is_file(PROJECT.'apps/'.self::$app.'config.php')){
+            return false;
+        }
+        
+        include(PROJECT.'apps/'.self::$app.'config.php');
+        
+        $this->setConfig($config);
+    }
     
     /**
      * parse and load needed files
      * 
      * @return  void
      */
-    private static function requireFiles(){        
-        if(!$fileInfo = self::checkFile('config/requires.php')){
-            return;
-        }
-        
-        include($fileInfo[0]);
-
-        if(!isset($requires) || !is_array($requires)){
-            Debug::log("Requires config file {$fileInfo[0]} not contain a requires array");
-            return;
-        }
-        
-        $requires = self::mergeEnvironment($requires);
-        
-        foreach($requires as $file){
-            if(is_file($fileInfo[1].$file)){
-                include($fileInfo[1].$file);
+    private function requireFiles(){        
+        foreach(self::$requires as $file){
+            if(is_file(PROJECT.self::$app.$file)){
+                include(PROJECT.self::$app.$file);
             }
         }
     }
@@ -173,22 +204,10 @@ class Jet{
      * 
      * @return  void
      */
-    private static function requireModules(){        
-        if(!$file = self::checkFile('config/modules.php')){
-            return;
-        }
-        
-        include($file[0]);
-
-        if(!isset($modules)){
-            Debug::log("Module config file {$file[0]} not contain an array");
-            return;
-        }
-        
-        $modulesList = self::mergeEnvironment($modules);
+    private function requireModules(){
         $modules = array();
         
-        foreach($modulesList as $moduleName){
+        foreach(self::$modules as $moduleName){
             if(is_dir(MODULES.$moduleName)){
 
                 //include all nececary files
@@ -198,17 +217,17 @@ class Jet{
                 $name = ucfirst($moduleName);
                 
                 if(!class_exists($moduleName)){
-                    Debug::log("Module {$moduleName} don't have class with same name", true);
+                    Log::save("Module {$moduleName} don't have class with same name", Log::WARNING);
                     continue;
                 }
            
                 $modules[$name] = new $name();
 
-                Debug::log('Module loaded : '.$name);
+                Log::save('Module loaded : '.$name);
             }
         }
         
-        self::set('modules', $modules);
+        $this->modules = $modules;
     }
     
     /**
@@ -217,18 +236,18 @@ class Jet{
      * @return  void
      */
     
-    private static function render(){        
-        $_currentApp = PROJECT.'apps/'.self::get('app');
-        $_currentController = self::get('controller');
-        $_currentAction = self::get('action');
-        $_currentOptions = self::get('options') ? self::get('options') : array();
-        $_currentModules = self::get('modules') ? self::get('modules') : array();
+    private function render(){
+        $_currentApp = PROJECT.'apps/'.self::$app;
+        $_currentController = $this->controller;
+        $_currentAction = $this->action;
+        $_currentOptions = $this->options;
+        $_currentModules = self::$modules;
         
         // include the asked controller            
-        Debug::log('Asked controller and action : '.$_currentController.'->'.$_currentAction);            
+        Log::save('Asked controller and action : '.$_currentController.'->'.$_currentAction);            
 
         if(!is_file($_currentApp.'controllers/'.$_currentController.'.php')){
-            Debug::log('Controller file '.$_currentController.' does not exists on '.$_currentApp.'controllers/', true, true);
+            Log::save('Controller file '.$_currentController.' does not exists on '.$_currentApp.'controllers/', Log::FATAL);
         }
 
         include($_currentApp.'controllers/'.$_currentController.'.php');
@@ -238,7 +257,7 @@ class Jet{
         $controller = ucfirst($_currentController);
         
         if(!class_exists($controller)){
-            Debug::log('Controller class '.$controller.' is not declared on '.$_currentApp.'controllers/'.$_currentController.'.php', true, true);
+            Log::save('Controller class '.$controller.' is not declared on '.$_currentApp.'controllers/'.$_currentController.'.php', Log::FATAL);
         }
         
         $app = new $controller();
@@ -249,29 +268,29 @@ class Jet{
             }
         }
         
-        if(method_exists($app, 'before'.ucfirst($_currentAction)))
-            self::lauchAction($app, 'before'.ucfirst($_currentAction), $_currentOptions);
+        if($this->get('askRoute') === 404){
+            $app->response->setStatus(404);
+        }
         
-        self::lauchAction($app, $_currentAction, $_currentOptions);
+        if(method_exists($app, 'before'.ucfirst($_currentAction)))
+            $this->lauchAction($app, 'before'.ucfirst($_currentAction), $_currentOptions);
+        
+        $this->lauchAction($app, $_currentAction, $_currentOptions);
         
         if(method_exists($app, 'after'.ucfirst($_currentAction)))
-            self::lauchAction($app, 'after'.ucfirst($_currentAction), $_currentOptions);
+            $this->lauchAction($app, 'after'.ucfirst($_currentAction), $_currentOptions);
 
         
         
         // check if our app need to be rendered
-        Debug::log('Render layout');
+        Log::save('Render layout');
         $body = $app->view->render();
         
-        Debug::log('Render Http Response');
-        
-        if(Jet::$config['show_Debug_log']){
-            $body .= Debug::getLog();
-        }
-        
+        Log::save('Render Http Response');
         $app->response->setBody($body);
         
-        echo $app->response->send();       
+        Log::save('Finish render');
+        echo $app->response->send();        
     }
     
     /** 
@@ -283,11 +302,11 @@ class Jet{
      * @param   $option array [optional] : the arguments for the method
      * @return  void
      */
-    private static function lauchAction($class, $method, $options = null){
-        Debug::log('LauchAction : '.$method);
+    private function lauchAction($class, $method, $options = false){
+        Log::save('LauchAction : '.$method);
         
         // lauch the asked action, with our options
-        if(!is_null($options))
+        if($options)
             @call_user_func_array(array($class, $method), $options);
         else
             $class->$method();
@@ -300,42 +319,18 @@ class Jet{
      * @param   $file   string  file to be check
      * @return  $file/false
      */
-    private static function checkFile($file){
+    private function checkFile($file){
         $return = null;
         
         if(is_file(PROJECT.$file)){
             $return = array($file, null);
         }
         
-        if(is_file(PROJECT.'apps/'.self::get('app').$file)){
-            $return = array(PROJECT.'apps/'.self::get('app').$file, PROJECT.'apps/'.self::get('app'));
+        if(is_file(PROJECT.'apps/'.$this->get('app').$file)){
+            $return = array(PROJECT.'apps/'.$this->get('app').$file, PROJECT.'apps/'.$this->get('app'));
         }
         
         return is_null($return) ? false : $return;
-    }
-    
-     /**
-     * merge array of 'all' environment and current environment
-     * 
-     * @param   $array  array   the array with environment to be merge
-     * @return  array
-     */
-    public static function mergeEnvironment($array){        
-        if(!isset($array[self::$environment]) && !isset($array['all'])){
-            Debug::log("Given array doesn't containt '".self::$environment."' or 'all' environements", true, true);
-        }
-        
-        $returnArray = array();
-        
-        if(isset($array['all'])){
-            $returnArray = $array['all'];
-        }
-        
-        if(isset($array[self::$environment])){
-            $returnArray = array_merge($returnArray, $array[self::$environment]);
-        }
-        
-        return $returnArray;
     }
     
     public static function set($name, $value){
@@ -343,6 +338,14 @@ class Jet{
     }
     
     public static function get($name){      
-        return isset(self::$infos[$name]) ? self::$infos[$name]  : false;
+        return isset(self::$infos[$name]) ? self::$infos[$name] : false;
+    }
+    
+    public function __set($name, $value){
+        self::set($name, $value);
+    }
+    
+    public function __get($name){
+        return self::get($name);
     }
 }

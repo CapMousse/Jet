@@ -40,7 +40,6 @@ try{
     |______|______|  |_| |_____/  |_|  \_\\____/ \_____|_|\_\
  
  */
-    
     require(SYSPATH.'init.php');
 }catch(Exception $e){
     echo $e;

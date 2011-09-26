@@ -42,7 +42,7 @@ class ViewJet extends ViewBridge{
      * @return   void 
      */   
     public function load($file, $options = null){
-        $_currentApp = PROJECT.'apps/'.Jet::get('app');
+        $_currentApp = PROJECT.'apps/'.Jet::$app;
         //Control if options is defined, if yes, construct all var used in templates
         $vars = $options;
 
@@ -50,11 +50,11 @@ class ViewJet extends ViewBridge{
         $globalFile = @include(PROJECT.'views/'.$file.'.php');
 
         if(!($appFile || $globalFile)){
-            Debug::log("The asked view <b>$file</b> doesn't exists in <b>".get_class($this).".php</b>");
+            Log::save("The asked view <b>$file</b> doesn't exists in <b>".get_class($this).".php</b>", Log::FATAL);
             return;
         }
 
-        Debug::log('Loaded view : '.$file);
+        Log::save('Loaded view : '.$file);
     }
     
     /**

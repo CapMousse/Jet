@@ -76,25 +76,27 @@ class Router{
         
         Jet::set('controller', self::$default[CONTROLLER]);
         Jet::set('action', self::$default[ACTION]);
+        Jet::set('askRoute', 'default');
         
         if(!is_array(Jet::$uri_array) || count(Jet::$uri_array) == 0){
-            Debug::log("Empty user uri, render default");
+            Log::save("Empty user uri, render default");
             return;
         }
         
         $uri = trim(implode('/', Jet::$uri_array), "/");
         
         if(isset(self::$routes[$uri])){
-            Debug::log('Routed url '.$uri);
+            Log::save('Routed url '.$uri);
             
             Jet::set('controller', self::$routes[$uri][CONTROLLER]);
             Jet::set('action', self::$routes[$uri][ACTION]);
+            Jet::set('askRoute', $uri);
             return;
         }
         
         foreach (self::$parsed_routes as $route => $val){
             if (preg_match('#'.$route.'$#', $uri, $array)){
-                Debug::log('Routed url '.$route);
+                Log::save('Routed url '.$route);
 
                 $method_args = array();
                 foreach($array as $name => $value){
@@ -105,17 +107,20 @@ class Router{
                 Jet::set('controller', self::$parsed_routes[$route][CONTROLLER]);
                 Jet::set('action', self::$parsed_routes[$route][ACTION]);
                 Jet::set('options', $method_args);
+                Jet::set('askRoute', $uri);
                 
                 return;
             }
         }
         // third, if no routes look like our uri, try the 404 route
-        Debug::log('Routed url 404 : '.$uri, true);
+        Log::save('Routed url 404 : '.$uri, Log::WARNING);
         
         if(count(self::$error) ==  0) return;
         
         Jet::set('controller', self::$error[CONTROLLER]);
         Jet::set('action', self::$error[ACTION]);
+        Jet::set('options', array('url' => $uri));
+        Jet::set('askRoute', 404);
 
         return;
     }

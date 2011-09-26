@@ -181,7 +181,7 @@ class HttpResponse{
      * @return  void
      */
     public function setStatus($status){
-        if(array_key_exists($status, self::$statusList)) return; 
+        if(!isset(self::$statusList[$status])) return; 
         
         $header = sprintf('%1$s %2$d %3$s', $_SERVER['SERVER_PROTOCOL'], $status, self::$statusList[$status]);
         $this->setHeader($header);
@@ -343,7 +343,7 @@ class HttpResponse{
         }
         
         if(!in_array($type, array('strong', 'weak'))){
-            debug::log("Etag type atribut don't exists", true);
+            Log::save("Etag type atribut don't exists", Log::INFO);
             return;
         }
         
@@ -377,7 +377,7 @@ class HttpResponse{
             $this->removeHeader("Expires");
         }else{
             $date = date(DATE_RFC1123, time()+$time);
-            $this->setHeader("Expires", $date, true);
+            $this->setHeader("Expires", $date, Log::INFO);
         }
     }
     
@@ -391,7 +391,7 @@ class HttpResponse{
      */
     public function redirect($address, $type = 304, $time = 0){
         if(!array_key_exists($type, self::$statusList)){
-            debug::log("The asked status doesn't exists : ".$type, true);
+            Log::save("The asked status doesn't exists : ".$type, Log::INFO);
             return false;
         }
         
@@ -407,6 +407,8 @@ class HttpResponse{
         $this->setHeader($header, $value);
         $this->sendHeaders();
         
+        
+        Log::save("Redirecting to  : ".$address, Log::INFO);
         if(0 === $time){
             //prevent framework from redering
             exit();

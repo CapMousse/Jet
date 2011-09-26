@@ -18,25 +18,7 @@ Options +FollowSymLinks +ExecCGI
 #SetEnv PHP_VER 5
 #SetEnv MAGIC_QUOTES 0
 
-###############################################################
-###############################################################
-#### for people who use OVH, just uncomment thoses 3 lines ####
-###############################################################
-###############################################################
-
 RewriteEngine on
-
-<IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/html text/plain text/css application/json
-    AddOutputFilterByType DEFLATE text/javascript application/javascript application/x-javascript
-    AddOutputFilterByType DEFLATE text/xml application/xml text/x-component
-    <FilesMatch "\.(css|js)($|\?.*$)">
-       SetOutputFilter DEFLATE
-    </FilesMatch>
-</IfModule>
-
-
-ErrorDocument 404 /error.html
 
 AddDefaultCharset utf-8
 AddCharset utf-8 .html .css .js .xml .json .rss

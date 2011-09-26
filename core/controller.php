@@ -32,7 +32,7 @@ abstract class Controller{
 
     //if you want to made your own __construct, add parent::__construct() to your code
     function __construct(){
-        $this->view = new Jet::$config['template']();
+        $this->view = new Jet::$global['template']();
         $this->response = new HttpResponse($this->status);
         $this->request = new HttpRequest();
     }
@@ -43,7 +43,7 @@ abstract class Controller{
      * @return   Model/false
      */   
     protected function loadModel($file){
-        $_currentApp = PROJECT.'apps/'.Jet::get('app');
+        $_currentApp = PROJECT.'apps/'.Jet::$app;
         $_className = ucfirst($file);
         
         //Control if model file exists
@@ -57,7 +57,7 @@ abstract class Controller{
             $this->models[$_className] = true;   
         }
         
-        Debug::log('Model loaded : '.$file);
+        Log::save('Model loaded : '.$file);
 
         //return the intentiate model
         return new $_className();
@@ -70,16 +70,16 @@ abstract class Controller{
      * @return   Controller/false
      */   
     protected function loadController($file){
-        $_currentApp = PROJECT.'apps/'.Jet::get('app');
+        $_currentApp = PROJECT.'apps/'.Jet::$app;
         
         if(!is_file($_currentApp.'controllers/'.$file.'.php')){
-            Debug::log("The asked controller <b>$file</b> doesn't exists in <b>".get_called_class()."</b> <br />", true, true);
+            Log::save("The asked controller <b>$file</b> doesn't exists in <b>".get_called_class()."</b> <br />", Log::FATAL);
             return false;
         }
 
         include($_currentApp.'controllers/'.$file.'.php');
 
-        Debug::log('Controller loaded : '.$file);
+        Log::save('Controller loaded : '.$file);
 
         $controller = ucfirst($file);
         return new $controller();
@@ -104,12 +104,12 @@ abstract class Controller{
             
             $name = ucfirst($name);
             if(!class_exists($moduleName)){
-                Debug::log("Module {$moduleName} don't have class with same name", true);
+                Log::save("Module {$moduleName} don't have class with same name", Log::WARNING);
             }else{
                 $this->{$name} = new $name();
             }
             
-            Debug::log('Module loaded : '.$name);
+            Log::save('Module loaded : '.$name);
         }
     }
 }

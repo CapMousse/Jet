@@ -42,32 +42,21 @@ spl_autoload_register(function($class){
         $loaded[$class] = true;
     } 
     
-    Debug::log('Autoload '.$class);
+    Log::save('Autoload '.$class);
     return $loaded[$class];
 });
 
-
-Debug::log('Init framework');
+Log::$start = microtime();
 
 // load framework user config file
-require(PROJECT.'config/global.php');
+require(PROJECT.'config.php');
 
 /***********************************************/
 /**** Include class framework and init them ****/
 /***********************************************/
 
 // init the KORE KLASS
-Jet::$environment = $environment;
-Jet::$config = Jet::mergeEnvironment($config);
 
-// init orm
-require(PROJECT.'config/orm.php');
-$ormConfig = Jet::mergeEnvironment($orm);
-if(isset($ormConfig['use_db']) && $ormConfig['use_db']){
-    OrmConnector::$config = $ormConfig['use_db'];
-}
-unset($ormConfig);
-
-Debug::$log_all = isset(Jet::$config['log_all']) ? Jet::$config['log_all'] : false;
-
-Jet::run();
+$jet = new Jet($environment);
+$jet->setConfig($config);
+$jet->run();

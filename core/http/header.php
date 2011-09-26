@@ -40,7 +40,7 @@ class HttpHeader{
         $this->header = $header;
         $this->value[$value] = 1;
         $this->erase = $erase;
-       Debug::log("Set header ".$header." : ".$value);
+       Log::save("Set header ".$header." : ".$value);
     }
     
     /**

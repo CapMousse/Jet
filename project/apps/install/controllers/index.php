@@ -3,6 +3,7 @@ class Index extends Controller{
     public $title = 'Congratulation';
     
     public function congrats(){
+        //$test = $this->loadModel('test');
         
         $this->view->setLayout('index');
         $this->view->load('partial/home');
@@ -45,6 +46,10 @@ class Index extends Controller{
     public function showId($id){
     	echo "Current id is {$id}";
         $this->loadView('partial/home');
+    }
+    
+    public function do404($url){
+        echo $url." doesn't exists";
     }
 }
 ?>
