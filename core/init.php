@@ -57,6 +57,7 @@ require(PROJECT.'config.php');
 
 // init the KORE KLASS
 
-$jet = new Jet($environment);
+$jet = Jet::getInstance();
+$jet->setEnvironment($environment);
 $jet->setConfig($config);
 $jet->run();

@@ -22,21 +22,36 @@
 */
 class Jet{
     public static
+        $instance = null;
+    
+    public 
+        $actions = array(),
         $global = array(),
         $environment,
         $apps = array(),
         $routes = array(),
+        $router = null,
         $modules = array(),
         $requires = array(),
         $uri_array = array(),
         $app = null,
         $infos = array();
-
+    
+    public static function getInstance() {
+        if(self::$instance === null){
+            self::$instance = new self;
+        }
+        
+        return self::$instance;
+    }
+    
     /**
-     * @param string $environement 
+     * Set the current used environment
+     * @param string $environment
+     * @return void
      */
-    function __construct($environement) {
-        self::$environment = $environement;
+    public function setEnvironment($environment){
+        $this->environment = $environment;
     }
     
     /**
@@ -49,14 +64,14 @@ class Jet{
         $config = $this->mergeEnvironment($config);
         
         if(isset($config['global'])){
-            self::$global = $config['global'];
+            $this->global = $config['global'];
         }
         
         if(isset($config['apps'])){
-            self::$apps = $config['apps'];
+            $this->apps = $config['apps'];
         }
         if(isset($config['routes'])){
-            self::$routes = $config['routes'];
+            $this->routes = $config['routes'];
         }
         
         if(isset($config['orm'])){
@@ -64,11 +79,11 @@ class Jet{
         }
         
         if(isset($config['modules'])){
-            self::$modules = array_merge($config['modules'], self::$modules);
+            $this->modules = array_merge($config['modules'], $this->modules);
         }
         
         if(isset($config['requires'])){
-            self::$requires = array_merge($config['requires'], self::$requires);
+            $this->requires = array_merge($config['requires'], $this->requires);
         }
     }
      /**
@@ -78,8 +93,8 @@ class Jet{
      * @return  array
      */
     public function mergeEnvironment($array){        
-        if(!isset($array[self::$environment]) && !isset($array['all'])){
-            Log::save("Given array doesn't containt '".self::$environment."' or 'all' environements", Log::WARNING);
+        if(!isset($array[$this->environment]) && !isset($array['all'])){
+            Log::save("Given array doesn't containt '".$this->environment."' or 'all' environements", Log::WARNING);
         }
         
         $returnArray = array();
@@ -88,8 +103,8 @@ class Jet{
             $returnArray = $array['all'];
         }
         
-        if(isset($array[self::$environment])){
-            $returnArray = array_merge($array[self::$environment], $returnArray);
+        if(isset($array[$this->environment])){
+            $returnArray = array_merge($array[$this->environment], $returnArray);
         }
         
         return $returnArray;
@@ -112,7 +127,8 @@ class Jet{
         $this->getAppConfig();
         
         //parse all routes with curent URI
-        Router::launch();
+        $this->router = new Router();
+        $this->router->launch();
         
         //parse and load needed files and modules
         $this->requireFiles();
@@ -133,7 +149,7 @@ class Jet{
         $path = (isset($_SERVER['PATH_INFO'])) ? $_SERVER['PATH_INFO'] : @getenv('PATH_INFO');
 
         // check if current path is not root url or core url, else return array of current route
-        self::$uri_array = (trim($path, '/') != '' && $path != "/".SELF) ? explode('/', trim($path, '/')) : null;
+        $this->uri_array = (trim($path, '/') != '' && $path != "/".SELF) ? explode('/', trim($path, '/')) : null;
     }
 
     /**
@@ -143,45 +159,45 @@ class Jet{
      */
     private function defineApp(){
         $routes = array();
-        $uri = self::$uri_array;
+        $uri = $this->uri_array;
         
-        if(!is_array(self::$apps) || count(self::$apps) == 0){
+        if(!is_array($this->apps) || count($this->apps) == 0){
             Log::save('Missing routes array in project/config.php', Log::FATAL);
             return;
         }
         
-        if(!isset(self::$apps)){
+        if(!isset($this->apps)){
             Log::save('No default app routes defined in config/routes.php', Log::FATAL);
             return;
         }
 
         if(!is_array($uri)){
-            self::$app = self::$apps['default'].'/';
+            $this->app = $this->apps['default'].'/';
         }
 
-        if(isset(self::$apps['/'.$uri[0]])){
-            $app = self::$apps['/'.$uri[0]].'/';
+        if(isset($this->apps['/'.$uri[0]])){
+            $app = $this->apps['/'.$uri[0]].'/';
             array_splice($uri, 0, 1);
         }else{
-            $app = self::$apps['default'].'/';
+            $app = $this->apps['default'].'/';
         }
 
-        self::$app = $app;
+        $this->app = $app;
     }
     
     /**
      * @return void
      */
     private function getAppConfig(){        
-        if(!self::$app){
+        if(!$this->app){
             return false;
         }
         
-        if(!is_file(PROJECT.'apps/'.self::$app.'config.php')){
+        if(!is_file(PROJECT.'apps/'.$this->app.'config.php')){
             return false;
         }
         
-        include(PROJECT.'apps/'.self::$app.'config.php');
+        include(PROJECT.'apps/'.$this->app.'config.php');
         
         $this->setConfig($config);
     }
@@ -192,9 +208,9 @@ class Jet{
      * @return  void
      */
     private function requireFiles(){        
-        foreach(self::$requires as $file){
-            if(is_file(PROJECT.self::$app.$file)){
-                include(PROJECT.self::$app.$file);
+        foreach($this->requires as $file){
+            if(is_file(PROJECT.'requires/'.$file)){
+                include(PROJECT.'requires/'.$file);
             }
         }
     }
@@ -207,11 +223,11 @@ class Jet{
     private function requireModules(){
         $modules = array();
         
-        foreach(self::$modules as $moduleName){
-            if(is_dir(MODULES.$moduleName)){
+        foreach($this->modules as $moduleName){
+            if(is_dir(PROJECT.'modules/'.$moduleName)){
 
                 //include all nececary files
-                foreach(glob(MODULES.$moduleName.'/*.php') as $file)
+                foreach(glob(PROJECT.'modules/'.$moduleName.'/*.php') as $file)
                     include($file);
 
                 $name = ucfirst($moduleName);
@@ -237,11 +253,11 @@ class Jet{
      */
     
     private function render(){
-        $_currentApp = PROJECT.'apps/'.self::$app;
+        $_currentApp = PROJECT.'apps/'.$this->app;
         $_currentController = $this->controller;
         $_currentAction = $this->action;
         $_currentOptions = $this->options;
-        $_currentModules = self::$modules;
+        $_currentModules = $this->modules;
         
         // include the asked controller            
         Log::save('Asked controller and action : '.$_currentController.'->'.$_currentAction);            
@@ -272,25 +288,76 @@ class Jet{
             $app->response->setStatus(404);
         }
         
+        $this->execute('beforeLaunchAction');
+        
         if(method_exists($app, 'before'.ucfirst($_currentAction)))
             $this->lauchAction($app, 'before'.ucfirst($_currentAction), $_currentOptions);
         
+        $this->execute('launchAction');
         $this->lauchAction($app, $_currentAction, $_currentOptions);
         
         if(method_exists($app, 'after'.ucfirst($_currentAction)))
             $this->lauchAction($app, 'after'.ucfirst($_currentAction), $_currentOptions);
 
-        
-        
-        // check if our app need to be rendered
+         // check if our app need to be rendered
         Log::save('Render layout');
+        $this->execute('beforeRender');
         $body = $app->view->render();
         
+        $this->execute('beforeSendHttpResponse');        
         Log::save('Render Http Response');
         $app->response->setBody($body);
         
         Log::save('Finish render');
         echo $app->response->send();        
+    }
+    
+    /**
+     * execute all fake listener bind to asked action
+     * 
+     * @access public
+     * @param  string $actionName
+     * @return void
+     */
+    public function execute($actionName){
+        if(isset($this->actions[$actionName])){
+            $actions = $this->actions[$actionName];
+            
+            foreach($actions as $action){
+                if(!is_array($action)){
+                    $action();
+                }else{
+                    $class = $action['class'];
+                    $method = $action['method'];
+                    $options = isset($action['options']) ? $action['options'] : false;
+                    
+                    $this->lauchAction($class, $method, $options);
+                }
+            }
+        }
+    }
+    
+    /**
+     * addAction add an action to the specified "listener"
+     * 
+     * @access public
+     * @param  string $action the listener
+     * @param  object $class the object from the action
+     * @param  string $method  the method to be launched
+     * @param  array  $option the arguments for the method
+     * @return void
+     */
+    public function addAction($action, $class, $method = null, $options = FALSE){
+        Log::save("Added a listerner at $action", Log::INFO);
+        if($method === NULL){
+            $this->actions[$action][] = $class;
+        }else{
+            $this->actions[$action][] = array(
+                'class' => $class,
+                'method' => $method,
+                'options' => $options
+            );
+        }
     }
     
     /** 
@@ -333,19 +400,19 @@ class Jet{
         return is_null($return) ? false : $return;
     }
     
-    public static function set($name, $value){
-        self::$infos[$name] = $value;
+    public function set($name, $value){
+        $this->infos[$name] = $value;
     }
     
-    public static function get($name){      
-        return isset(self::$infos[$name]) ? self::$infos[$name] : false;
+    public function get($name){      
+        return isset($this->infos[$name]) ? $this->infos[$name] : false;
     }
     
     public function __set($name, $value){
-        self::set($name, $value);
+        $this->set($name, $value);
     }
     
     public function __get($name){
-        return self::get($name);
+        return $this->get($name);
     }
 }

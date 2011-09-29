@@ -23,12 +23,18 @@
 
 
 class ViewJet extends ViewBridge{
-    public $layout = null;
+    public 
+        $layout = null,
+        $blocks = array();
     
     protected 
-        $blocks = array(),
+        $jet = null,
         $blockName = null,
         $_vars = array();
+    
+    function __construct(){
+        $this->jet = Jet::getInstance();
+    }
     
     /**
      * load
@@ -42,7 +48,7 @@ class ViewJet extends ViewBridge{
      * @return   void 
      */   
     public function load($file, $options = null){
-        $_currentApp = PROJECT.'apps/'.Jet::$app;
+        $_currentApp = PROJECT.'apps/'.$this->jet->app;
         //Control if options is defined, if yes, construct all var used in templates
         $vars = $options;
 

@@ -24,16 +24,17 @@
 abstract class Controller{
     
     public 
+        $jet = null,
         $view,
         $response,
         $request,
-        $status = HttpResponse::OK,
         $models = array();
 
     //if you want to made your own __construct, add parent::__construct() to your code
     function __construct(){
-        $this->view = new Jet::$global['template']();
-        $this->response = new HttpResponse($this->status);
+        $this->jet = Jet::getInstance();
+        $this->view = new $this->jet->global['template']();
+        $this->response = HttpResponse::getInstance();
         $this->request = new HttpRequest();
     }
 
@@ -43,7 +44,7 @@ abstract class Controller{
      * @return   Model/false
      */   
     protected function loadModel($file){
-        $_currentApp = PROJECT.'apps/'.Jet::$app;
+        $_currentApp = PROJECT.'apps/'.$this->jet->app;
         $_className = ucfirst($file);
         
         //Control if model file exists
@@ -70,7 +71,7 @@ abstract class Controller{
      * @return   Controller/false
      */   
     protected function loadController($file){
-        $_currentApp = PROJECT.'apps/'.Jet::$app;
+        $_currentApp = PROJECT.'apps/'.$this->jet->app;
         
         if(!is_file($_currentApp.'controllers/'.$file.'.php')){
             Log::save("The asked controller <b>$file</b> doesn't exists in <b>".get_called_class()."</b> <br />", Log::FATAL);

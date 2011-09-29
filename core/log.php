@@ -27,6 +27,7 @@ class Log{
         FATAL = 3;
         
     public static
+        $jet = null,
         $markers = array(),
         $start = 0,
         $messages = array(
@@ -41,7 +42,11 @@ class Log{
      * @param    bool     $type     error type (INFO, WARNING, FATAL)
      * @return   boolean
      */
-    public static function save($msg, $type = self::INFO){        
+    public static function save($msg, $type = self::INFO){
+        if(self::$jet === null){
+            self::$jet = Jet::getInstance();
+        }
+        
         $bk = Debug_backtrace();
 
         foreach($bk as $trace){
@@ -63,7 +68,7 @@ class Log{
 
         self::$markers[] = $log;
         
-        $debugLevel = isset(Jet::$global['log']) ? Jet::$global['log'] : 0;
+        $debugLevel = isset(self::$jet->global['log']) ? self::$jet->global['log'] : 0;
         
         if($debugLevel == $type || $debugLevel == 0){
             error_log($log."\n", 3, PROJECT.'logs/errors.log');

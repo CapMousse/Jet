@@ -22,7 +22,8 @@
 */
 
 class Router{
-    protected static
+    protected
+        $jet = null,
         $routes = array(),
         $parsed_routes = array(),
         $default = array(),
@@ -33,38 +34,42 @@ class Router{
             ':aplha'    => '[a-zA-Z]+',
             ':num'      => '[0-9]+'
         );
+    
+    function __construct() {
+        $this->jet = Jet::getInstance();
+        $this->routes = $this->jet->routes;
+    }
 
     /**
      * Launch the route parsing
      * @return void
      */
-    public static function launch(){
-        self::$routes = Jet::$routes;
-        self::$default = self::$routes['default'];
-        unset(self::$routes['default']);
+    public function launch(){
+        $this->default = $this->routes['default'];
+        unset($this->routes['default']);
         
-        if(isset(self::$routes['404'])){
-            self::$error = self::$routes['404'];
-            unset(self::$routes['404']);
+        if(isset($this->routes['404'])){
+            $this->error = $this->routes['404'];
+            unset($this->routes['404']);
         }
         
-        self::parse();
-        self::match();
+        $this->parse();
+        $this->match();
     }
 
     /**
      * Parse all routes for uri matching
      * @return void
      */
-    protected static function parse(){
+    protected function parse(){
         
         # transform routes into usable routes for the router
         # thanks to Taluu (Baptiste Clavié) for the help
         
-        foreach(self::$routes as $key => $value){
+        foreach($this->routes as $key => $value){
             $key = preg_replace('#\[(.+)\]:(.+)#', '(?<$1>:$2)', rtrim($key, '/'));
-            $key = str_replace(array_keys(self::$authorized_paterns), array_values(self::$authorized_paterns), $key);
-            self::$parsed_routes[$key] = $value;
+            $key = str_replace(array_keys($this->authorized_paterns), array_values($this->authorized_paterns), $key);
+            $this->parsed_routes[$key] = $value;
         }
     }
 
@@ -72,29 +77,29 @@ class Router{
      * Try to match the current uri with all routes
      * @return void
      */
-    protected static function match(){
+    protected function match(){
         
-        Jet::set('controller', self::$default[CONTROLLER]);
-        Jet::set('action', self::$default[ACTION]);
-        Jet::set('askRoute', 'default');
+        $this->jet->controller = $this->default[CONTROLLER];
+        $this->jet->action = $this->default[ACTION];
+        $this->jet->askRoute = 'default';
         
-        if(!is_array(Jet::$uri_array) || count(Jet::$uri_array) == 0){
+        if(!is_array($this->jet->uri_array) || count($this->jet->uri_array) == 0){
             Log::save("Empty user uri, render default");
             return;
         }
         
-        $uri = trim(implode('/', Jet::$uri_array), "/");
+        $uri = trim(implode('/', $this->jet->uri_array), "/");
         
-        if(isset(self::$routes[$uri])){
+        if(isset($this->routes[$uri])){
             Log::save('Routed url '.$uri);
             
-            Jet::set('controller', self::$routes[$uri][CONTROLLER]);
-            Jet::set('action', self::$routes[$uri][ACTION]);
-            Jet::set('askRoute', $uri);
+            $this->jet->controller = $this->routes[$uri][CONTROLLER];
+            $this->jet->action = $this->routes[$uri][ACTION];
+            $this->jet->askRoute = $uri;
             return;
         }
         
-        foreach (self::$parsed_routes as $route => $val){
+        foreach ($this->parsed_routes as $route => $val){
             if (preg_match('#'.$route.'$#', $uri, $array)){
                 Log::save('Routed url '.$route);
 
@@ -104,10 +109,10 @@ class Router{
                 }
 
                 //now, let's rock!
-                Jet::set('controller', self::$parsed_routes[$route][CONTROLLER]);
-                Jet::set('action', self::$parsed_routes[$route][ACTION]);
-                Jet::set('options', $method_args);
-                Jet::set('askRoute', $uri);
+                $this->jet->controller = $this->parsed_routes[$route][CONTROLLER];
+                $this->jet->action = $this->parsed_routes[$route][ACTION];
+                $this->jet->options = $method_args;
+                $this->jet->askRoute = $uri;
                 
                 return;
             }
@@ -115,12 +120,12 @@ class Router{
         // third, if no routes look like our uri, try the 404 route
         Log::save('Routed url 404 : '.$uri, Log::WARNING);
         
-        if(count(self::$error) ==  0) return;
+        if(count($this->error) ==  0) return;
         
-        Jet::set('controller', self::$error[CONTROLLER]);
-        Jet::set('action', self::$error[ACTION]);
-        Jet::set('options', array('url' => $uri));
-        Jet::set('askRoute', 404);
+        $this->jet->controller = $this->error[CONTROLLER];
+        $this->jet->action = $this->error[ACTION];
+        $this->jet->options = array('url' => $uri);
+        $this->jet->askRoute = 404;
 
         return;
     }

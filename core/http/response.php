@@ -36,7 +36,8 @@ class HttpResponse{
         $headers = array(),
         $cacheControl = array();          
     
-    protected static 
+    protected static
+        $instance = null,
         $statusList = array(
             100 => '100 Continue',
             101 => '101 Switching Protocols',
@@ -82,15 +83,15 @@ class HttpResponse{
         );
     
     /**
-     * Response constructor
-     * 
-     * @param   int $status status code to respond
-     * @return  void
+     * Singleton for response
+     * @return object HttpResponse
      */
-    function __construct($status = null){
-        if(!is_null($status) && isset(self::$statusList[$status])){
-            $this->status = $status;
+    public static function getInstance(){
+        if(null === self::$instance){
+            self::$instance = new self;
         }
+        
+        return self::$instance;
     }
     
     /**
@@ -128,7 +129,11 @@ class HttpResponse{
      * Send all headers
      * @return  void
      */
-    public function sendHeaders(){        
+    public function sendHeaders(){
+        if(headers_sent()){
+            return;
+        }
+        
         foreach($this->headers as $header){
             $header->send();
         }
@@ -205,7 +210,7 @@ class HttpResponse{
      * @return  void
      */
     public function setBody($value){
-        $this->body = $value;
+        $this->body .= $value;
         $this->setHeader("Content-Length", strlen($this->body), true);
     }
     
