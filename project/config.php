@@ -33,10 +33,9 @@ $config['dev'] = array(
         'type'      => 'mysql',
         'host'      => 'localhost',
         'log'       => 'root',
-        'pass'      => '',
+        'pass'      => 'root',
         'base'      => 'Jet',
     ),
     
-    'modules' => array(),
-    'requires' => array()
+    'requires' => array('debugLog.php')
 );

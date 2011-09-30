@@ -204,13 +204,28 @@ class Jet{
     
     /**
      * parse and load needed files
-     * 
+     * So obvious. 
      * @return  void
      */
-    private function requireFiles(){        
-        foreach($this->requires as $file){
-            if(is_file(PROJECT.'requires/'.$file)){
-                include(PROJECT.'requires/'.$file);
+    public function requireFiles($files = null, $dir = null){
+        if(null === $files){
+            $files = $this->requires;
+        }
+        
+        if(null === $dir){
+            $dir = PROJECT.'requires/';
+        }
+        
+        if(!is_array($files)){
+            $files = array($files);
+        }
+        
+        
+        foreach($files as $file){
+            if(is_file($dir.$file)){
+                include($dir.$file);
+            }else{
+                Log::warning('Required file '.$dir.$file.' doens\'t exists');
             }
         }
     }
@@ -248,7 +263,7 @@ class Jet{
     
     /**
      * launch the render of the current page
-     * 
+     * If you read this, you loose
      * @return  void
      */
     

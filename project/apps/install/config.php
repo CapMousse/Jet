@@ -18,7 +18,6 @@ $config['all'] = array(
         'contact' => array('index', 'contactForm')
     ),
     
-    'modules' => array(),
     'require' => array()
 );
 

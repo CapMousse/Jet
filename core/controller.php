@@ -30,7 +30,10 @@ abstract class Controller{
         $request,
         $models = array();
 
-    //if you want to made your own __construct, add parent::__construct() to your code
+    /**
+     * WARN ! If you need to create your own/self/personnal/other-type-of-reason-that-i-don't-know construct, your need to declare a parent::__construct() in
+     * IF NOT, BLACKHOLE APPEAR !
+     */
     function __construct(){
         $this->jet = Jet::getInstance();
         $this->view = new $this->jet->global['template']();
@@ -39,7 +42,7 @@ abstract class Controller{
     }
 
     /**
-     * load the asked model. 
+     * load the asked model. If your are to dumb to understand, suicide yourself.
      * @param    string $model      name of the model file
      * @return   Model/false
      */   
@@ -85,33 +88,14 @@ abstract class Controller{
         $controller = ucfirst($file);
         return new $controller();
     }
-
+    
     /**
-     * load the asked module
-     * @param   string   $names      names of all wanted modules
-     * @return  void
-     */   
-    protected function loadModule($name){
-        //check if we have a array of name or convert it to array
-        if(!is_string($name)) return;
-        
-        //check if module and module conf exists
-        if(is_dir(PROJECT.'modules/'.$name)){
-
-            //include all nececary files
-            foreach(glob(PROJECT.'modules/'.$name.'/*.php') as $file)
-                include($file);
-                
-            
-            $name = ucfirst($name);
-            if(!class_exists($moduleName)){
-                Log::save("Module {$moduleName} don't have class with same name", Log::WARNING);
-            }else{
-                $this->{$name} = new $name();
-            }
-            
-            Log::save('Module loaded : '.$name);
-        }
+     * load requested files
+     * We need to go deerper
+     * @param array/string $files 
+     */
+    public function requireFiles($files){
+        $this->jet->requireFiles($files, PROJECT.'apps/'.$this->jet->app);
     }
 }
 ?>
