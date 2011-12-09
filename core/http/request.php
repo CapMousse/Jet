@@ -118,7 +118,7 @@ class HttpRequest{
      */
     public static function getRoot(){
         if(null == self::$_root){
-            self::$_root = substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/') + 1);
+            self::$_root = substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], '/') + 1);
         }
         
         return self::$_root;
