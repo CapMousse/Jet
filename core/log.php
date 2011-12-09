@@ -38,9 +38,10 @@ class Log{
 
     /**
      * Create a log error
-     * @param    string   $msg      msg you want to log
-     * @param    bool     $type     error type (INFO, WARNING, FATAL)
-     * @return   boolean
+     *
+     * @param   string      $msg    msg you want to log
+     * @param   int    $type   error type (INFO, WARNING, FATAL)
+     * @return  null
      */
     public static function save($msg, $type = self::INFO){
         if(self::$jet === null){
@@ -81,8 +82,8 @@ class Log{
 
     /**
      * Set a info log
-     * @param  string/array $msg
-     * @return boolean
+     * @param   string|array $msg 
+     * @return  null
      */
     public static function info($msg){
         if(is_array($msg)){
@@ -94,8 +95,8 @@ class Log{
 
     /**
      * Set a warning log
-     * @param  string/array $msg
-     * @return boolean
+     * @param   string|array $msg
+     * @return  null
      */
     public static function warning($msg){
         if(is_array($msg)){
@@ -107,8 +108,8 @@ class Log{
 
     /**
      * Set a fatal log
-     * @param  string/array $msg
-     * @return boolean
+     * @param   string|array $msg
+     * @return  null
      */
     public static function fatal($msg){
         if(is_array($msg)){

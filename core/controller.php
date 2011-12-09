@@ -43,7 +43,9 @@ abstract class Controller{
 
     /**
      * load the asked model. If your are to dumb to understand, suicide yourself.
-     * @param    string $model      name of the model file
+     * @param $file
+     *
+     * @internal param string $model name of the model file
      * @return   Model/false
      */   
     protected function loadModel($file){
@@ -88,11 +90,13 @@ abstract class Controller{
         $controller = ucfirst($file);
         return new $controller();
     }
-    
+
     /**
      * load requested files
      * We need to go deerper
-     * @param array/string $files 
+     * @param $files
+     *
+     * @internal param $array /string $files
      */
     public function requireFiles($files){
         $this->jet->requireFiles($files, PROJECT.'apps/'.$this->jet->app);

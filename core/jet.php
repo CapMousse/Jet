@@ -78,10 +78,6 @@ class Jet{
             OrmConnector::$config = $config['orm'];
         }
         
-        if(isset($config['modules'])){
-            $this->modules = array_merge($config['modules'], $this->modules);
-        }
-        
         if(isset($config['requires'])){
             $this->requires = array_merge($config['requires'], $this->requires);
         }
@@ -130,9 +126,8 @@ class Jet{
         $this->router = new Router();
         $this->router->launch();
         
-        //parse and load needed files and modules
+        //parse and load needed files
         $this->requireFiles();
-        $this->requireModules();
 
         //launch render
         return $this->render();
@@ -141,7 +136,7 @@ class Jet{
     /**
      * parse current path to be used by the router
      *
-     * @access  private static function
+     * @access  private
      * @return  Array/null
      */
     private function parsePath(){
@@ -158,7 +153,6 @@ class Jet{
      * @return  string/false
      */
     private function defineApp(){
-        $routes = array();
         $uri = $this->uri_array;
         
         if(!is_array($this->apps) || count($this->apps) == 0){
@@ -167,7 +161,7 @@ class Jet{
         }
         
         if(!isset($this->apps)){
-            Log::save('No default app routes defined in config/routes.php', Log::FATAL);
+            Log::save('No default app routes defined in project/config.php', Log::FATAL);
             return;
         }
 
@@ -175,8 +169,8 @@ class Jet{
             $this->app = $this->apps['default'].'/';
         }
 
-        if(isset($this->apps['/'.$uri[0]])){
-            $app = $this->apps['/'.$uri[0]].'/';
+        if(isset($this->apps[$uri[0]])){
+            $app = $this->apps[$uri[0]].'/';
             array_splice($uri, 0, 1);
         }else{
             $app = $this->apps['default'].'/';
@@ -196,8 +190,8 @@ class Jet{
         if(!is_file(PROJECT.'apps/'.$this->app.'config.php')){
             return false;
         }
-        
-        include(PROJECT.'apps/'.$this->app.'config.php');
+
+        include(PROJECT.'apps/'.$this->app.'config.php');        
         
         $this->setConfig($config);
     }
@@ -220,9 +214,10 @@ class Jet{
             $files = array($files);
         }
         
-        
         foreach($files as $file){
-            if(is_file($dir.$file)){
+            if(is_file(PROJECT.'apps/'.$this->app.$file)){
+                include(PROJECT.'apps/'.$this->app.$file);
+            }elseif(is_file($dir.$file)){
                 include($dir.$file);
             }else{
                 Log::warning('Required file '.$dir.$file.' doens\'t exists');
@@ -340,7 +335,7 @@ class Jet{
             
             foreach($actions as $action){
                 if(!is_array($action)){
-                    $action();
+                    call_user_func($action);
                 }else{
                     $class = $action['class'];
                     $method = $action['method'];
@@ -351,16 +346,16 @@ class Jet{
             }
         }
     }
-    
+
     /**
-     * addAction add an action to the specified "listener"
-     * 
+     * addAction add an action to the specified listener
+     *
      * @access public
-     * @param  string $action the listener
-     * @param  object $class the object from the action
-     * @param  string $method  the method to be launched
-     * @param  array  $option the arguments for the method
-     * @return void
+     * @param  $action {String} Listener name
+     * @param  $class {Object} class name
+     * @param  $method {String} method name
+     * @param  $options {Array}  options name
+     * @return Void
      */
     public function addAction($action, $class, $method = null, $options = FALSE){
         Log::save("Added a listerner at $action", Log::INFO);
@@ -374,32 +369,34 @@ class Jet{
             );
         }
     }
-    
-    /** 
-     * lauch the specified action form class with sent options
-     * 
-     * @access  private static function
+
+    /**
+     * launch the specified action form class with sent options
+     *
+     * @access  private
      * @param   $class object : the object from the action
      * @param   $method string : the method to be launched
-     * @param   $option array [optional] : the arguments for the method
+     * @param   bool $options
+     *
+     * @internal param array $option [optional] : the arguments for the method
      * @return  void
      */
     private function lauchAction($class, $method, $options = false){
         Log::save('LauchAction : '.$method);
         
-        // lauch the asked action, with our options
+        // launch the asked action, with our options
         if($options)
             @call_user_func_array(array($class, $method), $options);
         else
             $class->$method();
     }
-    
+
     /**
      * check if file exist in project dir or app dir
-     * 
-     * @access  private static function
+     *
+     * @access  private
      * @param   $file   string  file to be check
-     * @return  $file/false
+     * @return  array|bool|null
      */
     private function checkFile($file){
         $return = null;
