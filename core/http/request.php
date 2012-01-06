@@ -1,13 +1,13 @@
 <?php
 /**
 *   Jet
-*   A lightweigth and fast framework for developper who don't need hundred of files
+*   A lightweight and fast framework for developer who don't need hundred of files
 *    
 *   @package Jet
 *   @author  Jérémy Barbe
 *   @license BSD
 *   @link     https://github.com/CapMousse/Jet
-*   @version 1
+*
 */
 
 /**
@@ -18,7 +18,7 @@
 *   @author  Jérémy Barbe
 *   @license BSD
 *   @link     https://github.com/CapMousse/Jet
-*   @version 1.1
+*
 */
 
 class HttpRequest{
@@ -33,7 +33,7 @@ class HttpRequest{
     /**
      * Get a value form the $_GET array
      * @param string $key
-     * @return mixed 
+     * @return mixed|false
      */
     public static function get($key){
         if(null == self::$_get){
@@ -46,7 +46,7 @@ class HttpRequest{
     /**
      * Get a value form the $_POST array
      * @param string $key
-     * @return mixed 
+     * @return mixed|false
      */
     public static function post($key){
         if(null == self::$_post){
@@ -59,7 +59,7 @@ class HttpRequest{
     /**
      * Get a value form a PUT request
      * @param string $key
-     * @return mixed 
+     * @return mixed|false
      */
     public static function put($key){
         if(null == self::$_put){
@@ -72,7 +72,7 @@ class HttpRequest{
     /**
      * Get a value form a DEL request
      * @param string $key
-     * @return mixed 
+     * @return mixed|false
      */
     public static function del($key){
         if(null == self::$_del){
@@ -85,7 +85,7 @@ class HttpRequest{
     /**
      * Get a value form the $_COOKIE array
      * @param string $key
-     * @return mixed 
+     * @return mixed|false
      */
     public static function cookie($key){
         if(null == self::$_cookie){
@@ -98,7 +98,7 @@ class HttpRequest{
     /**
      * Get a value form the $_SERVER array
      * @param string $key
-     * @return mixed 
+     * @return mixed|false
      */
     public static function server($key){
         return isset($_SERVER[$key]) ? $_SERVER[$key] : false;

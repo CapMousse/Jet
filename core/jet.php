@@ -1,13 +1,13 @@
 <?php
 /**
 *   Jet
-*   A lightweigth and fast framework for developper who don't need hundred of files
+*   A lightweight and fast framework for developer who don't need hundred of files
 *    
 *   @package Jet
 *   @author  Jérémy Barbe
 *   @license BSD
 *   @link     https://github.com/CapMousse/Jet
-*   @version 1
+*
 */
 
 /**
@@ -18,7 +18,7 @@
 *   @author  Jérémy Barbe
 *   @license BSD
 *   @link     https://github.com/CapMousse/Jet
-*   @version 1.1
+*
 */
 class Jet{
     public static
@@ -31,7 +31,6 @@ class Jet{
         $apps = array(),
         $routes = array(),
         $router = null,
-        $modules = array(),
         $requires = array(),
         $uri_array = array(),
         $app = null,
@@ -195,10 +194,12 @@ class Jet{
         
         $this->setConfig($config);
     }
-    
+
     /**
      * parse and load needed files
-     * So obvious. 
+     * So obvious.
+     * @param   null|string  $files  $file the fucking file name !
+     * @param   null|string  $dir    the fucking dir where is the file name !
      * @return  void
      */
     public function requireFiles($files = null, $dir = null){
@@ -226,39 +227,8 @@ class Jet{
     }
     
     /**
-     * parse and load needed modules
-     * 
-     * @return  void
-     */
-    private function requireModules(){
-        $modules = array();
-        
-        foreach($this->modules as $moduleName){
-            if(is_dir(PROJECT.'modules/'.$moduleName)){
-
-                //include all nececary files
-                foreach(glob(PROJECT.'modules/'.$moduleName.'/*.php') as $file)
-                    include($file);
-
-                $name = ucfirst($moduleName);
-                
-                if(!class_exists($moduleName)){
-                    Log::save("Module {$moduleName} don't have class with same name", Log::WARNING);
-                    continue;
-                }
-           
-                $modules[$name] = new $name();
-
-                Log::save('Module loaded : '.$name);
-            }
-        }
-        
-        $this->modules = $modules;
-    }
-    
-    /**
      * launch the render of the current page
-     * If you read this, you loose
+     * If you read this, you loose the game
      * @return  void
      */
     
@@ -267,7 +237,6 @@ class Jet{
         $_currentController = $this->controller;
         $_currentAction = $this->action;
         $_currentOptions = $this->options;
-        $_currentModules = $this->modules;
         
         // include the asked controller            
         Log::save('Asked controller and action : '.$_currentController.'->'.$_currentAction);            
@@ -277,37 +246,29 @@ class Jet{
         }
 
         include($_currentApp.'controllers/'.$_currentController.'.php');
-            
-        
-        // create the asked controller
+
         $controller = ucfirst($_currentController);
-        
+
+        //check if controller class existe
         if(!class_exists($controller)){
             Log::save('Controller class '.$controller.' is not declared on '.$_currentApp.'controllers/'.$_currentController.'.php', Log::FATAL);
         }
-        
+
+        //init controller
         $app = new $controller();
-        
-        if(count($_currentModules) > 0){
-            foreach($_currentModules as $name => $object){
-                $app->{$name} = $object;
-            }
-        }
-        
-        if($this->get('askRoute') === 404){
+
+        //check if client don't ask a broken link
+        if($this->get('askedRoute') === 404){
             $app->response->setStatus(404);
         }
-        
+
         $this->execute('beforeLaunchAction');
-        
-        if(method_exists($app, 'before'.ucfirst($_currentAction)))
-            $this->lauchAction($app, 'before'.ucfirst($_currentAction), $_currentOptions);
-        
-        $this->execute('launchAction');
+        $this->execute('before'.ucfirst($_currentAction));
+
         $this->lauchAction($app, $_currentAction, $_currentOptions);
-        
-        if(method_exists($app, 'after'.ucfirst($_currentAction)))
-            $this->lauchAction($app, 'after'.ucfirst($_currentAction), $_currentOptions);
+
+        $this->execute('after'.ucfirst($_currentAction));
+        $this->execute('afterLaunchAction');
 
          // check if our app need to be rendered
         Log::save('Render layout');
@@ -376,12 +337,12 @@ class Jet{
      * @access  private
      * @param   $class object : the object from the action
      * @param   $method string : the method to be launched
-     * @param   bool $options
+     * @param   array $options
      *
      * @internal param array $option [optional] : the arguments for the method
      * @return  void
      */
-    private function lauchAction($class, $method, $options = false){
+    private function lauchAction($class, $method, $options = array()){
         Log::save('LauchAction : '.$method);
         
         // launch the asked action, with our options

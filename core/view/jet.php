@@ -1,13 +1,13 @@
 <?php
 /**
 *   Jet
-*   A lightweigth and fast framework for developper who don't need hundred of files
+*   A lightweight and fast framework for developer who don't need hundred of files
 *    
 *   @package Jet
 *   @author  Jérémy Barbe
 *   @license BSD
 *   @link     https://github.com/CapMousse/Jet
-*   @version 1
+*
 */
 
 /**
@@ -18,7 +18,7 @@
 *   @author  Jérémy Barbe
 *   @license BSD
 *   @link     https://github.com/CapMousse/Jet
-*   @version 1
+*
 */
 
 
@@ -30,7 +30,8 @@ class ViewJet extends ViewBridge{
     protected 
         $jet = null,
         $blockName = null,
-        $_vars = array();
+        $_vars = array(),
+        $_version = "1.0";
     
     function __construct(){
         $this->jet = Jet::getInstance();
@@ -50,12 +51,16 @@ class ViewJet extends ViewBridge{
     public function load($file, $options = null){
         $_currentApp = PROJECT.'apps/'.$this->jet->app;
         //Control if options is defined, if yes, construct all var used in templates
-        $vars = $options;
 
-        $appFile = @include($_currentApp.'views/'.$file.'.php');
-        $globalFile = @include(PROJECT.'views/'.$file.'.php');
+        if(null != $options){
+            foreach($options as $name => $var) ${$name} = $var;
+        }
 
-        if(!($appFile || $globalFile)){
+        if(is_file($_currentApp.'views/'.$file.'.php')){
+            include($_currentApp.'views/'.$file.'.php');
+        }else if(is_file(PROJECT.'views/'.$file.'.php')){
+            include(PROJECT.'views/'.$file.'.php');
+        }else{
             Log::save("The asked view <b>$file</b> doesn't exists in <b>".get_class($this).".php</b>", Log::FATAL);
             return;
         }
@@ -193,7 +198,7 @@ class ViewJet extends ViewBridge{
      * render
      *
      * @access   public
-     * @return   void
+     * @return   string
      */
     public function _render(){
         ob_start();

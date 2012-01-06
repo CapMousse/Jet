@@ -1,13 +1,13 @@
 <?php
 /**
 *   Jet
-*   A lightweigth and fast framework for developper who don't need hundred of files
+*   A lightweight and fast framework for developer who don't need hundred of files
 *    
 *   @package Jet
 *   @author  Jérémy Barbe
 *   @license BSD
 *   @link     https://github.com/CapMousse/Jet
-*   @version 1
+*
 */
 
 /**
@@ -18,7 +18,7 @@
 *   @author     Jérémy Barbe
 *   @license    BSD
 *   @link       https://github.com/CapMousse/Jet
-*   @version    1
+*
 */
 
 class HttpResponse{
@@ -101,7 +101,7 @@ class HttpResponse{
      * @param   string  $value      value of the header
      * @param   boolean $erase      erase header if already exists
      * @param   int     $code       the status code of the header
-     * @return  current header
+     * @return  array
      */
     public function setHeader($header, $value = null, $erase = false, $code = 200){
         if(isset($this->headers[$header]) && !$erase){
@@ -114,7 +114,7 @@ class HttpResponse{
     }
     
     /**
-     * removeHeader
+     * Remove the specified header
      * 
      * @param   string  $header     the header to be removed
      * @return  void
@@ -213,12 +213,11 @@ class HttpResponse{
         $this->body .= $value;
         $this->setHeader("Content-Length", strlen($this->body), true);
     }
-    
+
     /**
-     * setPublic
-     * 
      * Set the http cache public
-     * 
+     *
+     * @param   bool $set
      * @return  void
      */
     public function setPublic($set = true){
@@ -228,12 +227,11 @@ class HttpResponse{
             $this->removeCacheControl('public');
         }
     }
-    
+
     /**
-     * setPrivate
-     * 
      * Set the http cache private
-     * 
+     *
+     * @param   bool $set
      * @return  void
      */
     public function setPrivate($set = true){
@@ -245,8 +243,6 @@ class HttpResponse{
     }
     
     /**
-     * setCacheControl
-     * 
      * Set the Cache-Control max age
      * 
      * @param   $maxAge   expire time in second
@@ -261,8 +257,6 @@ class HttpResponse{
     }
     
     /**
-     * setServerMaxAge
-     * 
      * Set the Cache-Control procy max age
      * 
      * @param   $maxAge   expire time in second
@@ -275,13 +269,11 @@ class HttpResponse{
             $this->addCacheControl('s-maxage', $maxAge);
         }
     }
-    
+
     /**
-     * setMustRevalidate
-     * 
      * Set the Cache-Control must revalidate
-     * 
-     * @param   bool $must  activate/disactivate
+     *
+     * @param bool $revalidate
      * @return  void
      */
     public function setMustRevalidate($revalidate = true){
@@ -293,8 +285,6 @@ class HttpResponse{
     }
     
     /**
-     * setProxyRevalidate
-     * 
      * Set the Cache-Control proxy revalidate
      * 
      * @param   bool $revalidate    set/unset the proxy-revalidate
@@ -309,8 +299,6 @@ class HttpResponse{
     }
     
     /**
-     * setLastModified
-     * 
      * Set the last modified date for cache
      * 
      * @param   int $time   timestamp
@@ -332,13 +320,12 @@ class HttpResponse{
             return;
         }
     }
-    
+
     /**
-     * setEtag
-     * 
      * Set the Etag header
-     * 
-     * @param   strin $tag   the Etag hash (must be unique)
+     *
+     * @param   string $tag   the Etag hash (must be unique)
+     * @param   string $type
      * @return  void
      */
     public function setEtag($tag = null, $type = 'strong'){
@@ -370,8 +357,6 @@ class HttpResponse{
     }
     
     /**
-     * setExpire
-     * 
      * Set the Expire header
      * 
      * @param   $time   expire time in second
@@ -387,8 +372,6 @@ class HttpResponse{
     }
     
     /**
-     * redirect
-     * 
      * @param $address string url of redirect
      * @param $type int type of redirect
      * @param $time int time before redirecting
@@ -397,7 +380,7 @@ class HttpResponse{
     public function redirect($address, $type = 304, $time = 0){
         if(!array_key_exists($type, self::$statusList)){
             Log::save("The asked status doesn't exists : ".$type, Log::INFO);
-            return false;
+            return;
         }
         
         $header = "Location";
@@ -415,16 +398,15 @@ class HttpResponse{
         
         Log::save("Redirecting to  : ".$address, Log::INFO);
         if(0 === $time){
-            //prevent framework from redering
+            //prevent framework from rendering
             exit();
         }
     }
     
     /**
      * Send header and body to the client
-     * 
-     * @param string $body
-     * @return  void
+     *
+     * @return  string
      */
     public function send(){
         if($this->halt !== false){

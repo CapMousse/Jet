@@ -1,13 +1,13 @@
 <?php
 /**
 *   Jet
-*   A lightweigth and fast framework for developper who don't need hundred of files
+*   A lightweight and fast framework for developer who don't need hundred of files
 *    
 *   @package Jet
 *   @author  Jérémy Barbe
 *   @license BSD
 *   @link     https://github.com/CapMousse/Jet
-*   @version 1
+*
 */
 
 /**
@@ -18,7 +18,7 @@
 *   @author  Jérémy Barbe
 *   @license BSD
 *   @link     https://github.com/CapMousse/Jet
-*   @version 1
+*
 */
 
 class Router{
@@ -81,7 +81,7 @@ class Router{
         
         $this->jet->controller = $this->default[CONTROLLER];
         $this->jet->action = $this->default[ACTION];
-        $this->jet->askRoute = 'default';
+        $this->jet->askedRoute = 'default';
         
         if(!is_array($this->jet->uri_array) || count($this->jet->uri_array) == 0){
             Log::save("Empty user uri, render default");
@@ -95,7 +95,7 @@ class Router{
             
             $this->jet->controller = $this->routes[$uri][CONTROLLER];
             $this->jet->action = $this->routes[$uri][ACTION];
-            $this->jet->askRoute = $uri;
+            $this->jet->askedRoute = $uri;
             return;
         }
         
@@ -112,7 +112,7 @@ class Router{
                 $this->jet->controller = $this->parsed_routes[$route][CONTROLLER];
                 $this->jet->action = $this->parsed_routes[$route][ACTION];
                 $this->jet->options = $method_args;
-                $this->jet->askRoute = $uri;
+                $this->jet->askedRoute = $uri;
                 
                 return;
             }
@@ -125,7 +125,7 @@ class Router{
         $this->jet->controller = $this->error[CONTROLLER];
         $this->jet->action = $this->error[ACTION];
         $this->jet->options = array('url' => $uri);
-        $this->jet->askRoute = 404;
+        $this->jet->askedRoute = 404;
 
         return;
     }
