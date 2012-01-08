@@ -18,7 +18,8 @@
 *   @license BSD
 *   @link     https://github.com/CapMousse/Jet
 */
-class Model extends OrmWrapper{    
+class Model extends OrmWrapper{
 }
+
 
 ?>

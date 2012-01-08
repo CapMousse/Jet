@@ -28,7 +28,7 @@ abstract class Controller{
         $view,
         $response,
         $request,
-        $models = array();
+        $model;
 
     /**
      * WARN ! If you need to create your own/self/personnal/other-type-of-reason-that-i-don't-know construct, your need to declare a parent::__construct() in
@@ -39,34 +39,7 @@ abstract class Controller{
         $this->view = new $this->jet->global['template']();
         $this->response = HttpResponse::getInstance();
         $this->request = new HttpRequest();
-    }
-
-    /**
-     * load the asked model. If your are to dumb to understand, suicide yourself.
-     * @param $file
-     *
-     * @internal param string $model name of the model file
-     * @return   Model/false
-     */   
-    protected function loadModel($file){
-        $_currentApp = PROJECT.'apps/'.$this->jet->app;
-        $_className = ucfirst($file);
-        
-        //Control if model file exists
-        if(!isset($this->models[$_className])){
-            if(!is_file($_currentApp.'models/'.$file.'.php')){
-                trigger_error("The asked model <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />", true, true);
-                return false;
-            }
-
-            include($_currentApp.'models/'.$file.'.php');
-            $this->models[$_className] = true;   
-        }
-        
-        Log::save('Model loaded : '.$file);
-
-        //return the intentiate model
-        return new $_className();
+        $this->model = new ModelManager();
     }
 
     /**

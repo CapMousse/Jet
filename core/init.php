@@ -30,8 +30,13 @@ spl_autoload_register(function($class){
     if(isset($loaded[$class])){
         return $loaded[$class];
     }
-    
-    $file = strtolower(preg_replace('/(?!^)[[:upper:]]/', '/\0', $class));
+
+    if(!is_file(SYSPATH.$class.'.php')){
+        $file = strtolower(preg_replace('/(?!^)[[:upper:]]/', '/\0', $class));
+    }else{
+        $file = lcfirst($class);
+    }
+
     
     
     if(!is_file(SYSPATH.$file.'.php')){

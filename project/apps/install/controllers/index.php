@@ -3,11 +3,11 @@ class Index extends Controller{
     public $title = 'Congratulation';
     
     public function congrats(){
-        //$test = $this->loadModel('test');
         
         $this->view->setLayout('index');
         $this->view->load('partial/home');
-        //$model = $this->loadModel('essaiModel');
+
+        //$model = $this->model->load('essaiModel');
         //$test = $model->findMany();
         
         //$test->description = "Test d'édition";
