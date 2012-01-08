@@ -99,7 +99,7 @@ class Jet{
         }
         
         if(isset($array[$this->environment])){
-            $returnArray = array_merge($array[$this->environment], $returnArray);
+            $returnArray = array_merge_recursive($array[$this->environment], $returnArray);
         }
         
         return $returnArray;
@@ -190,7 +190,7 @@ class Jet{
             return false;
         }
 
-        include(PROJECT.'apps/'.$this->app.'config.php');        
+        include(PROJECT.'apps/'.$this->app.'config.php');
         
         $this->setConfig($config);
     }

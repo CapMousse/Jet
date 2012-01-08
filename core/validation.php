@@ -168,29 +168,29 @@ class Validation{
             $this->content[$name]['value'] = $current;
             
             if((!$current || empty($current)) && isset($input['required'])){
-                $this->error[$name]['required'] = true;
+                $this->error[$name]['required'] = false;
             }
             
             if(isset($input['maxLength']) && strlen($current) > $input['maxLength']){
-                $this->error[$name]['maxLength'] = true;
+                $this->error[$name]['maxLength'] = false;
             }
             
             if(isset($input['minLength']) && strlen($current) < $input['minLength']){
-                $this->error[$name]['minLength'] = true;
+                $this->error[$name]['minLength'] = false;
             }
             
             if(isset($input['type'])){
                 if($input['type'] == "mail" && !filter_var($current, FILTER_VALIDATE_EMAIL)){
-                    $this->error[$name]['mail'] = true;
+                    $this->error[$name]['mail'] = false;
                 }
                 if($input['type'] == "number" && !filter_var($current, FILTER_VALIDATE_FLOAT)){
-                    $this->error[$name]['number'] = true;
+                    $this->error[$name]['number'] = false;
                 }
                 if($input['type'] == "ip" && !filter_var($current, FILTER_VALIDATE_IP)){
-                    $this->error[$name]['ip'] = true;
+                    $this->error[$name]['ip'] = false;
                 }
                 if($input['type'] == "url" && !filter_var($current, FILTER_VALIDATE_URL)){
-                    $this->error[$name]['url'] = true;
+                    $this->error[$name]['url'] = false;
                 }
             }
         }

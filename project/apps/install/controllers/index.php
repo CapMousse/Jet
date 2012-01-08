@@ -22,10 +22,11 @@ class Index extends Controller{
     }
     
     public function contactForm(){
-        $this->view->loadView('partial/form');
+        $this->view->setLayout('index');
+        $this->view->load('partial/form');
         
         if(Validation::method() == 'POST'){
-            $val = new Validation('JSON');
+            $val = new Validation();
             
             $val->add('name')
                 ->type('text')
@@ -33,10 +34,7 @@ class Index extends Controller{
                 ->required();
             
             $val->add('mail')
-                ->type('mail');
-            
-            $val->add('pass')
-                ->type('password')
+                ->type('mail')
                 ->required();
             
             var_dump($val->validate());
@@ -45,7 +43,7 @@ class Index extends Controller{
 
     public function showId($id){
     	echo "Current id is {$id}";
-        $this->loadView('partial/home');
+        $this->load('partial/home');
     }
     
     public function do404($url){

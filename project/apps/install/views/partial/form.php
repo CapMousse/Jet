@@ -1,8 +1,7 @@
-<?php $this->view->beginBlock('content'); ?>
+<?php $this->beginBlock('content'); ?>
 <form method="post">
-    <input type="text" name="name" /><br/>
-    <input type="mail" name="mail" /><br/>
-    <input type="password" name="pass" /><br/>
+    Name : <input type="text" name="name" /><br/>
+    Mail <input type="mail" name="mail" /><br/>
     <input type="submit" value="envoyer" />
 </form>
-<?php $this->view->endBlock(); ?>
+<?php $this->endBlock(); ?>
