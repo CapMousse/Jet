@@ -23,7 +23,9 @@
 
 
 class Validation{
-    private 
+    public $validatedInputs = array();
+
+    private
         $inputs = array(),
         $current = null,
         $error = array(),
@@ -193,6 +195,10 @@ class Validation{
                     $this->error[$name]['url'] = false;
                 }
             }
+
+            if(!isset($this->error[$name])){
+                $this->validatedInputs[$name] = $current;
+            }
         }
         
         if(count($this->error) > 0){
@@ -201,6 +207,10 @@ class Validation{
         }
         
         return true;
+    }
+
+    public function getInputs(){
+        return $this->validatedInputs;
     }
 }
 ?>
