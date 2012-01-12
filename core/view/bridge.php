@@ -64,7 +64,7 @@ abstract class ViewBridge{
      *          time in minutes before token destroy
      * @return string
      */
-    final public function setCSRF($time = 5){
+    final public function getCSRF($time = 5){
         if(null === $this->csrfName){
             $time = microtime()+ ($time*60*1000);
             $token = sha1($time+microtime());
