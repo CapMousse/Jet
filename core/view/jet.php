@@ -32,8 +32,10 @@ class ViewJet extends ViewBridge{
         $blockName = null,
         $_vars = array(),
         $_version = "1.0";
-    
+
     function __construct(){
+        parent::__construct();
+
         $this->jet = Jet::getInstance();
     }
     
