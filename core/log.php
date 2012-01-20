@@ -49,21 +49,18 @@ class Log{
         }
         
         $bk = Debug_backtrace();
-        $info = null;
 
         foreach($bk as $trace){
             if(isset($trace['class']) && $trace['class'] != __CLASS__ && $trace['class'] != "Controller"){
-                $info = $trace;
                 break;
             }
         }
 
         $url = HttpRequest::getQueryString();
-        $url = $url == "" ? "/" : $url;
         
-        $caller = substr($info['file'], strrpos($info['file'], "/") + 1);
-        $line = $info['line'];
-        $obj = (isset($info['type']) ? $info['class'].$info['type']:'').$info['function'];
+        $caller = substr($trace['file'], strrpos($trace['file'], "/") + 1);
+        $line = $trace['line'];
+        $obj = (isset($trace['type']) ? $trace['class'].$trace['type']:'').$trace['function'];
         $perf = microtime() - self::$start;
         $time = new DateTime('now', new DateTimeZone('UTC'));
         
@@ -89,7 +86,7 @@ class Log{
                 break;
             }
 
-            error_log($log, 3, $file);
+            error_log($log."\n", 3, $file);
         }
         
         if($type === self::FATAL){

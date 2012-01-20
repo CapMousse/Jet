@@ -109,7 +109,7 @@ class HttpRequest{
      * @return string 
      */
     public static function getQueryString() {
-        return $_SERVER['QUERY_STRING'];
+        return $_SERVER['REQUEST_URI'];
     }
     
     /**
