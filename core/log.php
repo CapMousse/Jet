@@ -49,9 +49,11 @@ class Log{
         }
         
         $bk = Debug_backtrace();
+        $info = null;
 
         foreach($bk as $trace){
             if(isset($trace['class']) && $trace['class'] != __CLASS__ && $trace['class'] != "Controller"){
+                $info = $trace;
                 break;
             }
         }
@@ -59,9 +61,9 @@ class Log{
         $url = HttpRequest::getQueryString();
         $url = $url == "" ? "/" : $url;
         
-        $caller = substr($trace['file'], strrpos($trace['file'], "/") + 1);
-        $line = $trace['line'];
-        $obj = (isset($trace['type']) ? $trace['class'].$trace['type']:'').$trace['function'];
+        $caller = substr($info['file'], strrpos($info['file'], "/") + 1);
+        $line = $info['line'];
+        $obj = (isset($info['type']) ? $info['class'].$info['type']:'').$info['function'];
         $perf = microtime() - self::$start;
         $time = new DateTime('now', new DateTimeZone('UTC'));
         
@@ -72,10 +74,25 @@ class Log{
         $debugLevel = isset(self::$jet->global['log']) ? self::$jet->global['log'] : 0;
         
         if($debugLevel == $type || $debugLevel == 0){
-            error_log($log."\n", 3, PROJECT.'logs/errors.log');
+            switch($type){
+                case self::FATAL:
+                    $file = PROJECT.'logs/fatal.log';
+                break;
+
+                case self::WARNING:
+                    $file = PROJECT.'logs/warning.log';
+                break;
+
+                case self::INFO:
+                default:
+                    $file = PROJECT.'logs/info.log';
+                break;
+            }
+
+            error_log($log, 3, $file);
         }
         
-        if($type === 3){
+        if($type === self::FATAL){
             exit($log);
         }
     }
@@ -87,7 +104,7 @@ class Log{
      */
     public static function info($msg){
         if(is_array($msg)){
-            $msg = joint(' ', $msg);
+            $msg = join(' ', $msg);
         }
         
         return self::save($msg, self::INFO);
@@ -100,7 +117,7 @@ class Log{
      */
     public static function warning($msg){
         if(is_array($msg)){
-            $msg = joint(' ', $msg);
+            $msg = join(' ', $msg);
         }
         
         return self::save($msg, self::WARNING);
@@ -113,7 +130,7 @@ class Log{
      */
     public static function fatal($msg){
         if(is_array($msg)){
-            $msg = joint(' ', $msg);
+            $msg = join(' ', $msg);
         }
         
         return self::save($msg, self::FATAL);
