@@ -20,22 +20,78 @@
 *   @link     https://github.com/CapMousse/Jet
 *
 */
-class Jet{
-    public static
-        $instance = null;
-    
-    public 
-        $actions = array(),
-        $global = array(),
-        $environment,
-        $apps = array(),
-        $routes = array(),
-        $router = null,
-        $requires = array(),
-        $uri_array = array(),
-        $app = null,
-        $infos = array();
-    
+final class Jet{
+    /**
+     * Contain the current instance of the core object
+     * @var Jet
+     */
+    public static $instance = null;
+
+    /**
+     * Contain all action by listeners
+     * @var array
+     */
+    public $actions = array();
+
+    /**
+     * Contain the global configuration object
+     * @var array
+     */
+    public $global = array();
+
+    /**
+     * Contain the current used environment
+     * @var String
+     */
+    public $environment;
+
+    /**
+     * Contain the app list
+     * @var array
+     */
+    public $apps = array();
+
+    /**
+     * Contain the list of parsed $routes
+     * @var array
+     */
+    public $routes = array();
+
+    /**
+     * Contain the Router object
+     * @var Router
+     */
+    public $router = null;
+
+    /**
+     * Contain the list of required files
+     * @var array
+     */
+    public $requires = array();
+
+    /**
+     * Contain the current sent URI on array format
+     * @var array
+     */
+    public $uri_array = array();
+
+    /**
+     * Contain the current APP name
+     * @var String|Null
+     */
+    public $app = null;
+
+    /**
+     * Contain vars of the setter/getter
+     * @var array
+     */
+    public $infos = array();
+
+    /**
+     * Return the current jet instance
+     * @static
+     * @return Jet|null
+     */
     public static function getInstance() {
         if(self::$instance === null){
             self::$instance = new self;
@@ -183,11 +239,11 @@ class Jet{
      */
     private function getAppConfig(){        
         if(!$this->app){
-            return false;
+            return;
         }
         
         if(!is_file(PROJECT.'apps/'.$this->app.'config.php')){
-            return false;
+            return;
         }
 
         include(PROJECT.'apps/'.$this->app.'config.php');
@@ -372,11 +428,19 @@ class Jet{
         
         return is_null($return) ? false : $return;
     }
-    
+
+    /**
+     * @param String $name
+     * @param Mixed $value
+     */
     public function set($name, $value){
         $this->infos[$name] = $value;
     }
-    
+
+    /**
+     * @param String $name
+     * @return Boolean|null
+     */
     public function get($name){      
         return isset($this->infos[$name]) ? $this->infos[$name] : false;
     }

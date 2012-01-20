@@ -22,13 +22,34 @@
 *
 */
 abstract class Controller{
-    
-    public 
-        $jet = null,
-        $view,
-        $response,
-        $request,
-        $model;
+
+    /**
+     * The jet core current instance
+     * @var Jet
+     */
+    public $jet = null;
+
+    /**
+     * Contain the current instance of the template manager
+     * @var ViewBridge
+     */
+    public $view;
+
+    /**
+     * The current instance of the HttpResponse object
+     * @var HttpResponse
+     */
+    public $response;
+
+    /**
+     * @var \HttpRequest
+     */
+    public $request;
+
+    /**
+     * @var \ModelManager
+     */
+    public $model;
 
     /**
      * WARN ! If you need to create your own/self/personnal/other-type-of-reason-that-i-don't-know construct, your need to declare a parent::__construct() in

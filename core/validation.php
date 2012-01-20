@@ -23,14 +23,41 @@
 
 
 class Validation{
+    /**
+     * The validated list of inputs with there contents
+     * @var array
+     */
     public $validatedInputs = array();
 
-    private
-        $inputs = array(),
-        $current = null,
-        $error = array(),
-        $content = array(),
-        $returnType = 'array';
+    /**
+     * The list of inputs
+     * @var array
+     */
+    private $inputs = array();
+
+    /**
+     * The current edited input
+     * @var String|null
+     */
+    private $current = null;
+
+    /**
+     * Error list by inputs
+     * @var array
+     */
+    private $error = array();
+
+    /**
+     * The validated content of each inputs
+     * @var array
+     */
+    private $content = array();
+
+    /**
+     * The type of object returned, default array
+     * @var string
+     */
+    private $returnType = 'array';
 
 
     /**

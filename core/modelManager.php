@@ -19,15 +19,30 @@
 *   @link     https://github.com/CapMousse/Jet
 */
 class ModelManager{
-    public
-        $jet,
-        $models = array();
+    /**
+     * The core current instance
+     * @var Jet
+     */
+    private $jet;
 
+    /**
+     * The list of models already loaded
+     * @var array
+     */
+    private $models = array();
+
+    /**
+     * Get the Jet core instance
+     */
     function __construct(){
         $this->jet = Jet::getInstance();
     }
 
-
+    /**
+     * Check if the model exist, load and instantiate him
+     * @param String $file
+     * @return OrmWrapper
+     */
     public function load($file){
         $_currentApp = PROJECT.'apps/'.$this->jet->app;
         $_className = ucfirst($file);

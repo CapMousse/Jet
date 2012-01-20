@@ -22,13 +22,41 @@
 */
 
 class HttpRequest{
-    public static
-        $_get = null,
-        $_post = null,
-        $_put = null,
-        $_del = null,
-        $_cookie = null,
-        $_root = null;
+    /**
+     * Contain the list of $_GET
+     * @var null
+     */
+    public static $_get = null;
+
+    /**
+     * Contain the list of $_POST
+     * @var null
+     */
+    public static $_post = null;
+
+    /**
+     * Contain the list of PUT
+     * @var null
+     */
+    public static $_put = null;
+
+    /**
+     * Contain the list of DEL
+     * @var null
+     */
+    public static $_del = null;
+
+    /**
+     * Contain the list of $_COOKIE
+     * @var null
+     */
+    public static $_cookie = null;
+
+    /**
+     * Contain the root dir
+     * @var null
+     */
+    public static $_root = null;
     
     /**
      * Get a value form the $_GET array

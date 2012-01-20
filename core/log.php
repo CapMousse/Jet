@@ -25,16 +25,34 @@ class Log{
         INFO = 1,
         WARNING = 2,
         FATAL = 3;
-        
-    public static
-        $jet = null,
-        $markers = array(),
-        $start = 0,
-        $messages = array(
-            1 => 'Information',
-            2 => 'Warning',
-            3 => 'Fatal'
-        );
+
+    /**
+     * The current instance of the core
+     * @var Jet
+     */
+    public static $jet = null;
+
+    /**
+     * List of declared markers
+     * @var array
+     */
+    public static $markers = array();
+
+    /**
+     * Start time
+     * @var int
+     */
+    public static $start = 0;
+
+    /**
+     * List of message type
+     * @var array
+     */
+    public static $messages = array(
+        1 => 'Information',
+        2 => 'Warning',
+        3 => 'Fatal'
+    );
 
     /**
      * Create a log error

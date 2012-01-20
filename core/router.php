@@ -22,19 +22,51 @@
 */
 
 class Router{
-    protected
-        $jet = null,
-        $routes = array(),
-        $parsed_routes = array(),
-        $default = array(),
-        $error = array(),
-        $authorized_paterns = array(
-            ':any'      => '.+',
-            ':slug'     => '[a-zA-Z0-9_-]+',
-            ':aplha'    => '[a-zA-Z]+',
-            ':num'      => '[0-9]+'
-        );
+    /**
+     * The current instance of the core
+     * @var Jet
+     */
+    protected $jet = null;
+
+    /**
+     * The current routes list
+     * @var array
+     */
+    protected $routes = array();
+
+    /**
+     * The routes list parsed to regexp
+     * @var array
+     */
+    protected $parsed_routes = array();
+
+    /**
+     * The default route
+     * @var array
+     */
+    protected $default = array();
+
+    /**
+     * Contain the 404 route
+     * @var array
+     */
+    protected $error = array();
     
+    /**
+     * The list of authorized patterns in a route
+     * @var array
+     */
+    protected $authorized_patterns = array(
+        ':any'      => '.+',
+        ':slug'     => '[a-zA-Z0-9_-]+',
+        ':aplha'    => '[a-zA-Z]+',
+        ':num'      => '[0-9]+'
+    );
+
+    /**
+     * Get the core instance
+     * Set the route list from the core object
+     */
     function __construct() {
         $this->jet = Jet::getInstance();
         $this->routes = $this->jet->routes;
@@ -68,7 +100,7 @@ class Router{
         
         foreach($this->routes as $key => $value){
             $key = preg_replace('#\[(.+)\]:(.+)#', '(?<$1>:$2)', rtrim($key, '/'));
-            $key = str_replace(array_keys($this->authorized_paterns), array_values($this->authorized_paterns), $key);
+            $key = str_replace(array_keys($this->authorized_patterns), array_values($this->authorized_patterns), $key);
             $this->parsed_routes[$key] = $value;
         }
     }
@@ -119,7 +151,8 @@ class Router{
         }
         // third, if no routes look like our uri, try the 404 route
         Log::save('Routed url 404 : '.$uri, Log::WARNING);
-        
+
+        // Check if a 404 route exists. If not, render the default route
         if(count($this->error) ==  0) return;
         
         $this->jet->controller = $this->error[CONTROLLER];
