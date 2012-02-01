@@ -377,7 +377,7 @@ class HttpResponse{
      * @param $time int time before redirecting
      * @return void
      */
-    public function redirect($address, $type = 304, $time = 0){
+    public function redirect($address, $type = 307, $time = 0){
         if(!array_key_exists($type, self::$statusList)){
             Log::save("The asked status doesn't exists : ".$type, Log::INFO);
             return;
