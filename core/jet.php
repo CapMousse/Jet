@@ -226,7 +226,7 @@ final class Jet{
 
         if(isset($this->apps[$uri[0]])){
             $app = $this->apps[$uri[0]].'/';
-            array_splice($uri, 0, 1);
+            array_splice($this->uri_array, 0, 1);
         }else{
             $app = $this->apps['default'].'/';
         }
