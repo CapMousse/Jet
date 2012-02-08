@@ -41,8 +41,6 @@ abstract class ViewBridge{
     
     protected function _assign(){}
     
-    public function load(){}
-    
     final public function render(){
         $this->_assign();
         return $this->_render();

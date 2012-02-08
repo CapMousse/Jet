@@ -6,6 +6,11 @@ Work on PHP5.3+
 
 Now Beta 2. Try and report bugs !
 
+
+WARNING
+-------
+*Before use, you need to update permissions on the ***project/logs*** dir*
+
 Features
 --------
 

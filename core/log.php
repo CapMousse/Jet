@@ -55,15 +55,29 @@ class Log{
     );
 
     /**
+     * Check if Log can write on the logs files
+     * @return boolean
+     */
+    public static function checkWritable(){
+        return is_writable(PROJECT.'logs/fatal.log');
+    }
+
+    /**
      * Create a log error
      *
      * @param   string      $msg    msg you want to log
      * @param   int    $type   error type (INFO, WARNING, FATAL)
+     * @param   string          $file
+     * @param   string          $line
      * @return  null
      */
-    public static function save($msg, $type = self::INFO){
+    public static function save($msg, $type = self::INFO, $file = null, $line = null){
         if(self::$jet === null){
             self::$jet = Jet::getInstance();
+        }
+
+        if(!self::checkWritable()){
+            exit('You must allow writing on project/logs dir & files');
         }
         
         $bk = Debug_backtrace();
@@ -76,8 +90,8 @@ class Log{
 
         $url = HttpRequest::getQueryString();
         
-        $caller = substr($trace['file'], strrpos($trace['file'], "/") + 1);
-        $line = $trace['line'];
+        $caller = !is_null($file) ? $file : substr($trace['file'], strrpos($trace['file'], "/") + 1);
+        $line = !is_null($line) ? $line : $trace['line'];
         $obj = (isset($trace['type']) ? $trace['class'].$trace['type']:'').$trace['function'];
         $perf = microtime() - self::$start;
         $time = new DateTime('now', new DateTimeZone('UTC'));
@@ -114,41 +128,47 @@ class Log{
 
     /**
      * Set a info log
-     * @param   string|array $msg 
+     * @param   string|array    $msg
+     * @param   string          $file
+     * @param   string          $line
      * @return  null
      */
-    public static function info($msg){
+    public static function info($msg, $file = null, $line = null){
         if(is_array($msg)){
             $msg = join(' ', $msg);
         }
         
-        return self::save($msg, self::INFO);
+        return self::save($msg, self::INFO, $file, $line);
     }
 
     /**
      * Set a warning log
-     * @param   string|array $msg
+     * @param   string|array    $msg
+     * @param   string          $file
+     * @param   string          $line
      * @return  null
      */
-    public static function warning($msg){
+    public static function warning($msg, $file = null, $line = null){
         if(is_array($msg)){
             $msg = join(' ', $msg);
         }
         
-        return self::save($msg, self::WARNING);
+        return self::save($msg, self::WARNING, $file, $line);
     }
 
     /**
      * Set a fatal log
-     * @param   string|array $msg
+     * @param   string|array    $msg
+     * @param   string          $file
+     * @param   string          $line
      * @return  null
      */
-    public static function fatal($msg){
+    public static function fatal($msg, $file = null, $line = null){
         if(is_array($msg)){
             $msg = join(' ', $msg);
         }
         
-        return self::save($msg, self::FATAL);
+        return self::save($msg, self::FATAL, $file, $line);
     }
 }
 ?>
