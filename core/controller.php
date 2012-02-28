@@ -56,9 +56,10 @@ abstract class Controller{
      * IF NOT, BLACKHOLE APPEAR !
      */
     function __construct(){
+        $this->jet = Jet::getInstance();
+
         $template = $this->jet->global['template'];
 
-        $this->jet = Jet::getInstance();
         $this->view = $template::getInstance();
         $this->response = HttpResponse::getInstance();
         $this->request = new HttpRequest();

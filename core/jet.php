@@ -88,24 +88,6 @@ final class Jet{
     public $infos = array();
 
     /**
-     * The current controller
-     * @var null
-     */
-    private $controller = null;
-
-    /**
-     * The current action of the controller
-     * @var null
-     */
-    private $action = null;
-
-    /**
-     * The current options for the action
-     * @var null
-     */
-    private $options = null;
-
-    /**
      * Return the current jet instance
      * @static
      * @return Jet|null
