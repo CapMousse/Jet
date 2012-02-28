@@ -58,10 +58,10 @@ class ViewJet extends ViewBridge{
             foreach($options as $name => $var) ${$name} = $var;
         }
 
-        if(is_file($_currentApp.'views/'.$file.'.php')){
-            include($_currentApp.'views/'.$file.'.php');
-        }else if(is_file(PROJECT.'views/'.$file.'.php')){
-            include(PROJECT.'views/'.$file.'.php');
+        if(is_file($_currentApp.'views'.DR.$file.EXT)){
+            include($_currentApp.'views'.DR.$file.EXT);
+        }else if(is_file(PROJECT.'views'.DR.$file.EXT)){
+            include(PROJECT.'views'.DR.$file.EXT);
         }else{
             Log::save("The asked view <b>$file</b> doesn't exists in <b>".get_class($this).".php</b>", Log::FATAL);
             return;

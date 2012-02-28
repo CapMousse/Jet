@@ -88,6 +88,24 @@ final class Jet{
     public $infos = array();
 
     /**
+     * The current controller
+     * @var null
+     */
+    private $controller = null;
+
+    /**
+     * The current action of the controller
+     * @var null
+     */
+    private $action = null;
+
+    /**
+     * The current options for the action
+     * @var null
+     */
+    private $options = null;
+
+    /**
      * Return the current jet instance
      * @static
      * @return Jet|null
@@ -185,7 +203,7 @@ final class Jet{
         $this->requireFiles();
 
         //launch render
-        return $this->render();
+        $this->render();
     }
 
     /**
@@ -225,10 +243,10 @@ final class Jet{
         }
 
         if(isset($this->apps[$uri[0]])){
-            $app = $this->apps[$uri[0]].'/';
+            $app = $this->apps[$uri[0]].DR;
             array_splice($this->uri_array, 0, 1);
         }else{
-            $app = $this->apps['default'].'/';
+            $app = $this->apps['default'].DR;
         }
 
         $this->app = $app;
@@ -247,7 +265,8 @@ final class Jet{
         }
 
         include(PROJECT.'apps/'.$this->app.'config.php');
-        
+
+        /** @var $config ARRAY */
         $this->setConfig($config);
     }
 
@@ -297,17 +316,17 @@ final class Jet{
         // include the asked controller            
         Log::save('Asked controller and action : '.$_currentController.'->'.$_currentAction);            
 
-        if(!is_file($_currentApp.'controllers/'.$_currentController.'.php')){
+        if(!is_file($_currentApp.'controllers'.DR.$_currentController.EXT)){
             Log::save('Controller file '.$_currentController.' does not exists on '.$_currentApp.'controllers/', Log::FATAL);
         }
 
-        include($_currentApp.'controllers/'.$_currentController.'.php');
+        include($_currentApp.'controllers'.DR.$_currentController.EXT);
 
         $controller = ucfirst($_currentController);
 
         //check if controller class existe
         if(!class_exists($controller)){
-            Log::save('Controller class '.$controller.' is not declared on '.$_currentApp.'controllers/'.$_currentController.'.php', Log::FATAL);
+            Log::save('Controller class '.$controller.' is not declared on '.$_currentApp.'controllers'.DR.$_currentController.EXT, Log::FATAL);
         }
 
         //init controller
@@ -393,7 +412,7 @@ final class Jet{
      * @access  private
      * @param   $class object : the object from the action
      * @param   $method string : the method to be launched
-     * @param   array $options
+     * @param   array|bool $options
      *
      * @internal param array $option [optional] : the arguments for the method
      * @return  void
@@ -406,27 +425,6 @@ final class Jet{
             @call_user_func_array(array($class, $method), $options);
         else
             $class->$method();
-    }
-
-    /**
-     * check if file exist in project dir or app dir
-     *
-     * @access  private
-     * @param   $file   string  file to be check
-     * @return  array|bool|null
-     */
-    private function checkFile($file){
-        $return = null;
-        
-        if(is_file(PROJECT.$file)){
-            $return = array($file, null);
-        }
-        
-        if(is_file(PROJECT.'apps/'.$this->get('app').$file)){
-            $return = array(PROJECT.'apps/'.$this->get('app').$file, PROJECT.'apps/'.$this->get('app'));
-        }
-        
-        return is_null($return) ? false : $return;
     }
 
     /**

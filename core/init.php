@@ -31,7 +31,7 @@ spl_autoload_register(function($class){
         return $loaded[$class];
     }
 
-    if(!is_file(SYSPATH.$class.'.php')){
+    if(!is_file(SYSPATH.$class.EXT)){
         $file = strtolower(preg_replace('/(?!^)[[:upper:]]/', '/\0', $class));
     }else{
         $file = lcfirst($class);
@@ -39,11 +39,11 @@ spl_autoload_register(function($class){
 
     
     
-    if(!is_file(SYSPATH.$file.'.php')){
+    if(!is_file(SYSPATH.$file.EXT)){
         $loaded[$class] = false;
     }
     else{
-        require SYSPATH.$file.'.php';
+        require SYSPATH.$file.EXT;
         $loaded[$class] = true;
     } 
     
@@ -54,7 +54,7 @@ spl_autoload_register(function($class){
 Log::$start = microtime();
 
 // load framework user config file
-require(PROJECT.'config.php');
+require(PROJECT.'config'.EXT);
 
 /***********************************************/
 /**** Include class framework and init them ****/
@@ -63,6 +63,16 @@ require(PROJECT.'config.php');
 // init the KORE KLASS
 
 $jet = Jet::getInstance();
+
+/**
+ * Var loaded from the config.php file
+ * @var string $environment
+ */
 $jet->setEnvironment($environment);
+
+/**
+ * Var loaded from the config.php file
+ * @var array $config
+ */
 $jet->setConfig($config);
 $jet->run();

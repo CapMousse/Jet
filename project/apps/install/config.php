@@ -15,7 +15,8 @@ $config['all'] = array(
     'routes' => array(
         'default' => array('Index', 'congrats'),
         '404' => array('Index', 'do404'),
-        'contact' => array('Index', 'contactForm')
+        'contact' => array('Index', 'contactForm'),
+        'test' => array('Index', 'showExample')
     ),
     
     'require' => array()
@@ -24,6 +25,7 @@ $config['all'] = array(
 $config['dev'] = array(
     'routes' => array(
         'dev/mode' => array('Index', 'congrats'),
-        'test/:any/[id]:num/' => array('Index', 'showId')
+        'test/:any/[id]:num/' => array('Index', 'showId'),
+        'example/[id]:num/' => array('Index', 'showExample')
     )
 );

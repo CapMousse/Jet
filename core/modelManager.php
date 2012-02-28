@@ -44,17 +44,22 @@ class ModelManager{
      * @return OrmWrapper
      */
     public function load($file){
-        $_currentApp = PROJECT.'apps/'.$this->jet->app;
+        $_currentApp = PROJECT.'apps'.DR.$this->jet->app;
         $_className = ucfirst($file);
 
         //Control if model file exists
         if(!isset($this->models[$_className])){
-            if(!is_file($_currentApp.'models/'.$file.'.php')){
+            if(!is_file($_currentApp.'models'.DR.$file.EXT) && !is_file(PROJECT.'models'.DR.$file.EXT)){
                 Log::save("The asked model <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />", Log::FATAL);
                 return false;
             }
 
-            include($_currentApp.'models/'.$file.'.php');
+            if(is_file($_currentApp.'models'.DR.$file.EXT)){
+                include($_currentApp.'models'.DR.$file.EXT);
+            }else{
+                include(PROJECT.'models'.DR.$file.EXT);
+            }
+
             $this->models[$_className] = true;
         }
 

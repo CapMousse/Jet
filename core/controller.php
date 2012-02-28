@@ -37,7 +37,7 @@ abstract class Controller{
 
     /**
      * The current instance of the HttpResponse object
-     * @var HttpResponse
+     * @var \HttpResponse
      */
     public $response;
 
@@ -56,8 +56,10 @@ abstract class Controller{
      * IF NOT, BLACKHOLE APPEAR !
      */
     function __construct(){
+        $template = $this->jet->global['template'];
+
         $this->jet = Jet::getInstance();
-        $this->view = new $this->jet->global['template']();
+        $this->view = $template::getInstance();
         $this->response = HttpResponse::getInstance();
         $this->request = new HttpRequest();
         $this->model = new ModelManager();
@@ -70,14 +72,14 @@ abstract class Controller{
      * @return   Controller/false
      */   
     protected function loadController($file){
-        $_currentApp = PROJECT.'apps/'.$this->jet->app;
+        $_currentApp = PROJECT.'apps'.DR.$this->jet->app;
         
-        if(!is_file($_currentApp.'controllers/'.$file.'.php')){
+        if(!is_file($_currentApp.'controllers'.DR.$file.EXT)){
             Log::save("The asked controller <b>$file</b> doesn't exists in <b>".get_called_class()."</b> <br />", Log::FATAL);
             return false;
         }
 
-        include($_currentApp.'controllers/'.$file.'.php');
+        include($_currentApp.'controllers'.DR.$file.EXT);
 
         Log::save('Controller loaded : '.$file);
 
@@ -93,7 +95,7 @@ abstract class Controller{
      * @internal param $array /string $files
      */
     public function requireFiles($files){
-        $this->jet->requireFiles($files, PROJECT.'apps/'.$this->jet->app);
+        $this->jet->requireFiles($files, PROJECT.'apps'.DR.$this->jet->app);
     }
 }
 ?>

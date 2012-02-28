@@ -6,19 +6,6 @@ class Index extends Controller{
         
         $this->view->setLayout('index');
         $this->view->load('partial/home');
-
-        //$model = $this->model->load('essaiModel');
-        //$test = $model->findMany();
-        
-        //$test->description = "Test d'édition";
-        //$test->save();
-        
-        /*$test2 = $model->create(array(
-            'nom' => 'autre test',
-            'description' => 'test'
-        ));
-        
-        $test2->save();*/
     }
     
     public function contactForm(){
@@ -48,6 +35,14 @@ class Index extends Controller{
     
     public function do404($url){
         echo $url." doesn't exists";
+    }
+
+    public function showExample($id = null){
+        $userModel = $this->model->load('user');
+
+        $example = $userModel->findOne($id);
+
+        var_dump($example);
     }
 }
 ?>
