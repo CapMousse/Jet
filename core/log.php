@@ -59,7 +59,7 @@ class Log{
      * @return boolean
      */
     public static function checkWritable(){
-        return is_writable(PROJECT.'logs/fatal.log');
+        return is_writable(PROJECT.'logs/');
     }
 
     /**
