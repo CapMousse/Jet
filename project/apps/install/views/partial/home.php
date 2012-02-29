@@ -1,3 +1,3 @@
 <?php $this->beginBlock('content'); ?>
-<p>Vous avez installé Jet avec succès!</p>
+<p>Jet is now ready to rock !</p>
 <?php $this->endBlock(); ?>

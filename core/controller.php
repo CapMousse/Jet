@@ -52,40 +52,27 @@ abstract class Controller{
     public $model;
 
     /**
+     * @var string
+     * the current app name
+     */
+    protected $appName;
+
+    /**
      * WARN ! If you need to create your own/self/personnal/other-type-of-reason-that-i-don't-know construct, your need to declare a parent::__construct() in
      * IF NOT, BLACKHOLE APPEAR !
+     * @param $appName string
+     *        the current app name of the controller
      */
-    function __construct(){
+    function __construct($appName){
         $this->jet = Jet::getInstance();
+        $this->appName = $appName;
 
         $template = $this->jet->global['template'];
 
-        $this->view = $template::getInstance();
+        $this->view = new $template($appName);
         $this->response = HttpResponse::getInstance();
         $this->request = new HttpRequest();
         $this->model = new ModelManager();
-    }
-
-    /**
-     * load the asked controller. 
-     * SUP DAWG. I HEARD YOU LOVE CONTROLLER, SO WE PUT A CONTROLLER IN YOUR CONTROLLER SO YOU CAN CONTROL WHILE YOU CONTROL
-     * @param    string   $file      name of the controller file
-     * @return   Controller/false
-     */   
-    protected function loadController($file){
-        $_currentApp = PROJECT.'apps'.DR.$this->jet->app;
-        
-        if(!is_file($_currentApp.'controllers'.DR.$file.EXT)){
-            Log::save("The asked controller <b>$file</b> doesn't exists in <b>".get_called_class()."</b> <br />", Log::FATAL);
-            return false;
-        }
-
-        include($_currentApp.'controllers'.DR.$file.EXT);
-
-        Log::save('Controller loaded : '.$file);
-
-        $controller = ucfirst($file);
-        return new $controller();
     }
 
     /**

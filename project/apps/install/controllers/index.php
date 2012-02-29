@@ -30,7 +30,9 @@ class Index extends Controller{
 
     public function showId($id){
     	echo "Current id is {$id}";
-        $this->load('partial/home');
+
+        $this->view->setLayout('index');
+        $this->view->load('partial/home');
     }
     
     public function do404($url){

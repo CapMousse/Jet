@@ -46,7 +46,7 @@ final class Jet{
     public $environment;
 
     /**
-     * Contain the app list
+     * Contain the routed app list
      * @var array
      */
     public $apps = array();
@@ -86,6 +86,12 @@ final class Jet{
      * @var array
      */
     public $infos = array();
+
+    /**
+     * Contain a list of insticiated controllers
+     * @var array
+     */
+    private $controllerList = array();
 
     /**
      * Return the current jet instance
@@ -140,22 +146,22 @@ final class Jet{
      /**
      * merge array of 'all' environment and current environment
      * 
-     * @param   $array  array   the array with environment to be merge
+     * @param   $config  Object Config object
      * @return  array
      */
-    public function mergeEnvironment($array){        
-        if(!isset($array[$this->environment]) && !isset($array['all'])){
-            Log::save("Given array doesn't containt '".$this->environment."' or 'all' environements", Log::WARNING);
+    public function mergeEnvironment($config){
+        if(!call_user_func(array($config, $config->environment)) && !method_exists($config, 'all')){
+            Log::save("Given config doesn't containt '".$this->environment."' or 'all' environements", Log::WARNING);
         }
         
         $returnArray = array();
         
-        if(isset($array['all'])){
-            $returnArray = $array['all'];
+        if(method_exists($config, 'all')){
+            $returnArray = $config->all();
         }
         
-        if(isset($array[$this->environment])){
-            $returnArray = array_merge_recursive($array[$this->environment], $returnArray);
+        if($array = call_user_func(array($config, $config->environment))){
+            $returnArray = array_merge_recursive($array, $returnArray);
         }
         
         return $returnArray;
@@ -174,8 +180,6 @@ final class Jet{
         Log::save('Begining route parsing');
 
         $this->parsePath();
-        $this->defineApp();
-        $this->getAppConfig();
         
         //parse all routes with curent URI
         $this->router = new Router();
@@ -201,38 +205,6 @@ final class Jet{
         // check if current path is not root url or core url, else return array of current route
         $this->uri_array = (trim($path, '/') != '' && $path != "/".SELF) ? explode('/', trim($path, '/')) : null;
     }
-
-    /**
-     * Define app asked by the current uri
-     *
-     * @return  string/false
-     */
-    private function defineApp(){
-        $uri = $this->uri_array;
-        
-        if(!is_array($this->apps) || count($this->apps) == 0){
-            Log::save('Missing routes array in project/config.php', Log::FATAL);
-            return;
-        }
-        
-        if(!isset($this->apps)){
-            Log::save('No default app routes defined in project/config.php', Log::FATAL);
-            return;
-        }
-
-        if(!is_array($uri)){
-            $this->app = $this->apps['default'].'/';
-        }
-
-        if(isset($this->apps[$uri[0]])){
-            $app = $this->apps[$uri[0]].DR;
-            array_splice($this->uri_array, 0, 1);
-        }else{
-            $app = $this->apps['default'].DR;
-        }
-
-        $this->app = $app;
-    }
     
     /**
      * @return void
@@ -249,7 +221,8 @@ final class Jet{
         include(PROJECT.'apps/'.$this->app.'config.php');
 
         /** @var $config ARRAY */
-        $this->setConfig($config);
+        $configName = $this->app.'Config';
+        $this->setConfig(new $configName());
     }
 
     /**
@@ -290,54 +263,72 @@ final class Jet{
      */
     
     private function render(){
-        $_currentApp = PROJECT.'apps/'.$this->app;
-        $_currentController = $this->controller;
-        $_currentAction = $this->action;
-        $_currentOptions = $this->options;
-        
-        // include the asked controller            
-        Log::save('Asked controller and action : '.$_currentController.'->'.$_currentAction);            
-
-        if(!is_file($_currentApp.'controllers'.DR.$_currentController.EXT)){
-            Log::save('Controller file '.$_currentController.' does not exists on '.$_currentApp.'controllers/', Log::FATAL);
-        }
-
-        include($_currentApp.'controllers'.DR.$_currentController.EXT);
-
-        $controller = ucfirst($_currentController);
-
-        //check if controller class existe
-        if(!class_exists($controller)){
-            Log::save('Controller class '.$controller.' is not declared on '.$_currentApp.'controllers'.DR.$_currentController.EXT, Log::FATAL);
-        }
-
-        //init controller
-        $app = new $controller();
+        $apps = $this->apps;
+        $response = HttpResponse::getInstance();
 
         //check if client don't ask a broken link
         if($this->get('askedRoute') === 404){
-            $app->response->setStatus(404);
+            $response->setStatus(404);
         }
 
         $this->execute('beforeLaunchAction');
-        $this->execute('before'.ucfirst($_currentAction));
 
-        $this->lauchAction($app, $_currentAction, $_currentOptions);
+        $this->lauchController($apps);
 
-        $this->execute('after'.ucfirst($_currentAction));
         $this->execute('afterLaunchAction');
 
          // check if our app need to be rendered
         Log::save('Render layout');
         $this->execute('beforeRender');
-        $body = $app->view->render();
+
+        $template = $this->global['template'];
+        $view = new $template();
+
+        $body = $view->render();
         
         $this->execute('beforeSendHttpResponse');        
         Log::save('Render Http Response');
-        $app->response->setBody($body);
+        $response->setBody($body);
         
         Log::save('Finish render');
-        echo $app->response->send();        
+        echo $response->send();
+    }
+
+    /**
+     * Lauch all controllers
+     * @param $apps array array of routed apps
+     */
+    private function lauchController($apps){
+        $options = $this->options;
+
+        foreach($apps as $app){
+            $appName = $app[APP];
+            $controllerName = $app[CONTROLLER];
+            $action = $app[ACTION];
+
+            if(!is_dir(APPS.$appName)){
+                Log::fatal("App $appName doen't exists");
+            }
+
+            if(!is_file(APPS.$appName.DR.'controllers'.DR.lcfirst($controllerName).EXT)){
+                Log::fatal("Controller $controllerName doen't exists");
+            }
+
+            $this->execute('before'.ucfirst($action));
+
+            //init controller
+            if(!isset($this->controllerList[$controllerName])){
+                include(APPS.$appName.DR.'controllers'.DR.lcfirst($controllerName).EXT);
+                $controller = new $controllerName($appName);
+                $this->controllerList[$controllerName] = $controller;
+            }else{
+                $controller = $this->controllerList[$controllerName];
+            }
+
+            $this->lauchAction($controller, $action, $options);
+
+            $this->execute('after'.ucfirst($action));
+        }
     }
     
     /**

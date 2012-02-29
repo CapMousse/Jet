@@ -1,0 +1,6 @@
+<?php
+
+//include the constant file witch define all system constant (project dir, core dir...)
+include('web/constant.php');
+
+include(SYSPATH.'console.php');

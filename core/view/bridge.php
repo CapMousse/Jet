@@ -38,17 +38,14 @@ abstract class ViewBridge{
     private static
         $instance = array();
 
+    protected  $appName;
 
-    public static function getInstance() {
-        $class = get_called_class();
-        if (!isset(self::$instance[$class])) {
-            self::$instance[$class] = new $class();
-        }
-        return self::$instance[$class];
-    }
-
-    public function __construct(){
+    /**
+     * @param $appName string the current app name
+     */
+    public function __construct($appName){
         $this->checkCSRF();
+        $this->appName = $appName;
     }
     
     protected function _assign(){}

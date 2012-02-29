@@ -23,7 +23,7 @@
 
 
 class ViewJet extends ViewBridge{
-    public 
+    public static
         $layout = null,
         $blocks = array();
     
@@ -33,8 +33,11 @@ class ViewJet extends ViewBridge{
         $_vars = array(),
         $_version = "1.0";
 
-    function __construct(){
-        parent::__construct();
+    /**
+     * @param $appName string
+     */
+    function __construct($appName = null){
+        parent::__construct($appName);
 
         $this->jet = Jet::getInstance();
     }
@@ -51,7 +54,7 @@ class ViewJet extends ViewBridge{
      * @return   void 
      */   
     public function load($file, $options = null){
-        $_currentApp = PROJECT.'apps/'.$this->jet->app;
+        $_currentApp = PROJECT.'apps/'.$this->appName.DR;
         //Control if options is defined, if yes, construct all var used in templates
 
         if(null != $options){
@@ -63,7 +66,7 @@ class ViewJet extends ViewBridge{
         }else if(is_file(PROJECT.'views'.DR.$file.EXT)){
             include(PROJECT.'views'.DR.$file.EXT);
         }else{
-            Log::save("The asked view <b>$file</b> doesn't exists in <b>".get_class($this).".php</b>", Log::FATAL);
+            Log::save("The asked view <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> on $_currentApp", Log::FATAL);
             return;
         }
 
@@ -82,8 +85,9 @@ class ViewJet extends ViewBridge{
     public function beginBlock($block){
         $this->blockName = $block;
 
-        if(!isset($this->blocks[$block]))
-                $this->blocks[$block] = null;
+        if(!isset(self::$blocks[$block])){
+            self::$blocks[$block] = null;
+        }
 
         ob_start();
     }
@@ -103,7 +107,7 @@ class ViewJet extends ViewBridge{
         $value = ob_get_clean();
 
         $block = is_null($block) ? $this->blockName : $block;
-        $this->blocks[$block] .= $value;
+        self::$blocks[$block] .= $value;
     }
 
 
@@ -117,7 +121,7 @@ class ViewJet extends ViewBridge{
      * @return   string
      */   
     public function getBlock($block){
-        return isset($this->blocks[$block]) ? $this->blocks[$block] : '';
+        return isset(self::$blocks[$block]) ? self::$blocks[$block] : '';
     }
 
 
@@ -131,7 +135,7 @@ class ViewJet extends ViewBridge{
      * @return   bool
      */   
     public function issetBlock($block){
-            return isset($this->blocks[$block]) ? true : false;
+            return isset(self::$blocks[$block]) ? true : false;
     }
 
     /**
@@ -145,7 +149,7 @@ class ViewJet extends ViewBridge{
      * @return   void
      */   
     public function destroyBlock($block){
-        unset($this->blocks[$block]);
+        unset(self::$blocks[$block]);
     }
 
     /**
@@ -182,7 +186,7 @@ class ViewJet extends ViewBridge{
      * @return   void
      */   
     public function setLayout($layout){
-        $this->layout = $layout;
+        self::$layout = $layout;
     }
 
     /**
@@ -192,7 +196,7 @@ class ViewJet extends ViewBridge{
      * @return   bool
      */
     public function hasLayout(){
-        return !is_null($this->layout);
+        return !is_null(self::$layout);
     }
     
 
@@ -206,7 +210,7 @@ class ViewJet extends ViewBridge{
         ob_start();
         
         if($this->hasLayout())
-            $this->load($this->layout);
+            $this->load(self::$layout);
         
         
         $return = ob_get_clean();

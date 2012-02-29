@@ -111,8 +111,7 @@ class Router{
      */
     protected function match(){
         
-        $this->jet->controller = $this->default[CONTROLLER];
-        $this->jet->action = $this->default[ACTION];
+        $this->jet->apps = $this->default;
         $this->jet->askedRoute = 'default';
         
         if(!is_array($this->jet->uri_array) || count($this->jet->uri_array) == 0){
@@ -124,9 +123,8 @@ class Router{
         
         if(isset($this->routes[$uri])){
             Log::save('Routed url '.$uri);
-            
-            $this->jet->controller = $this->routes[$uri][CONTROLLER];
-            $this->jet->action = $this->routes[$uri][ACTION];
+
+            $this->jet->apps = $this->routes[$uri];
             $this->jet->askedRoute = $uri;
             return;
         }
@@ -141,8 +139,7 @@ class Router{
                 }
 
                 //now, let's rock!
-                $this->jet->controller = $this->parsed_routes[$route][CONTROLLER];
-                $this->jet->action = $this->parsed_routes[$route][ACTION];
+                $this->jet->apps = $this->parsed_routes[$route];
                 $this->jet->options = $method_args;
                 $this->jet->askedRoute = $uri;
                 
@@ -155,8 +152,7 @@ class Router{
         // Check if a 404 route exists. If not, render the default route
         if(count($this->error) ==  0) return;
         
-        $this->jet->controller = $this->error[CONTROLLER];
-        $this->jet->action = $this->error[ACTION];
+        $this->jet->apps = $this->error;
         $this->jet->options = array('url' => $uri);
         $this->jet->askedRoute = 404;
 

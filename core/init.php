@@ -55,6 +55,7 @@ Log::$start = microtime();
 
 // load framework user config file
 require(PROJECT.'config'.EXT);
+$config = new Config();
 
 /***********************************************/
 /**** Include class framework and init them ****/
@@ -68,7 +69,7 @@ $jet = Jet::getInstance();
  * Var loaded from the config.php file
  * @var string $environment
  */
-$jet->setEnvironment($environment);
+$jet->setEnvironment($config->environment);
 
 /**
  * Var loaded from the config.php file

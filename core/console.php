@@ -65,7 +65,7 @@ switch($argumentType){
         }
 
         //Lauch the AppManager class to manage asked option
-        new AppManager($argumentOptions, array_pop($appName));
+        new app($argumentOptions, array_pop($appName));
     break;
 
     case 'db':
@@ -89,11 +89,11 @@ switch($argumentType){
         }
 
         //Lauche the dbManager class to manage asked option
-        new dbManager($argumentOptions, $type, $name);
+        new db($argumentOptions, $type, $name);
     break;
 }
 
-class AppManager{
+class app{
 
     /**
      * Init the AppManager
@@ -119,8 +119,6 @@ class AppManager{
      * @param string $appName
      */
     private function createApp($appName){
-        print "Create app $appName \n";
-
         //Check if a app with the same name already exists
         if(is_dir(PROJECT.'apps'.DR.$appName)){
             print "App $appName already exists \n";
@@ -133,11 +131,6 @@ class AppManager{
         mkdir(PROJECT.'apps'.DR.$appName.DR.'views');
         mkdir(PROJECT.'apps'.DR.$appName.DR.'controllers');
 
-        //Create a default config file
-        $configFile = fopen(PROJECT.'apps'.DR.$appName.DR.'config.php', 'w+');
-        fwrite($configFile, "<?php \n\n//This is a generated config.php. Fill it whith your infos ! \n\n".'$config[\'all\']'." = array(\n    'routes' => array( \n        'default' => array('', '')\n    )\n);");
-        fclose($configFile);
-
         print "App $appName is created \n";
     }
 
@@ -146,16 +139,14 @@ class AppManager{
      * @param string $appName
      */
     private function deleteApp($appName){
-        print "Delete app $appName \n";
-
         //Check if the asked app exists
-        if(!is_dir(PROJECT.'apps'.DR.$appName)){
+        if(!is_dir(APPS.$appName)){
             print "App $appName don't exists \n";
             exit(0);
         }
 
         //Clean the database by removing linked app tables
-        new dbManager('empty', $appName);
+        new db('empty', 'app', $appName);
 
         //Delete all elements of the app
         $dir = PROJECT.'apps'.DR.$appName;
@@ -188,7 +179,7 @@ class AppManager{
     }
 }
 
-class dbManager{
+class db{
     public
         /**
          * Contain all index
@@ -256,24 +247,26 @@ class dbManager{
         include(SYSPATH.'jet.php');
         include(SYSPATH.'model.php');
 
+        $config = new Config();
+
         //Get an instance of the Jet core
         $jet = Jet::getInstance();
 
         /** @var $environment String */
-        $jet->setEnvironment($environment);
+        $jet->setEnvironment($config->environment);
         /** @var $config Array */
         $jet->setConfig($config);
 
         //Only parse models from the selected app if not null
         if(!is_null($this->type) && $this->type != 'model'){
             //check if app and app models dir exists
-            if(!is_dir(PROJECT.'apps/'.$this->name) || !is_dir(PROJECT.'apps/'.$this->name.DR.'models'.DR)){
+            if(!is_dir(APPS.$this->name) || !is_dir(APPS.$this->name.DR.'models'.DR)){
                 print "App ".$this->name." don't exists\n";
                 exit(0);
             }
 
             //scan all models
-            $this->scanModels(PROJECT.'apps/'.$this->name.DR.'models'.DR, $action);
+            $this->scanModels(APPS.$this->name.DR.'models'.DR, $action);
         }else{
             if($action == 'remove' && is_null($this->name)){
                 $this->deleteTable();
