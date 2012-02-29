@@ -33,9 +33,11 @@ class ModelManager{
 
     /**
      * Get the Jet core instance
+     * @param $appName string the current AppName
      */
-    function __construct(){
+    function __construct($appName){
         $this->jet = Jet::getInstance();
+        $this->appName = $appName;
     }
 
     /**
@@ -44,7 +46,7 @@ class ModelManager{
      * @return OrmWrapper
      */
     public function load($file){
-        $_currentApp = PROJECT.'apps'.DR.$this->jet->app;
+        $_currentApp = APPS.$this->appName.DR;
         $_className = ucfirst($file);
 
         //Control if model file exists

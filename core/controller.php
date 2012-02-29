@@ -72,7 +72,7 @@ abstract class Controller{
         $this->view = new $template($appName);
         $this->response = HttpResponse::getInstance();
         $this->request = new HttpRequest();
-        $this->model = new ModelManager();
+        $this->model = new ModelManager($appName);
     }
 
     /**
