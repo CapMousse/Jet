@@ -80,9 +80,9 @@ class Router{
         $this->default = $this->routes['default'];
         unset($this->routes['default']);
         
-        if(isset($this->routes['404'])){
-            $this->error = $this->routes['404'];
-            unset($this->routes['404']);
+        if(isset($this->routes['notFound'])){
+            $this->error = $this->routes['notFound'];
+            unset($this->routes['notFound']);
         }
         
         $this->parse();
@@ -154,7 +154,7 @@ class Router{
         
         $this->jet->apps = $this->error;
         $this->jet->options = array('url' => $uri);
-        $this->jet->askedRoute = 404;
+        $this->jet->askedRoute = "notFound";
 
         return;
     }

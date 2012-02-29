@@ -267,7 +267,7 @@ final class Jet{
         $response = HttpResponse::getInstance();
 
         //check if client don't ask a broken link
-        if($this->get('askedRoute') === 404){
+        if($this->get('askedRoute') === "notFound"){
             $response->setStatus(404);
         }
 

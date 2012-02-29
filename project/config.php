@@ -40,7 +40,7 @@ class Config{
                     array(  'install',  'Index',    'congrats'),
                     array(  'install',  'Index',    'contactForm')
                 ),
-                '404' => array(
+                'notFound' => array(
                     array('install', 'Index', 'do404')
                 ),
                 'contact' => array(
@@ -74,9 +74,9 @@ class Config{
 
                 //Socket for the cli client. Here is the Mac OS X sample
                 'socket'    => 'mysql:unix_socket=/Applications/MAMP/tmp/mysql/mysql.sock'
-            ),
+            )/*,
 
-            'requires' => array('debugLog.php')
+            'requires' => array('debugLog.php')*/
         );
     }
 }

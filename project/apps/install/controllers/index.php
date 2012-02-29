@@ -36,7 +36,12 @@ class Index extends Controller{
     }
     
     public function do404($url){
+
+        $this->view->setLayout('index');
+
+        $this->view->beginBlock('content');
         echo $url." doesn't exists";
+        $this->view->endBlock();
     }
 
     public function showExample($id = null){
