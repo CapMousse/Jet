@@ -415,14 +415,17 @@ class db{
 
         //check all columns. Change them if already exists or create them
         /** @var $structure Array */
+        $before = null;
+
         foreach($model::$structure as $name => $column){
             if(isset($rowsName[$name])){
                 $columns[] = "CHANGE ".OrmConnector::$quoteSeparator . $name . OrmConnector::$quoteSeparator." ".$this->makeRowSQL($name, $column);
                 $rowsName[$name] = true;
             }else{
-                $columns[] = "ADD ".$this->makeRowSQL($name, $column);
+                $columns[] = "ADD ".$this->makeRowSQL($name, $column). (!is_null($before) ? " AFTER ".OrmConnector::$quoteSeparator . $before . OrmConnector::$quoteSeparator : "");
             }
 
+            $before = $name;
         }
 
         //create the index query
