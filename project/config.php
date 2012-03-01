@@ -74,9 +74,9 @@ class Config{
 
                 //Socket for the cli client. Here is the Mac OS X sample
                 'socket'    => 'mysql:unix_socket=/Applications/MAMP/tmp/mysql/mysql.sock'
-            )/*,
+            ),
 
-            'requires' => array('debugLog.php')*/
+            'requires' => array('debugLog.php')
         );
     }
 }

@@ -83,7 +83,7 @@ abstract class Controller{
      * @internal param $array /string $files
      */
     public function requireFiles($files){
-        $this->jet->requireFiles($files, PROJECT.'apps'.DR.$this->jet->app);
+        $this->jet->requireFiles($files, APPS.$this->appName.DR);
     }
 }
 ?>

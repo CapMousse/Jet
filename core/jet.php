@@ -205,25 +205,6 @@ final class Jet{
         // check if current path is not root url or core url, else return array of current route
         $this->uri_array = (trim($path, '/') != '' && $path != "/".SELF) ? explode('/', trim($path, '/')) : null;
     }
-    
-    /**
-     * @return void
-     */
-    private function getAppConfig(){        
-        if(!$this->app){
-            return;
-        }
-        
-        if(!is_file(PROJECT.'apps/'.$this->app.'config.php')){
-            return;
-        }
-
-        include(PROJECT.'apps/'.$this->app.'config.php');
-
-        /** @var $config ARRAY */
-        $configName = $this->app.'Config';
-        $this->setConfig(new $configName());
-    }
 
     /**
      * parse and load needed files
@@ -246,12 +227,12 @@ final class Jet{
         }
         
         foreach($files as $file){
-            if(is_file(PROJECT.'apps/'.$this->app.$file)){
-                include(PROJECT.'apps/'.$this->app.$file);
-            }elseif(is_file($dir.$file)){
+            if(is_file($dir.$file)){
                 include($dir.$file);
+            }elseif(is_file(PROJECT.'requires/')){
+                include(PROJECT.'requires/');
             }else{
-                Log::warning('Required file '.$dir.$file.' doens\'t exists');
+                Log::warning("Required file $file doens't exists");
             }
         }
     }
