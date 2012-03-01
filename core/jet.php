@@ -227,10 +227,10 @@ final class Jet{
         }
         
         foreach($files as $file){
-            if(is_file($dir.$file)){
-                include($dir.$file);
-            }elseif(is_file(PROJECT.'requires/')){
-                include(PROJECT.'requires/');
+            if(is_file($dir.'requires/'.$file)){
+                include($dir.'requires/'.$file);
+            }elseif(is_file(PROJECT.'requires/'.$file)){
+                include(PROJECT.'requires/'.$file);
             }else{
                 Log::warning("Required file $file doens't exists");
             }
