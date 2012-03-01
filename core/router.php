@@ -58,7 +58,7 @@ class Router{
      */
     protected $authorized_patterns = array(
         ':any'      => '.+',
-        ':slug'     => '[a-zA-Z0-9_-]+',
+        ':slug'     => '[a-zA-Z0-9\/_-]+',
         ':aplha'    => '[a-zA-Z]+',
         ':num'      => '[0-9]+'
     );
