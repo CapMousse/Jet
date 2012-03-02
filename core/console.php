@@ -277,8 +277,16 @@ class db{
             $apps = scandir(PROJECT.'apps'.DR);
 
             foreach($apps as $app){
-                if($app != "." && $app != ".." && is_dir(PROJECT.'apps'.DR.$app)){
+                if($app != "." && $app != ".." && is_dir(PROJECT.'apps'.DR.$app) && is_dir(PROJECT.'apps'.DR.$app.DR.'models') ){
                     $this->scanModels(PROJECT.'apps'.DR.$app.DR.'models', $action);
+                }
+            }
+
+            //check if models are defined on the require dir
+            $modules = scandir(PROJECT.'requires'.DR);
+            foreach($modules as $module){
+                if($module != "." && $module != ".." && is_dir(PROJECT.'requires'.DR.$module) && is_dir(PROJECT.'requires'.DR.$module.DR.'models')){
+                    $this->scanModels(PROJECT.'requires'.DR.$module.DR.'models', $action);
                 }
             }
 
