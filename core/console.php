@@ -386,6 +386,17 @@ class db{
         if(property_exists($model, 'engine')){
             /** @var $engine String */
             $query .= " ENGINE = ".$model::$engine;
+        }else{
+            $query .= " ENGINE = INNODB";
+        }
+
+        //check if a engine is specified on the model
+        if(property_exists($model, 'encode')){
+            /** @var $encode String */
+            $set = array_shift(explode('_', $model::$encode));
+            $query .= " CHARACTER SET $set COLLATE ".$model::$encode;
+        }else{
+            $query .= " CHARACTER SET utf8 COLLATE utf8_general_ci";
         }
 
         //create the table
