@@ -25,6 +25,7 @@
 class ViewJet extends ViewBridge{
     public static
         $layout = null,
+        $appLayoutName = null,
         $blocks = array();
     
     protected 
@@ -54,7 +55,7 @@ class ViewJet extends ViewBridge{
      * @return   void 
      */   
     public function load($file, $options = null){
-        $_currentApp = PROJECT.'apps/'.$this->appName.DR;
+        $_currentApp = PROJECT.'apps/'.self::$appName.DR;
         //Control if options is defined, if yes, construct all var used in templates
 
         if(null != $options){
@@ -183,9 +184,11 @@ class ViewJet extends ViewBridge{
      *
      * @access   public
      * @param    string/bool    $layout
+     * @param    string         $appName
      * @return   void
      */   
-    public function setLayout($layout){
+    public function setLayout($layout, $appName = null){
+        self::$appLayoutName = $appName;
         self::$layout = $layout;
     }
 
@@ -209,9 +212,14 @@ class ViewJet extends ViewBridge{
     public function _render(){
         ob_start();
         
-        if($this->hasLayout())
+        if($this->hasLayout()){
+            if(!is_null(self::$appLayoutName)){
+                self::$appName = self::$appLayoutName;
+            }
+
             $this->load(self::$layout);
-        
+        }
+
         
         $return = ob_get_clean();
         

@@ -61,7 +61,7 @@ class HttpRequest{
     /**
      * Get a value form the $_GET array
      * @param string $key
-     * @return mixed|false
+     * @return mixed|Boolean
      */
     public static function get($key){
         if(null == self::$_get){

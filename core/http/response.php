@@ -34,7 +34,7 @@ class HttpResponse{
         $body = "",
         $length = 0,
         $headers = array(),
-        $cacheControl = array();          
+        $cacheControl = array();
     
     protected static
         $instance = null,
@@ -207,10 +207,16 @@ class HttpResponse{
      * Set the response body
      * 
      * @param   string $value   the body of the response
+     * @param   null|string $replace replace the asked element with the passed value
      * @return  void
      */
-    public function setBody($value){
-        $this->body .= $value;
+    public function setBody($value, $replace = null){
+        if(!is_null($replace)){
+            $this->body = str_replace($replace, $value, $this->body);
+        }else{
+            $this->body .= $value;
+        }
+
         $this->setHeader("Content-Length", strlen($this->body), true);
     }
 
@@ -315,7 +321,7 @@ class HttpResponse{
         $this->setHeader("Last-Modified", "$date GMT");
         
         $lastModifiedHeader = HttpRequest::server('HTTP_IF_MODIFIED_SINCE');
-        if($time === strtotime(HttpRequest::server('HTTP_IF_MODIFIED_SINCE'))){
+        if($time === strtotime($lastModifiedHeader)){
             $this->halt = 304;
             return;
         }
@@ -418,6 +424,8 @@ class HttpResponse{
         if(304 !== $this->halt){
             return $this->body;
         }
+
+        return null;
     }
 }
 ?>

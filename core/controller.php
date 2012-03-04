@@ -31,18 +31,18 @@ abstract class Controller{
 
     /**
      * Contain the current instance of the template manager
-     * @var ViewBridge
+     * @var ViewJet
      */
     public $view;
 
     /**
      * The current instance of the HttpResponse object
-     * @var \HttpResponse
+     * @var HttpResponse
      */
     public $response;
 
     /**
-     * @var \HttpRequest
+     * @var HttpRequest
      */
     public $request;
 

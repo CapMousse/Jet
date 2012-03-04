@@ -30,28 +30,28 @@ class DebugLog{
     function __construct(){        
         $this->response = HttpResponse::getInstance();
         $this->jet = Jet::getInstance();
-        $this->jet->addAction('beforeRender', $this, 'showLogBar');
+        $this->jet->addAction('beforeSendHttpResponse', $this, 'showLogBar');
     }
     
     /**
      * i love to write comments. That's so funny !
      */
     public function showLogBar(){
-        $return = '<div id="debug-bar" style="position: absolute; top: 0px; right: 0px; width: 250px; background-image: linear-gradient(bottom, rgb(209,209,209) 5%, rgb(245,245,245) 77%);background-image: -o-linear-gradient(bottom, rgb(209,209,209) 5%, rgb(245,245,245) 77%);background-image: -moz-linear-gradient(bottom, rgb(209,209,209) 5%, rgb(245,245,245) 77%);background-image: -webkit-linear-gradient(bottom, rgb(209,209,209) 5%, rgb(245,245,245) 77%);background-image: -ms-linear-gradient(bottom, rgb(209,209,209) 5%, rgb(245,245,245) 77%);background-image: -webkit-gradient(linear,left bottom,left top,color-stop(0.05, rgb(209,209,209)),color-stop(0.77, rgb(245,245,245))); border-radius: 0 0 4px 4px;"><a href="#" style="display: inline-block;border-right: 1px solid #eee; padding: 0 5% 0 5%; color: black; text-decoration: none; text-shadow: 0px 1px 1px #FFF" onclick="var a=document.getElementById(\'log-block\'); a.style.display == \'none\' ? a.style.display = \'block\' : a.style.display = \'none\'; return false">Show debug log</a><a href="#" style="display: inline-block; padding: 0 5% 0 5%; color: black; text-decoration: none; text-shadow: 0px 1px 1px #FFF" onclick="var a=document.getElementById(\'orm-block\'); a.style.display == \'none\' ? a.style.display = \'block\' : a.style.display = \'none\'; return false">Show ORM log</a></div>';
+        $return = '<div id="debug-bar" style="position: absolute; z-index: 1100; top: 0px; right: 0px; width: 250px; background-image: linear-gradient(bottom, rgb(209,209,209) 5%, rgb(245,245,245) 77%);background-image: -o-linear-gradient(bottom, rgb(209,209,209) 5%, rgb(245,245,245) 77%);background-image: -moz-linear-gradient(bottom, rgb(209,209,209) 5%, rgb(245,245,245) 77%);background-image: -webkit-linear-gradient(bottom, rgb(209,209,209) 5%, rgb(245,245,245) 77%);background-image: -ms-linear-gradient(bottom, rgb(209,209,209) 5%, rgb(245,245,245) 77%);background-image: -webkit-gradient(linear,left bottom,left top,color-stop(0.05, rgb(209,209,209)),color-stop(0.77, rgb(245,245,245))); border-radius: 0 0 4px 4px;"><a href="#" style="display: inline-block;border-right: 1px solid #eee; padding: 0 5% 0 5%; color: black; text-decoration: none; text-shadow: 0px 1px 1px #FFF" onclick="var a=document.getElementById(\'log-block\'); a.style.display == \'none\' ? a.style.display = \'block\' : a.style.display = \'none\'; return false">Show debug log</a><a href="#" style="display: inline-block; padding: 0 5% 0 5%; color: black; text-decoration: none; text-shadow: 0px 1px 1px #FFF" onclick="var a=document.getElementById(\'orm-block\'); a.style.display == \'none\' ? a.style.display = \'block\' : a.style.display = \'none\'; return false">Show ORM log</a></div>';
         
-        $return .= '<div id="log-block" style="display: none"><ul style="font-size: 12px;list-style: none; list-style-position: inside; padding: 0; margin: 0">';
+        $return .= '<div id="log-block" style="display: none; position: absolute; z-index: 1099;  top:0px; left: 0px; background: white;"><ul style="font-size: 12px;list-style: none; list-style-position: inside; padding: 0; margin: 0">';
         foreach(Log::$markers as $marker){
             $return .= "<li>$marker</li>";
         }
         $return .= "</ul></div>";
         
-        $return .= '<div id="orm-block" style="display: none"><ul style="font-size: 12px;list-style: none; list-style-position: inside; padding: 0; margin: 0">';
+        $return .= '<div id="orm-block" style="display: none; position: absolute; z-index: 1099; top:0px; left: 0px; background: white;"><ul style="font-size: 12px;list-style: none; list-style-position: inside; padding: 0; margin: 0">';
         foreach(OrmWrapper::$log as $marker){
             $return .= "<li>$marker</li>";
         }
-        $return .= "</ul></div>";
+        $return .= "</ul></div></body>";
         
-        $this->response->setBody($return);
+        $this->response->setBody($return, '</body>');
     }
 }
 

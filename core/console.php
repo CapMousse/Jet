@@ -553,16 +553,20 @@ class db{
      * Load fixtures
      */
     public function loadData(){
+        //include all core files needed to launch the orm
         include(PROJECT.'config.php');
         include(SYSPATH.'orm/connector.php');
         include(SYSPATH.'orm/wrapper.php');
         include(SYSPATH.'jet.php');
         include(SYSPATH.'model.php');
 
+        $config = new Config();
+
+        //Get an instance of the Jet core
         $jet = Jet::getInstance();
 
         /** @var $environment String */
-        $jet->setEnvironment($environment);
+        $jet->setEnvironment($config->environment);
         /** @var $config Array */
         $jet->setConfig($config);
 

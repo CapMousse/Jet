@@ -4,7 +4,7 @@ class Index extends Controller{
     
     public function congrats(){
         
-        $this->view->setLayout('index');
+        $this->view->setLayout('index', 'install');
         $this->view->load('partial/home');
     }
     

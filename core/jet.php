@@ -267,10 +267,11 @@ final class Jet{
 
         $body = $view->render();
         
-        $this->execute('beforeSendHttpResponse');        
+        $this->execute('beforeMakeHttpResponse');
         Log::save('Render Http Response');
         $response->setBody($body);
-        
+
+        $this->execute('beforeSendHttpResponse');
         Log::save('Finish render');
         echo $response->send();
     }

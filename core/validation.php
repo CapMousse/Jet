@@ -53,12 +53,6 @@ class Validation{
      */
     private $content = array();
 
-    /**
-     * The type of object returned, default array
-     * @var string
-     */
-    private $returnType = 'array';
-
 
     /**
      * __construct
@@ -66,11 +60,9 @@ class Validation{
      * set the default return type
      *
      * @access   public
-     * @param    string $returnType
      * @return   \Validation
      */
-    function __construct($returnType = 'array'){
-        $this->returnType = $returnType;
+    function __construct(){
     }
     
     /**
@@ -186,7 +178,7 @@ class Validation{
      * validate the current set of inputs
      *
      * @access  public  method
-     * @return  array|bool|string (array/string) = false / true
+     * @return  array|False
      */
     public function validate(){
         if($_SERVER['REQUEST_METHOD'] !== "POST" && $_SERVER['REQUEST_METHOD'] !== "GET")
@@ -197,29 +189,29 @@ class Validation{
             $this->content[$name]['value'] = $current;
             
             if((!$current || empty($current)) && isset($input['required'])){
-                $this->error[$name]['required'] = false;
+                $this->error[$name]['required'] = true;
             }
             
             if(isset($input['maxLength']) && strlen($current) > $input['maxLength']){
-                $this->error[$name]['maxLength'] = false;
+                $this->error[$name]['maxLength'] = $input['maxLength'];
             }
             
             if(isset($input['minLength']) && strlen($current) < $input['minLength']){
-                $this->error[$name]['minLength'] = false;
+                $this->error[$name]['minLength'] = $input['minLength'];
             }
             
             if(isset($input['type'])){
                 if($input['type'] == "mail" && !filter_var($current, FILTER_VALIDATE_EMAIL)){
-                    $this->error[$name]['mail'] = false;
+                    $this->error[$name]['mail'] = true;
                 }
                 if($input['type'] == "number" && !filter_var($current, FILTER_VALIDATE_FLOAT)){
-                    $this->error[$name]['number'] = false;
+                    $this->error[$name]['number'] = true;
                 }
                 if($input['type'] == "ip" && !filter_var($current, FILTER_VALIDATE_IP)){
-                    $this->error[$name]['ip'] = false;
+                    $this->error[$name]['ip'] = true;
                 }
                 if($input['type'] == "url" && !filter_var($current, FILTER_VALIDATE_URL)){
-                    $this->error[$name]['url'] = false;
+                    $this->error[$name]['url'] = true;
                 }
             }
 
@@ -230,10 +222,10 @@ class Validation{
         
         if(count($this->error) > 0){
             $return = array_merge_recursive($this->content, $this->error);
-            return $this->returnType == "JSON" ?  json_encode($return) : $return;
+            return $return;
         }
         
-        return true;
+        return array();
     }
 
     public function getInputs(){

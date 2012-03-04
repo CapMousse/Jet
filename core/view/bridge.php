@@ -36,16 +36,23 @@ abstract class ViewBridge{
         $csrfName = null;
 
     private static
-        $instance = array();
+        $csrfChecked = false;
 
-    protected  $appName;
+    /**
+     * Current appName
+     * @var string
+     */
+    protected static $appName;
 
     /**
      * @param $appName string the current app name
      */
     public function __construct($appName){
         $this->checkCSRF();
-        $this->appName = $appName;
+
+        if(!is_null($appName)){
+            self::$appName = $appName;
+        }
     }
     
     protected function _assign(){}
@@ -72,7 +79,7 @@ abstract class ViewBridge{
      * @return string
      */
     final public function getCSRF($time = 5){
-        if(null === $this->csrfName){
+        if(null === $this->csrfName && !isset($_SESSION['CSRF']) || $_SESSION['CSRF_TIME'] < microtime()){
             $time = microtime()+ ($time*60*1000);
             $token = sha1($time+microtime());
             $name = md5(microtime());
@@ -82,20 +89,28 @@ abstract class ViewBridge{
             $_SESSION['CSRF_NAME'] = $name;
             $this->csrfToken = $token;
             $this->csrfName = $name;
+        }else{
+            $this->csrfToken = $_SESSION['CSRF'];
+            $this->csrfName = $_SESSION['CSRF_NAME'];
         }
 
         return '<input type="hidden" name="'.$this->csrfName.'" value="'.$this->csrfToken.'" />';
     }
 
     final public function checkCSRF(){
-        if(Validation::method() == "POST" && isset($_SESSION['CSRF'])){
+        if(Validation::method() == "POST" && isset($_SESSION['CSRF']) && !self::$csrfChecked){
             $csrfName = $_SESSION['CSRF_NAME'];
             $csrfTime = $_SESSION['CSRF_TIME'];
             $token = $_SESSION['CSRF'];
 
             if(!isset($_POST[$csrfName]) || $_POST[$csrfName] != $token || $csrfTime < microtime()){
-                Log::save('CSRF attack', Log::FATAL);
+                Log::save('CSRF attack', Log::WARNING);
+
+                $response = HttpResponse::getInstance();
+                $response->redirect(HttpRequest::getRoot().'error');
             }
+
+            self::$csrfChecked = true;
         }
     }
 }
