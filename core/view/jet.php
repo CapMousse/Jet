@@ -59,7 +59,7 @@ class ViewJet extends ViewBridge{
         //Control if options is defined, if yes, construct all var used in templates
 
         if(null != $options){
-            foreach($options as $name => $var) ${$name} = $var;
+            foreach($options as $_name => $_var) ${$_name} = $_var;
         }
 
         if(is_file($_currentApp.'views'.DR.$file.EXT)){
