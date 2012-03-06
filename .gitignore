@@ -16,11 +16,3 @@
 .idea/workspace.xml
 
 .idea/scopes/scope_settings.xml
-
-project/logs/errors.log
-
-project/logs/info.log
-
-project/logs/warning.log
-
-project/logs/fatal.log

@@ -1,185 +1,26 @@
 <?php
 
-$args = $argv;
+/**
+*   Jet
+*   A lightweight and fast framework for developer who don't need hundred of files
+*
+*   @package    Jet
+*   @author     Jérémy Barbe
+*   @license    BSD
+*   @link       https://github.com/CapMousse/Jet
+*
+*/
 
-//Check if an argument is called
-if(count($args) < 2){
-    print 'For help, use the "help" argument';
-    exit(0);
-}
 
-//Init all constant for the script
-define('TYPE', 0);
-define('LENGTH', 1);
-define('DEFAULTVALUE', 2);
-define('ENCODE', 3);
-define('ATTR', 4);
-define('ISNULL', 5);
-define('INDEX', 6);
-
-//include the constant file witch define all system constant (project dir, core dir...)
-include('web/constant.php');
-
-//Get the first argument name and his option
-$arguments = explode(':', $args[1]);
-$argumentType = $arguments[0];
-$argumentOptions = $arguments[1];
-
-//Check called argument
-switch($argumentType){
-    default:
-        print "Command $argumentType doesn't exists\nHere is a list of authorized arguments\n\n";
-    case 'help':
-        print "the Jet cli tools provide some simple command to create/destroy apps and create/remove tables from your database : \n";
-        print "\t- help : list all available command \n";
-        print "\t- app:create name:name : Create the named app with controllers/models/views dir and a config file\n";
-        print "\t- app:remove name:name : remove an APP and all his dir and remove tables\n";
-        print "\t- db:create : create all tables \n";
-        print "\t\t- db:create app:name : create all tables from the selected app\n";
-        print "\t\t- db:create model:name : create all tables from the model app\n";
-        print "\t- db:migrate : migrate to last version all tables \n";
-        print "\t\t- db:migrate app:name : migrate to last version the selected app\n";
-        print "\t\t- db:migrate model:name : migrate to last version the model app\n";
-        print "\t- db:load : load fake datas in named tables from the fixtures.php file \n";
-        print "\t\tFixtures data don't have to fill the id column\n";
-        print "\t- db:empty : remove all tables \n";
-        print "\t\t- db:empty app:name : remove all tables from the selected app\n";
-        print "\t\t- db:empty model:name : remove all tables from the selected app\n\n\n";
-        print "Please, note that the db argument only work on mysql databases\n\n";
-    break;
-
-    case 'app':
-
-        //Check if a app name exists
-        if(!isset($args[2])){
-            print 'Missing app argument';
-            exit(0);
-        }
-
-        $appName = explode(':', $args[2]);
-
-        //Check if the app name is not empty
-        if(count($appName) != 2){
-            print 'Missing app name';
-            exit(0);
-        }
-
-        //Lauch the AppManager class to manage asked option
-        new app($argumentOptions, array_pop($appName));
-    break;
-
-    case 'db':
-        $appName = null;
-        $type = null;
-        $name = null;
-
-        //Check if a app name is called
-        if(isset($args[2])){
-            $options = explode(':', $args[2]);
-
-            //Check if the app name is not empty
-            if(count($options) != 2){
-                print 'Missing app name';
-                exit(0);
-            }
-
-            //Get the app name
-            $type = $options[0];
-            $name = $options[1];
-        }
-
-        //Lauche the dbManager class to manage asked option
-        new db($argumentOptions, $type, $name);
-    break;
-}
-
-class app{
-
-    /**
-     * Init the AppManager
-     * @param string $option
-     * @param string $appName
-     */
-    public function __construct($option, $appName){
-
-        //check the asked type of option
-        switch($option){
-            case 'create':
-                $this->createApp($appName);
-            break;
-
-            case 'remove':
-                $this->deleteApp($appName);
-            break;
-        }
-    }
-
-    /**
-     * Create the asked APP
-     * @param string $appName
-     */
-    private function createApp($appName){
-        //Check if a app with the same name already exists
-        if(is_dir(PROJECT.'apps'.DR.$appName)){
-            print "App $appName already exists \n";
-            exit(0);
-        }
-
-        //Make all app dir
-        mkdir(PROJECT.'apps'.DR.$appName);
-        mkdir(PROJECT.'apps'.DR.$appName.DR.'models');
-        mkdir(PROJECT.'apps'.DR.$appName.DR.'views');
-        mkdir(PROJECT.'apps'.DR.$appName.DR.'controllers');
-
-        print "App $appName is created \n";
-    }
-
-    /**
-     * Delete the asked APP
-     * @param string $appName
-     */
-    private function deleteApp($appName){
-        //Check if the asked app exists
-        if(!is_dir(APPS.$appName)){
-            print "App $appName don't exists \n";
-            exit(0);
-        }
-
-        //Clean the database by removing linked app tables
-        new db('empty', 'app', $appName);
-
-        //Delete all elements of the app
-        $dir = PROJECT.'apps'.DR.$appName;
-        $this->recursiveDelete($dir);
-
-        print "App $appName deleted \n";
-    }
-
-    /**
-     * Recursively delete all dir/files of the selected dir
-     * @param string $dir
-     */
-    private function recursiveDelete($dir){
-        if(is_dir($dir)){
-            $objects = scandir($dir);
-
-            foreach($objects as $element){
-                if($element != "." && $element != ".."){
-                    if(filetype($dir.''.DR.$element) == "dir"){
-                        $this->recursiveDelete($dir.''.DR.$element);
-                    }else{
-                        unlink($dir.''.DR.$element);
-                    }
-                }
-            }
-
-            reset($objects);
-            rmdir($dir);
-        }
-    }
-}
-
-class db{
+/**
+ *   TableManager Class
+ *
+ *   @package   Jet
+ *   @author    Jérémy Barbe
+ *   @license   BSD
+ *   @link      https://github.com/CapMousse/Jet
+ */
+class TableManager{
     public
         /**
          * Contain all index
@@ -209,7 +50,6 @@ class db{
      * @param null|string $name element
      */
     public function __construct($option, $type = null, $name = null){
-
         $this->type = $type;
         $this->name = $name;
 
@@ -239,24 +79,6 @@ class db{
      * @return void
      */
     public function parseModels($action){
-
-        //include all core files needed to launch the orm
-        include(PROJECT.'config.php');
-        include(SYSPATH.'orm/connector.php');
-        include(SYSPATH.'orm/wrapper.php');
-        include(SYSPATH.'jet.php');
-        include(SYSPATH.'model.php');
-
-        $config = new Config();
-
-        //Get an instance of the Jet core
-        $jet = Jet::getInstance();
-
-        /** @var $environment String */
-        $jet->setEnvironment($config->environment);
-        /** @var $config Array */
-        $jet->setConfig($config);
-
         //Only parse models from the selected app if not null
         if(!is_null($this->type) && $this->type != 'model'){
             //check if app and app models dir exists
@@ -553,23 +375,6 @@ class db{
      * Load fixtures
      */
     public function loadData(){
-        //include all core files needed to launch the orm
-        include(PROJECT.'config.php');
-        include(SYSPATH.'orm/connector.php');
-        include(SYSPATH.'orm/wrapper.php');
-        include(SYSPATH.'jet.php');
-        include(SYSPATH.'model.php');
-
-        $config = new Config();
-
-        //Get an instance of the Jet core
-        $jet = Jet::getInstance();
-
-        /** @var $environment String */
-        $jet->setEnvironment($config->environment);
-        /** @var $config Array */
-        $jet->setConfig($config);
-
         $model = new Model();
 
         include('fixtures.php');
@@ -589,7 +394,3 @@ class db{
 
     }
 }
-
-exit(0);
-
-?>

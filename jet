@@ -3,4 +3,9 @@
 //include the constant file witch define all system constant (project dir, core dir...)
 include('web/constant.php');
 
-include(SYSPATH.'console.php');
+include(SYSPATH.'console/appManager.php');
+include(SYSPATH.'console/tableManager.php');
+include(SYSPATH.'console/commandManager.php');
+
+
+exit(0);

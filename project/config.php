@@ -72,8 +72,9 @@ class Config{
                 'pass'      => 'root',
                 'base'      => 'Jet',
 
-                //Socket for the cli client. Here is the Mac OS X sample
-                'socket'    => 'mysql:unix_socket=/Applications/MAMP/tmp/mysql/mysql.sock'
+                //If your terminal php bin is not your apache php bin, use a socket to connect to your mysql
+                //Here is a OsX Mamp Example
+                //'socket'    => 'mysql:unix_socket=/Applications/MAMP/tmp/mysql/mysql.sock'
             ),
 
             'requires' => array('debugLog.php')
