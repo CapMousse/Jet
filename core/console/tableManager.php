@@ -64,6 +64,7 @@ class TableManager{
             break;
 
             case 'load':
+                $this->parseModels('load');
                 $this->loadData();
             break;
 
@@ -154,6 +155,12 @@ class TableManager{
 
                         case 'remove':
                             $this->deleteTable($model);
+                        break;
+
+                        case 'load':
+                            if(property_exists($model, 'data')){
+                                $this->loadModelData($model);
+                            }
                         break;
                     }
                 }
@@ -385,6 +392,23 @@ class TableManager{
             print "Table ".$model->tableName." deleted \n";
         }
 
+    }
+
+    /**
+     * Load fixtures from a model
+     * @param Model $model
+     */
+    public function loadModelData($model){
+        /** @var $data Array */
+
+        $model = new $model();
+        $datas = $model::$data;
+
+        foreach($datas as $data){
+            $model->rawQuery('INSERT INTO '.$model->tableName.' VALUES("", '.join(',',  array_fill(0, count($data), "?")).')', $data)->run(true);
+        }
+
+        print "Fixtures loaded for ".$model->tableName."\n";
     }
 
     /**
