@@ -222,7 +222,15 @@ class TableManager{
         }
 
         //create the table
-        $model->reset()->rawQuery($query)->run(true);
+        $test = $model->reset()->rawQuery($query)->run(true);
+
+        if(!$test){
+            $errors = OrmWrapper::$log;
+            $error = array_pop($errors);
+            $sql = array_pop($errors);
+            print_r($error->getMessage()."\n".$sql."\n");
+            exit(0);
+        }
 
         print "Table ".$model->tableName." created \n";
     }
@@ -283,7 +291,15 @@ class TableManager{
         $alterQuery = $query.join(',', $columns);
 
         //migrate the table
-        $model->reset()->rawQuery($alterQuery)->run(true);
+        $test = $model->reset()->rawQuery($alterQuery)->run(true);
+
+        if(!$test){
+            $errors = OrmWrapper::$log;
+            $error = array_pop($errors);
+            $sql = array_pop($errors);
+            print_r($error->getMessage()."\n".$sql."\n");
+            exit(0);
+        }
 
         //Drop all columns missing from the structure
         foreach($rowsName as $name => $verif){
