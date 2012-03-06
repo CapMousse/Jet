@@ -296,8 +296,6 @@ final class Jet{
                 Log::fatal("Controller $controllerName doen't exists");
             }
 
-            $this->execute('before'.ucfirst($action));
-
             //init controller
             if(!isset($this->controllerList[$controllerName])){
                 include(APPS.$appName.DR.'controllers'.DR.lcfirst($controllerName).EXT);
@@ -307,9 +305,15 @@ final class Jet{
                 $controller = $this->controllerList[$controllerName];
             }
 
+            if(method_exists($controller, 'before'.ucfirst($action))){
+                $this->lauchAction($controller, 'before'.ucfirst($action), $options);
+            }
+
             $this->lauchAction($controller, $action, $options);
 
-            $this->execute('after'.ucfirst($action));
+            if(method_exists($controller, 'after'.ucfirst($action))){
+                $this->lauchAction($controller, 'after'.ucfirst($action), $options);
+            }
         }
     }
     
