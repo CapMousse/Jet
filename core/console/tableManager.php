@@ -417,7 +417,7 @@ class TableManager{
     public function loadData(){
         $model = new Model();
 
-        include('fixtures.php');
+        include('../../fixtures.php');
 
         print "Load fixtures into database \n";
 
