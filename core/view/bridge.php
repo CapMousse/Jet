@@ -79,7 +79,7 @@ abstract class ViewBridge{
      * @return string
      */
     final public function getCSRF($time = 5){
-        if(null === $this->csrfName && !isset($_SESSION['CSRF']) || $_SESSION['CSRF_TIME'] < microtime()){
+        if(null === $this->csrfName || !isset($_SESSION['CSRF']) || $_SESSION['CSRF_TIME'] < microtime()){
             $time = microtime()+ ($time*60*1000);
             $token = sha1($time+microtime());
             $name = md5(microtime());
@@ -94,11 +94,19 @@ abstract class ViewBridge{
             $this->csrfName = $_SESSION['CSRF_NAME'];
         }
 
-        return '<input type="hidden" name="'.$this->csrfName.'" value="'.$this->csrfToken.'" />';
+        return '<input type="hidden" name="csrf" /><input type="hidden" name="'.$this->csrfName.'" value="'.$this->csrfToken.'" />';
     }
 
     final public function checkCSRF(){
-        if(Validation::method() == "POST" && isset($_SESSION['CSRF']) && !self::$csrfChecked){
+        if(Validation::method() == "POST" && isset($_POST['csrf']) && !self::$csrfChecked){
+
+            if(!isset($_SESSION['CSRF_NAME']) || !isset($_SESSION['CSRF_TIME']) || !isset($_SESSION['CSRF'])){
+                Log::save('CSRF attack', Log::WARNING);
+
+                $response = HttpResponse::getInstance();
+                $response->redirect(HttpRequest::getRoot().'error', '500');
+            }
+
             $csrfName = $_SESSION['CSRF_NAME'];
             $csrfTime = $_SESSION['CSRF_TIME'];
             $token = $_SESSION['CSRF'];
@@ -107,9 +115,10 @@ abstract class ViewBridge{
                 Log::save('CSRF attack', Log::WARNING);
 
                 $response = HttpResponse::getInstance();
-                $response->redirect(HttpRequest::getRoot().'error');
+                $response->redirect(HttpRequest::getRoot().'error', '500');
             }
 
+            unset($_SESSION['CSRF']);
             self::$csrfChecked = true;
         }
     }
