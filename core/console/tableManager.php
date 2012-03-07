@@ -404,6 +404,8 @@ class TableManager{
         $model = new $model();
         $datas = $model::$data;
 
+        $model->rawQuery('TRUNCATE TABLE '.$model->tableName)->run(true);
+
         foreach($datas as $data){
             $model->rawQuery('INSERT INTO '.$model->tableName.' VALUES("", '.join(',',  array_fill(0, count($data), "?")).')', $data)->run(true);
         }
@@ -417,7 +419,7 @@ class TableManager{
     public function loadData(){
         $model = new Model();
 
-        include('../../fixtures.php');
+        include(SYSPATH.'../fixtures.php');
 
         print "Load fixtures into database \n";
 
