@@ -41,7 +41,12 @@ class TableManager{
          * The name of the searched element (app/model)
          * @var null|string
          */
-        $name = null;
+        $name = null,
+        /**
+         * History of already truncated table
+         * @var array
+         */
+        $truncated = array();
 
     /**
      * Init the dbManager
@@ -403,8 +408,12 @@ class TableManager{
 
         $model = new $model();
         $datas = $model::$data;
+        $tableName = str_replace(OrmConnector::$quoteSeparator, '', $model->tableName);
 
-        $model->rawQuery('TRUNCATE TABLE '.$model->tableName)->run(true);
+        if(!in_array($tableName, $this->truncated)){
+            $model->rawQuery('TRUNCATE TABLE '.$model->tableName)->run(true);
+            $this->truncated[] = $tableName;
+        }
 
         foreach($datas as $data){
             $model->rawQuery('INSERT INTO '.$model->tableName.' VALUES("", '.join(',',  array_fill(0, count($data), "?")).')', $data)->run(true);
@@ -425,10 +434,13 @@ class TableManager{
 
         /** @var $fixtures Array */
         foreach($fixtures as $table => $datas){
-            $model->rawQuery('TRUNCATE TABLE '.$table)->run(true);
+            if(!in_array($table, $this->truncated)){
+                $model->rawQuery('TRUNCATE TABLE '.OrmConnector::$quoteSeparator.$table.OrmConnector::$quoteSeparator)->run(true);
+                $this->truncated[] = $table;
+            }
 
             foreach($datas as $data){
-                $model->rawQuery('INSERT INTO '.$table.' VALUES("", '.join(',',  array_fill(0, count($data), "?")).')', $data)->run(true);
+                $model->rawQuery('INSERT INTO '.OrmConnector::$quoteSeparator.$table.OrmConnector::$quoteSeparator.' VALUES("", '.join(',',  array_fill(0, count($data), "?")).')', $data)->run(true);
             }
         }
 
