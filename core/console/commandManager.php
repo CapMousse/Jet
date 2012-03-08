@@ -72,8 +72,22 @@ switch($argumentType){
         print "\t\tFixtures data don't have to fill the id column\n";
         print "\t- db:empty : remove all tables \n";
         print "\t\t- db:empty app:name : remove all tables from the selected app\n";
-        print "\t\t- db:empty model:name : remove all tables from the selected app\n\n\n";
+        print "\t\t- db:empty model:name : remove all tables from the selected app\n";
+        print "\t- env:name : set the current environment name\n\n";
         print "Please, note that the db argument only work on mysql databases\n\n";
+    break;
+
+    case 'env':
+        $configFile = file(PROJECT.'config.php');
+
+        foreach($configFile as $number => $line){
+            if(preg_match('#environment = \".+\"#i', $line)){
+                $configFile[$number] = preg_replace('#environment = \".+\"#i', 'environment = "'.$argumentOptions.'"', $line);
+            }
+        }
+
+        file_put_contents(PROJECT.'config.php', implode("", $configFile));
+        print "Change environment to $argumentOptions\n";
     break;
 
     case 'app':

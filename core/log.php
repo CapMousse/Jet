@@ -100,9 +100,9 @@ class Log{
 
         self::$markers[] = $log;
         
-        $debugLevel = isset(self::$jet->global['log']) ? self::$jet->global['log'] : 0;
+        $debugLevel = isset(self::$jet->global['log']) ? self::$jet->global['log'] : false;
         
-        if($debugLevel == $type || $debugLevel == 0){
+        if($debugLevel !== false || $debugLevel >= $type){
             switch($type){
                 case self::FATAL:
                     $file = PROJECT.'logs/fatal.log';

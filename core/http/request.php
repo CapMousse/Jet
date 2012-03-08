@@ -81,7 +81,7 @@ class HttpRequest{
             self::$_post = $_POST;
         }
         
-        return isset($_post[$key]) ? $_post[$key] : false;
+        return isset(self::$_post[$key]) ? self::$_post[$key] : false;
     }
     
     /**
@@ -137,7 +137,7 @@ class HttpRequest{
      * @return string 
      */
     public static function getQueryString() {
-        return $_SERVER['REQUEST_URI'];
+        return ltrim($_SERVER['REQUEST_URI'], '/');
     }
     
     /**
