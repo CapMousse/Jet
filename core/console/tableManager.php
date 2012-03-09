@@ -111,12 +111,7 @@ class TableManager{
             }
 
             //check if models are defined on the require dir
-            $modules = scandir(PROJECT.'requires'.DR);
-            foreach($modules as $module){
-                if($module != "." && $module != ".." && is_dir(PROJECT.'requires'.DR.$module) && is_dir(PROJECT.'requires'.DR.$module.DR.'models')){
-                    $this->scanModels(PROJECT.'requires'.DR.$module.DR.'models', $action);
-                }
-            }
+            $this->parseDir(PROJECT.'requires', $action);
 
             if(is_dir(PROJECT.'models')){
                 $this->scanModels(PROJECT.'models', $action);
@@ -125,6 +120,22 @@ class TableManager{
         }
 
         return;
+    }
+
+    public function parseDir($dir, $action){
+        $scandir = scandir($dir);
+
+        foreach($scandir as $subdir){
+            if($subdir == "." || $subdir == ".."){
+                continue;
+            }
+
+            if(is_dir($dir.DR.$subdir.DR.'models')){
+                $this->scanModels($dir.DR.$subdir.DR.'models', $action);
+            }else if(is_dir($dir.DR.$subdir) && substr($subdir, 0, 1) != "."){
+                $this->parseDir($dir.DR.$subdir, $action);
+            }
+        }
     }
 
     /**

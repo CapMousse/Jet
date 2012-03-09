@@ -80,6 +80,27 @@ class Validation{
         
         return false;
     }
+
+    /**
+     * Create the opening form
+     * @static
+     * @param string $class
+     * @param string $id
+     * @param string $method
+     * @param string $action
+     * @return string
+     */
+    public static function beginForm($class = '', $id = '', $method = "post", $action = null){
+        if(is_null($action)){
+            $action = HttpRequest::getRoot().trim(HttpRequest::getQueryString(), "/");
+        }
+
+        return "<form action='$action' class='$class' id='$id' method='$method'>";
+    }
+
+    public static function endForm(){
+        return "</form>";
+    }
     
     /**
      * add
