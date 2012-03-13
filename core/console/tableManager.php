@@ -203,6 +203,8 @@ class TableManager{
         $query = "CREATE TABLE ".$model->tableName." (";
         $columns = array();
         $createLog = array();
+        $this->unique = array();
+        $this->index = array();
 
         //Create the ID column
         $columns[] = $model->getIdName()." INT NOT NULL AUTO_INCREMENT PRIMARY KEY";
@@ -284,6 +286,8 @@ class TableManager{
         //prepare the query
         $query = "ALTER TABLE ".$model->tableName." ";
         $columns = array();
+        $this->unique = array();
+        $this->index = array();
 
         //check all columns. Change them if already exists or create them
         /** @var $structure Array */
