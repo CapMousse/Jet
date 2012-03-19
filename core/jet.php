@@ -273,6 +273,7 @@ final class Jet{
 
         $this->execute('beforeSendHttpResponse');
         Log::save('Finish render');
+
         echo $response->send();
     }
 

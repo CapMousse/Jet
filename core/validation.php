@@ -86,20 +86,24 @@ class Validation{
      * @static
      * @param string $class
      * @param string $id
+     * @param string $attr
      * @param string $method
      * @param string $action
-     * @return string
      */
-    public static function beginForm($class = '', $id = '', $method = "post", $action = null){
+    public static function beginForm($class = '', $id = '', $attr='', $method = "post", $action = null){
         if(is_null($action)){
             $action = HttpRequest::getRoot().trim(HttpRequest::getQueryString(), "/");
         }
 
-        return "<form action='$action' class='$class' id='$id' method='$method'>";
+        echo "<form action='$action' class='$class' id='$id' method='$method' $attr>";
     }
 
+    /**
+     * Create the close form
+     * @static
+     */
     public static function endForm(){
-        return "</form>";
+        echo "</form>";
     }
     
     /**
