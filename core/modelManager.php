@@ -29,7 +29,7 @@ class ModelManager{
      * The list of models already loaded
      * @var array
      */
-    private $models = array();
+    private static $models = array();
 
     /**
      * Get the Jet core instance
@@ -43,14 +43,15 @@ class ModelManager{
     /**
      * Check if the model exist, load and instantiate him
      * @param String $file
-     * @return OrmWrapper
+     * @return Model
      */
     public function load($file){
+        $file = lcfirst($file);
         $_currentApp = APPS.$this->appName.DR;
         $_className = ucfirst($file);
 
         //Control if model file exists
-        if(!isset($this->models[$_className])){
+        if(!isset(self::$models[$_className])){
             if(!is_file($_currentApp.'models'.DR.$file.EXT) && !is_file(PROJECT.'models'.DR.$file.EXT)){
                 Log::save("The asked model <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />", Log::FATAL);
                 return false;
@@ -62,7 +63,7 @@ class ModelManager{
                 include(PROJECT.'models'.DR.$file.EXT);
             }
 
-            $this->models[$_className] = true;
+            self::$models[$_className] = true;
         }
 
         Log::save('Model loaded : '.$file);

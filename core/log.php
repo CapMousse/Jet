@@ -102,7 +102,7 @@ class Log{
         
         $debugLevel = isset(self::$jet->global['log']) ? self::$jet->global['log'] : false;
         
-        if($debugLevel !== false || $debugLevel >= $type){
+        if($debugLevel !== false && $type >= $debugLevel){
             switch($type){
                 case self::FATAL:
                     $file = PROJECT.'logs/fatal.log';

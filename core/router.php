@@ -99,7 +99,7 @@ class Router{
         # thanks to Taluu (Baptiste Clavié) for the help
         
         foreach($this->routes as $key => $value){
-            $key = preg_replace('#\[(.+)\]:(.+)#', '(?<$1>:$2)', rtrim($key, '/'));
+            $key = preg_replace('#\[([a-zA-Z0-9]+)\]:([a-z]+)#', '(?<$1>:$2)', rtrim($key, '/'));
             $key = str_replace(array_keys($this->authorized_patterns), array_values($this->authorized_patterns), $key);
             $this->parsed_routes[$key] = $value;
         }

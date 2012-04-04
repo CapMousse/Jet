@@ -199,8 +199,14 @@ final class Jet{
      * @return  Array/null
      */
     private function parsePath(){
-        // get current adresse path
-        $path = (isset($_SERVER['PATH_INFO'])) ? $_SERVER['PATH_INFO'] : @getenv('PATH_INFO');
+        // get current path
+        if(isset($_SERVER['PATH_INFO'])){
+            $path = $_SERVER['PATH_INFO'];
+        }else if(isset($_SERVER['ORIG_PATH_INFO'])){
+            $path = $_SERVER['ORIG_PATH_INFO'];
+        }else{
+            $path = @getenv('PATH_INFO');
+        }
 
         // check if current path is not root url or core url, else return array of current route
         $this->uri_array = (trim($path, '/') != '' && $path != "/".SELF) ? explode('/', trim($path, '/')) : null;
@@ -273,6 +279,7 @@ final class Jet{
 
         $this->execute('beforeSendHttpResponse');
         Log::save('Finish render');
+
         echo $response->send();
     }
 

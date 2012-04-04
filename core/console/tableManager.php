@@ -126,7 +126,7 @@ class TableManager{
         $scandir = scandir($dir);
 
         foreach($scandir as $subdir){
-            if($subdir == "." || $subdir == ".."){
+            if($subdir == "." || $subdir == ".." || substr($subdir, 0, 1) == '.'){
                 continue;
             }
 
@@ -361,7 +361,7 @@ class TableManager{
             $columnQuery .= ' CHARACTER SET '.$encode.' COLLATE '.$column[ENCODE];
         }
 
-        if($column[ISNULL]){
+        if(isset($column[ISNULL])){
             $columnQuery .= ' NULL';
         }else{
             $columnQuery .= ' NOT NULL';
@@ -375,17 +375,19 @@ class TableManager{
             }
         }
 
-        if($column[INDEX] == "PRIMARY KEY"){
+        if(isset($column[INDEX]) && $column[INDEX] == "PRIMARY KEY"){
             $columnQuery .= ' PRIMARY KEY';
         }else{
-            switch($column[INDEX]){
-                case 'UNIQUE':
-                    $this->unique[] = $name;
-                break;
+            if(isset($column[INDEX])){
+                switch($column[INDEX]){
+                    case 'UNIQUE':
+                        $this->unique[] = $name;
+                        break;
 
-                case "INDEX":
-                    $this->index[] = $name;
-                break;
+                    case "INDEX":
+                        $this->index[] = $name;
+                        break;
+                }
             }
         }
 
@@ -403,7 +405,7 @@ class TableManager{
             $tables = $model->rawQuery("SHOW TABLES")->run();
             foreach($tables as $table){
                 $table = array_pop($table);
-                @$model->rawQuery('DROP TABLE '.$table)->run(true);
+                @$model->rawQuery('DROP TABLE '.OrmConnector::$quoteSeparator.$table.OrmConnector::$quoteSeparator)->run(true);
                 print "Table ".$table." deleted \n";
             }
         }else{

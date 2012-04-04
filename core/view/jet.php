@@ -26,7 +26,8 @@ class ViewJet extends ViewBridge{
     public static
         $layout = null,
         $appLayoutName = null,
-        $blocks = array();
+        $blocks = array(),
+        $renderLayout = false;
     
     protected 
         $jet = null,
@@ -49,12 +50,13 @@ class ViewJet extends ViewBridge{
      * load the asked view. Important for display data... or not
      * We need to go deerper.
      *
-     * @access   protected
+     * @access  protected
      * @param   string   $file      name of the view file
-     * @param    array    $options    data used by the view
-     * @return   void 
+     * @param   array    $options   data used by the view
+     * @param   string   $dir       dir to load view
+     * @return  void
      */   
-    public function load($file, $options = null){
+    public function load($file, $options = null, $dir = null){
         $_currentApp = PROJECT.'apps/'.self::$appName.DR;
         //Control if options is defined, if yes, construct all var used in templates
 
@@ -62,13 +64,23 @@ class ViewJet extends ViewBridge{
             foreach($options as $_name => $_var) ${$_name} = $_var;
         }
 
+        if(!self::$renderLayout){
+            ob_start();
+        }
+
         if(is_file($_currentApp.'views'.DR.$file.EXT)){
             include($_currentApp.'views'.DR.$file.EXT);
         }else if(is_file(PROJECT.'views'.DR.$file.EXT)){
             include(PROJECT.'views'.DR.$file.EXT);
+        }else if(!is_null($dir) && is_file($dir.DR.$file.EXT)){
+            include($dir.DR.$file.EXT);
         }else{
             Log::save("The asked view <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> on $_currentApp", Log::FATAL);
             return;
+        }
+
+        if(!self::$renderLayout){
+            ob_end_clean();
         }
 
         Log::save('Loaded view : '.$file);
@@ -178,6 +190,24 @@ class ViewJet extends ViewBridge{
 
         return $text;
     }
+
+    /**
+     * Simple helper to create links
+     * @param string $text
+     * @return string
+     */
+    public function createLink($text){
+        return HttpRequest::getRoot().$text;
+    }
+
+    /**
+     * Compare asked url with current URI
+     * @param string $url
+     * @return int
+     */
+    public function compareUrl($url){
+        return preg_match('#'.$url.'#', HttpRequest::getQueryString());
+    }
     
     /**
      * setLayout
@@ -217,6 +247,7 @@ class ViewJet extends ViewBridge{
                 self::$appName = self::$appLayoutName;
             }
 
+            self::$renderLayout = true;
             $this->load(self::$layout);
         }
 
