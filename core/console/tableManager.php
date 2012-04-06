@@ -278,6 +278,16 @@ class TableManager{
             return;
         }
 
+        //Check all existing INDEX and save them
+        $indexes = $model->rawQuery('SHOW INDEX FROM '.$model->tableName)->run();
+        if(is_array($indexes)){
+            foreach($indexes as $index){
+                if(!empty($index['Key_name']) && $index['Key_name'] != "PRIMARY"){
+                    $model->rawQuery('ALTER TABLE '.$model->tableName.' DROP INDEX '.OrmConnector::$quoteSeparator.$index['Key_name'].OrmConnector::$quoteSeparator)->run(true);
+                }
+            }
+        }
+
         $rowsName = array();
         foreach($rows as $row){
             $rowsName[$row["Field"]] = false;
