@@ -137,7 +137,7 @@ class HttpRequest{
      * @return string 
      */
     public static function getQueryString() {
-        return ltrim($_SERVER['REQUEST_URI'], '/');
+        return isset($_SERVER['REQUEST_URI']) ? ltrim($_SERVER['REQUEST_URI'], '/') : '';
     }
     
     /**

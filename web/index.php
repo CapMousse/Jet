@@ -22,6 +22,13 @@
 *
 */
 
+//Prevent direct access to index.php
+if(strpos($_SERVER['REQUEST_URI'], 'index.php') !== false){
+    $addr = str_replace('index.php', '', $_SERVER['REQUEST_URI']);
+    header('location: '.$addr, false, 301);
+    exit();
+}
+
 //require the constant file where are defined constant for the framework
 require('constant.php');
 

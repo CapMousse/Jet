@@ -70,7 +70,10 @@ class TableManager{
 
             case 'load':
                 $this->parseModels('load');
-                $this->loadData();
+
+                if($this->name == null){
+                    $this->loadData();
+                }
             break;
 
             case 'empty':
@@ -281,8 +284,12 @@ class TableManager{
         //Check all existing INDEX and save them
         $indexes = $model->rawQuery('SHOW INDEX FROM '.$model->tableName)->run();
         if(is_array($indexes)){
+            //multiple INDEX can have same name, we need to check if the current INDEX was not already deleted
+            $deleted = array();
+
             foreach($indexes as $index){
-                if(!empty($index['Key_name']) && $index['Key_name'] != "PRIMARY"){
+                if(!empty($index['Key_name']) && $index['Key_name'] != "PRIMARY" && !in_array($index['Key_name'], $deleted)){
+                    $deleted[] = $index['Key_name'];
                     $model->rawQuery('ALTER TABLE '.$model->tableName.' DROP INDEX '.OrmConnector::$quoteSeparator.$index['Key_name'].OrmConnector::$quoteSeparator)->run(true);
                 }
             }

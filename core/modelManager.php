@@ -51,7 +51,7 @@ class ModelManager{
         $_className = ucfirst($file);
 
         //Control if model file exists
-        if(!isset(self::$models[$_className])){
+        if(!isset(self::$models[$_className]) && !class_exists($_className)){
             if(!is_file($_currentApp.'models'.DR.$file.EXT) && !is_file(PROJECT.'models'.DR.$file.EXT)){
                 Log::save("The asked model <b>$file</b> doesn't exists in <b>".get_class($this).".php</b> <br />", Log::FATAL);
                 return false;

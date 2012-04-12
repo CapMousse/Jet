@@ -24,31 +24,7 @@
 session_start();
 
 //register a autoload for core file
-spl_autoload_register(function($class){
-    static $loaded = array();
-    
-    if(isset($loaded[$class])){
-        return $loaded[$class];
-    }
-
-    if(!is_file(SYSPATH.lcfirst($class).EXT)){
-        $file = strtolower(preg_replace('/(?!^)[[:upper:]]/', '/\0', $class));
-    }else{
-        $file = lcfirst($class);
-    }
-
-
-    if(!is_file(SYSPATH.$file.EXT)){
-        $loaded[$class] = false;
-    }
-    else{
-        require SYSPATH.$file.EXT;
-        $loaded[$class] = true;
-    }
-
-    Log::save('Autoload '.$class);
-    return $loaded[$class];
-});
+require('autoload.php');
 
 Log::$start = microtime();
 
