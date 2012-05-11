@@ -99,10 +99,14 @@ class Validation{
     }
 
     /**
-     * Create the close form
+     * Create the close form with a CSRF protection
+     * @param boolean|int $time time in minute before CSRF token destroy
      * @static
      */
-    public static function endForm(){
+    public static function endForm($time = 5){
+        if($time != false){
+            echo ViewBridge::getCSRF($time);
+        }
         echo "</form>";
     }
     

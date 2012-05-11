@@ -73,6 +73,15 @@ abstract class Controller{
         $this->response = HttpResponse::getInstance();
         $this->request = new HttpRequest();
         $this->model = new ModelManager($appName);
+
+        $this->construct();
+    }
+
+    /**
+     * Placeholer for construt method
+     */
+    protected function construct(){
+
     }
 
     /**

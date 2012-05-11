@@ -246,7 +246,7 @@ class TableManager{
             $set = array_shift(explode('_', $model::$encode));
             $query .= " CHARACTER SET $set COLLATE ".$model::$encode;
         }else{
-            $query .= " CHARACTER SET utf8 COLLATE utf8_general_ci";
+            $query .= " CHARACTER SET utf8 COLLATE utf8_unicode_ci";
         }
 
         //create the table
@@ -256,7 +256,7 @@ class TableManager{
             $errors = OrmWrapper::$log;
             $error = array_pop($errors);
             $sql = array_pop($errors);
-            print_r($error->getMessage()."\n".$sql."\n");
+            print_r($error->getMessage()."\n".$sql."\n\n");
             exit(0);
         }
 
@@ -341,7 +341,7 @@ class TableManager{
             $errors = OrmWrapper::$log;
             $error = array_pop($errors);
             $sql = array_pop($errors);
-            print_r($error->getMessage()."\n".$sql."\n");
+            print_r($error->getMessage()."\n".$sql."\n\n");
             exit(0);
         }
 

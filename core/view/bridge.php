@@ -31,7 +31,7 @@ abstract class ViewBridge{
         INFO_ENGINE = 3,
         INFO_ALL = 4;
 
-    private
+    private static
         $csrfToken = null,
         $csrfName = null;
 
@@ -56,6 +56,10 @@ abstract class ViewBridge{
     }
     
     protected function _assign(){}
+
+    public function setAppName($appName){
+        self::$appName = $appName;
+    }
     
     final public function render(){
         $this->_assign();
@@ -78,8 +82,8 @@ abstract class ViewBridge{
      *          time in minutes before token destroy
      * @return string
      */
-    final public function getCSRF($time = 5){
-        if(null === $this->csrfName || !isset($_SESSION['CSRF']) || $_SESSION['CSRF_TIME'] < microtime()){
+    final public static function getCSRF($time = 5){
+        if(null === self::$csrfName || !isset($_SESSION['CSRF']) || $_SESSION['CSRF_TIME'] < microtime()){
             $time = microtime()+ ($time*60*1000);
             $token = sha1($time+microtime());
             $name = md5(microtime());
@@ -87,16 +91,19 @@ abstract class ViewBridge{
             $_SESSION['CSRF'] = $token;
             $_SESSION['CSRF_TIME'] = $time;
             $_SESSION['CSRF_NAME'] = $name;
-            $this->csrfToken = $token;
-            $this->csrfName = $name;
+            self::$csrfToken = $token;
+            self::$csrfName = $name;
         }else{
-            $this->csrfToken = $_SESSION['CSRF'];
-            $this->csrfName = $_SESSION['CSRF_NAME'];
+            self::$csrfToken = $_SESSION['CSRF'];
+            self::$csrfName = $_SESSION['CSRF_NAME'];
         }
 
-        return '<input type="hidden" name="csrf" /><input type="hidden" name="'.$this->csrfName.'" value="'.$this->csrfToken.'" />';
+        return '<input type="hidden" name="csrf" /><input type="hidden" name="'.self::$csrfName.'" value="'.self::$csrfToken.'" />';
     }
 
+    /**
+     * Prevent Cross-Site Request Forgery
+     */
     final public function checkCSRF(){
         if(Validation::method() == "POST" && isset($_POST['csrf']) && !self::$csrfChecked){
 
